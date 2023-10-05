@@ -23,6 +23,9 @@ class EsposalledDataset(GenericDataset):
         self.patch_width = patch_width
 
         self.base_folder = os.path.join(base_folder, split)
-        valid_records = None # Valid records from cross validation fold
+        valid_records = [record.strip() for record in open(os.path.join(base_folder, 'splits', cross_val, split + 'txt'), 'r').readlines()]
 
-        records = [os.path.join(self.base_folder, page_id, mode) for page_id in os.listdir(self.base_folder) if page_id in valid_records]
+        records = [os.path.join(self.base_folder, page_id, mode) for page_id in os.listdir(self.base_folder) if page_id in valid_records] # TODO: Check there's no leak and it's getting properly filtered
+        all_images = []
+        for record in records:
+            
