@@ -1,5 +1,7 @@
 # Task Arithmetic in the Tangent Space
 
+Initial code source from: git@github.com:gortizji/tangent_task_arithmetic.git 
+
 This is the source code to reproduce the experiments of the paper "[Task arithmetic in the tangent space: Improved editing of pre-trained models](https://arxiv.org/abs/2305.12827)" by Guillermo Ortiz-Jimenez*, Alessandro Favero* and Pascal Frossard.
 
 ![](figures/tangent.jpg)
