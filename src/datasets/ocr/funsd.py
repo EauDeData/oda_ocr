@@ -61,12 +61,14 @@ class FUNSDDataset(GenericDataset):
     def __getitem__(self, idx):
         
         metadata = self.samples[idx]
+        x,y,w,h = metadata['bbx']
+
         
         image = Image.open(
                            
                            os.path.join(self.base_images, metadata['image_path'])
                            
-                           ).crop(metadata['bbx']).convert('RGB')
+                           ).crop((y,x,h,w))
         
         original_width, _ = image.size
         new_width = original_width + (original_width % self.patch_width)
