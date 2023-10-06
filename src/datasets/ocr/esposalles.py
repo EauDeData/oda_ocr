@@ -41,6 +41,8 @@ class EsposalledDataset(GenericDataset):
         self.samples = samples
         self.keys = list(self.samples.keys())
         self.transforms = transforms
+        self.fold = cross_val
+        self.split = split
     
     def __len__(self):
         return len(self.samples)
@@ -63,5 +65,7 @@ class EsposalledDataset(GenericDataset):
             "original_image": image,
             "resized_image": image_resized,
             "input_tensor": input_tensor,
-            "annotation": annotation
+            "annotation": annotation,
+            'dataset': self.name,
+            'split': f"{self.fold}_{self.split}"
         }
