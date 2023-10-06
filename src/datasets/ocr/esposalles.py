@@ -50,7 +50,7 @@ class EsposalledDataset(GenericDataset):
     def __getitem__(self, idx):
         
         file_path = self.keys[idx]
-        image = Image.open(file_path)
+        image = Image.open(file_path).convert('RGB')
         
         original_width, _ = image.size
         new_width = original_width + (original_width % self.patch_width)

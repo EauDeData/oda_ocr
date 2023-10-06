@@ -6,7 +6,7 @@ from src.datasets.ocr.funsd import FUNSDDataset, DEFAULT_FUNSD
 from src.datasets.ocr.washinton import GWDataset, DEFAULT_WASHINTON
 from src.datasets.ocr.hiertext import HierTextDataset, DEFAULT_HIERTEXT
 
-IDX = 505
+IDX = 42
 OUTPUT_TMP_FOLDER = './tmp_/'
 os.makedirs(OUTPUT_TMP_FOLDER, exist_ok=True)
 

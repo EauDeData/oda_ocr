@@ -59,7 +59,7 @@ class COCOTextDataset(GenericDataset):
                            
                            os.path.join(self.base_images, metadata['image_path'])
                            
-                           ).crop((x, y, x+w, y+h))
+                           ).crop((x, y, x+w, y+h)).convert('RGB')
         
         original_width, _ = image.size
         new_width = original_width + (original_width % self.patch_width)

@@ -48,7 +48,7 @@ class FUNSDDataset(GenericDataset):
                 for word in form['words']:
                     self.samples.append(
                         {
-                            'image_path': sample_ids[name]['image_file'],
+                            'image_path': sample_ids[id_ann]['image_file'],
                             'bbx': word["box"],
                             "transcription": word['text']
                             
@@ -63,12 +63,11 @@ class FUNSDDataset(GenericDataset):
         metadata = self.samples[idx]
         x,y,w,h = metadata['bbx']
 
-        
         image = Image.open(
                            
                            os.path.join(self.base_images, metadata['image_path'])
                            
-                           ).crop((y,x,h,w))
+                           ).crop((x, y, w, h)).convert('RGB')
         
         original_width, _ = image.size
         new_width = original_width + (original_width % self.patch_width)

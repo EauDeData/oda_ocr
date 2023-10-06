@@ -74,7 +74,7 @@ class GWDataset(GenericDataset):
         
         metadata = self.data[idx]
 
-        image = Image.open(metadata['image_path'])
+        image = Image.open(metadata['image_path']).convert('RGB')
         
         original_width, _ = image.size
         new_width = original_width + (original_width % self.patch_width)
