@@ -8,7 +8,7 @@ DEFAULT_ESPOSALLES = "/data/users/amolina/OCR/ESPOSALLES"
 class EsposalledDataset(GenericDataset):
     name = 'esposalles_dataset'
 
-    def __init__(self, base_folder = DEFAULT_ESPOSALLES, split = 'train', cross_val = 'cv1', mode = 'words', image_height = 128, patch_width = 16) -> None:
+    def __init__(self, base_folder = DEFAULT_ESPOSALLES, split = 'train', cross_val = 'cv1', mode = 'words', image_height = 128, patch_width = 16, transforms = lambda x: x) -> None:
         super().__init__()
         #### ESPOSALLES DATASET ####
         # base_folder: folder with train - test splits.
@@ -23,9 +23,45 @@ class EsposalledDataset(GenericDataset):
         self.patch_width = patch_width
 
         self.base_folder = os.path.join(base_folder, split)
-        valid_records = [record.strip() for record in open(os.path.join(base_folder, 'splits', cross_val, split + 'txt'), 'r').readlines()]
+        valid_records = [record.strip() for record in open(os.path.join(base_folder, 'splits', cross_val, split + '.txt'), 'r').readlines()]
 
-        records = [os.path.join(self.base_folder, page_id, mode) for page_id in os.listdir(self.base_folder) if page_id in valid_records] # TODO: Check there's no leak and it's getting properly filtered
-        all_images = []
-        for record in records:
+        records = [{'folder': os.path.join(self.base_folder, page_id, mode),
+                    'transcription_file': os.path.join(self.base_folder, page_id, mode, page_id + '_transcription.txt'),
+                    'page_id': page_id} for page_id in os.listdir(self.base_folder) if page_id in valid_records and 'idPage' in page_id] # TODO: Check there's no leak and it's getting properly filtered
+        samples = {}
+        for record_folder in records:
             
+            files = os.listdir(record_folder['folder'])
+            transcriptions = {os.path.join(record_folder['folder'], 
+                                           f'{line.strip().split(":")[0]}.png'): line.strip().split(":")[1] 
+                                            for line in open(record_folder['transcription_file'], 'r').readlines()
+                                            if f'{line.strip().split(":")[0]}.png' in files}
+            samples = {**samples, **transcriptions}
+        
+        self.samples = samples
+        self.keys = list(self.samples.keys())
+        self.transforms = transforms
+    
+    def __len__(self):
+        return len(self.samples)
+    
+    def __getitem__(self, idx):
+        
+        file_path = self.keys[idx]
+        image = Image.open(file_path)
+        
+        original_width, _ = image.size
+        new_width = original_width + (original_width % self.patch_width)
+        
+        image_resized = image.resize((new_width, self.image_height))
+         
+        input_tensor = self.transforms(image_resized)
+        
+        annotation = self.samples[file_path]
+        
+        return {
+            "original_image": image,
+            "resized_image": image_resized,
+            "input_tensor": input_tensor,
+            "annotation": annotation
+        }

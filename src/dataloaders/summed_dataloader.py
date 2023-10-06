@@ -44,9 +44,10 @@ class DummyDataset(GenericDataset):
 
 class CollateFNs:
 
-    def __init__(self, patch_width, image_height) -> None:
+    def __init__(self, patch_width, image_height, character_tokenizer) -> None:
         self.patch_width = patch_width
         self.image_height = image_height
+        self.character_tokenizer = character_tokenizer
     
     def collate(self, batch):
         ## ADD 0 - PADDING SO WE CAN HORIZONTALY TOKENIZE THE SEQUENCES ##
