@@ -6,7 +6,10 @@ def try_esposalles(base_folder = DEFAULT_ESPOSALLES, split = 'train', cross_val 
     ###### dataset init #######
     dataset = EsposalledDataset(base_folder, split, cross_val, mode, image_height, patch_width, transforms)
     print(dataset[0])
+    print('total:', len(dataset))
     
-def try_cocotext(base_folder = DEFAULT_COCOTEXT, annots_name='cocotext.v2.json', langs = ['english', 'non-english'], legibility = ['legible', 'illgible'], style = ['machine-printed', 'handwritten'], split = 'train', image_height = 128, patch_width = 16, transforms = lambda x: x):
-    dataset = COCOTextDataset(base_folder, annots_name, split, langs, legibility, style, image_height, patch_width, transforms )
+def try_cocotext(base_folder = DEFAULT_COCOTEXT, annots_name='cocotext.v2.json', langs = ['english', 'non-english'], legibility = ['legible', 'illgible'], split = 'train', image_height = 128, patch_width = 16, transforms = lambda x: x):
+    dataset = COCOTextDataset(base_folder, annots_name, split, langs, legibility, image_height, patch_width, transforms )
+    # print(dataset.__getitem__)
+    print('total:', len(dataset))
     print(dataset[0])
