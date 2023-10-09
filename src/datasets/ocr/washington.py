@@ -4,11 +4,11 @@ import json
 
 from src.dataloaders.summed_dataloader import GenericDataset
 
-DEFAULT_WASHINTON = "/data/users/amolina/OCR/GW"
+DEFAULT_WASHINGTON = "/data/users/amolina/OCR/GW"
 
 class GWDataset(GenericDataset):
     name = 'gw_dataset'
-    def __init__(self, base_folder = DEFAULT_WASHINTON, split: ['train', 'test', 'val'] = 'train', cross_val = 'cv1', mode = 'word', image_height = 128, patch_width = 16, transforms = lambda x: x) -> None:
+    def __init__(self, base_folder = DEFAULT_WASHINGTON, split: ['train', 'test', 'val'] = 'train', cross_val = 'cv1', mode = 'word', image_height = 128, patch_width = 16, transforms = lambda x: x) -> None:
         super().__init__()
         
         self.split = split
