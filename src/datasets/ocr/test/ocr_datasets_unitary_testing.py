@@ -7,7 +7,8 @@ from src.datasets.ocr.washington import GWDataset, DEFAULT_WASHINGTON
 from src.datasets.ocr.hiertext import HierTextDataset, DEFAULT_HIERTEXT
 from src.datasets.ocr.historical_maps import HistoricalMapsdDataset, DEFAULT_HIST_MAPS
 from src.datasets.ocr.iam import IAMDataset, DEFAULT_IAM
-
+from src.datasets.ocr.iit5k import IIIT5kDataset, DEFAULT_IIIT
+from src.datasets.ocr.mlt19 import MLT19Dataset, DEFAULT_MLT
 
 IDX = 42
 OUTPUT_TMP_FOLDER = './tmp_/'
@@ -61,3 +62,12 @@ def try_iam(base_folder = DEFAULT_IAM, split: ["train", "test", "val"] = 'train'
     dataset = IAMDataset(base_folder, split, partition, mode, image_height, patch_width, transforms)
     log_dataset(dataset)
 
+def try_iii(base_folder = DEFAULT_IIIT, split: ["train", "test"] = 'train', image_height = 128, patch_width = 16, transforms = lambda x: x):
+    dataset = IIIT5kDataset(base_folder, split, image_height, patch_width, transforms)
+    log_dataset(dataset)
+
+def try_mlt19( base_folder = DEFAULT_MLT, split: ["train", "val"] = 'train',\
+                 language = ['Latin', 'Arabic',  "Chinese", "Japanese", "Korean", "Bangla", "Hindi", "Symbols", "Mixed", "None"],\
+                cross_val = 'cv1', image_height = 128, patch_width = 16, transforms = lambda x: x):
+    dataset = MLT19Dataset(base_folder, split, language, cross_val, image_height, patch_width, transforms)
+    log_dataset(dataset)
