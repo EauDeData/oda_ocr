@@ -18,7 +18,7 @@ from src.datasets.ocr.svt import SVTDataset, DEFAULT_SVT
 from src.datasets.ocr.sroie import SROIEDataset, DEFAULT_SROIE
 from src.datasets.ocr.saintgall import SaintGallDataset, DEFAULT_SAINT_GALL
 
-IDX = 505
+IDX = 42
 OUTPUT_TMP_FOLDER = './tmp_/'
 os.makedirs(OUTPUT_TMP_FOLDER, exist_ok=True)
 
@@ -30,6 +30,11 @@ def log_dataset(dataset, idx = IDX, image_to_observe = 'original_image'):
 
 def try_totaltext(base_folder = DEFAULT_TOTALTEXT, split: ['Train', 'Test'] = 'Train', image_height = 128, patch_width = 16, transforms = lambda x: x):
     dataset = TotalTextDataset(base_folder, split, image_height, patch_width, transforms)
+    log_dataset(dataset)
+    return dataset
+
+def try_svt(base_folder = DEFAULT_SVT, split: ['train', 'test'] = 'train', image_height = 128, patch_width = 16, transforms = lambda x: x):
+    dataset = SVTDataset(base_folder, split, image_height, patch_width, transforms)
     log_dataset(dataset)
     return dataset
 
