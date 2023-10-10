@@ -33,6 +33,11 @@ def try_totaltext(base_folder = DEFAULT_TOTALTEXT, split: ['Train', 'Test'] = 'T
     log_dataset(dataset)
     return dataset
 
+def try_sroie(base_folder = DEFAULT_SROIE, split: ['train', 'test'] = 'train', image_height = 128, patch_width = 16, transforms = lambda x: x):
+    dataset = SROIEDataset(base_folder, split, image_height, patch_width, transforms)
+    log_dataset(dataset)
+    return dataset
+
 def try_svt(base_folder = DEFAULT_SVT, split: ['train', 'test'] = 'train', image_height = 128, patch_width = 16, transforms = lambda x: x):
     dataset = SVTDataset(base_folder, split, image_height, patch_width, transforms)
     log_dataset(dataset)
