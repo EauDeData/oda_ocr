@@ -18,7 +18,7 @@ from src.datasets.ocr.svt import SVTDataset, DEFAULT_SVT
 from src.datasets.ocr.sroie import SROIEDataset, DEFAULT_SROIE
 from src.datasets.ocr.saintgall import SaintGallDataset, DEFAULT_SAINT_GALL
 
-IDX = 42
+IDX = -1
 OUTPUT_TMP_FOLDER = './tmp_/'
 os.makedirs(OUTPUT_TMP_FOLDER, exist_ok=True)
 
@@ -31,10 +31,12 @@ def log_dataset(dataset, idx = IDX, image_to_observe = 'original_image'):
 def try_totaltext(base_folder = DEFAULT_TOTALTEXT, split: ['Train', 'Test'] = 'Train', image_height = 128, patch_width = 16, transforms = lambda x: x):
     dataset = TotalTextDataset(base_folder, split, image_height, patch_width, transforms)
     log_dataset(dataset)
+    return dataset
 
 def try_xfund(base_folder = DEFAULT_XFUND, split: ['train', 'val'] = 'train', lang = ['DE', 'ES', 'FR', 'IT', 'JA', 'PT', 'ZH'], image_height = 128, patch_width = 16, transforms = lambda x: x):
     dataset = XFundDataset(base_folder, split, lang, image_height, patch_width, transforms)
     log_dataset(dataset)
+    return dataset
 
 def try_esposalles(base_folder = DEFAULT_ESPOSALLES, split = 'train', cross_val = 'cv1', mode = 'words', image_height = 128, patch_width = 16, transforms = lambda x: x):
 
@@ -44,20 +46,19 @@ def try_esposalles(base_folder = DEFAULT_ESPOSALLES, split = 'train', cross_val 
 def try_cocotext(base_folder = DEFAULT_COCOTEXT, annots_name='cocotext.v2.json', langs = ['english', 'non-english'], legibility = ['legible', 'illgible'], split = 'train', image_height = 128, patch_width = 16, transforms = lambda x: x):
     dataset = COCOTextDataset(base_folder, annots_name, split, langs, legibility, image_height, patch_width, transforms )
     log_dataset(dataset)
+    return dataset
 
-
-    
 def try_funsd(base_folder = DEFAULT_FUNSD, split: ['train', 'test'] = 'train', patch_width = 16, image_height = 128, transformations = lambda x: x):
     
     dataset = FUNSDDataset(base_folder, split, patch_width, image_height, transformations)
     log_dataset(dataset)
-
+    return dataset
     
 def try_washinton(base_folder = DEFAULT_WASHINGTON, split: ['train', 'test', 'val'] = 'train', cross_val = 'cv1', mode = 'word', image_height = 128, patch_width = 16, transforms = lambda x: x):
     
     dataset = GWDataset(base_folder, split, cross_val, mode, image_height, patch_width, transforms)
     log_dataset(dataset)
-
+    return dataset
     
 def try_hiertext(base_folder = DEFAULT_HIERTEXT, split: ['train', 'val'] = 'train',
                  handwritten = [True, False], legibility = [True, False], mode = 'words',
@@ -67,28 +68,32 @@ def try_hiertext(base_folder = DEFAULT_HIERTEXT, split: ['train', 'val'] = 'trai
                  handwritten, legibility , mode ,
                  image_height ,patch_width , transforms)
     log_dataset(dataset)
-
+    return dataset
 
 def try_maps(base_folder = DEFAULT_HIST_MAPS, split: ["train", "test"] = 'train', cross_val = 'cv1', image_height = 128, patch_width = 16, transforms = lambda x: x):
     dataset =  HistoricalMapsdDataset(base_folder, split, cross_val, image_height, patch_width, transforms)
     log_dataset(dataset)
-
+    return dataset
 
 def try_iam(base_folder = DEFAULT_IAM, split: ["train", "test", "val"] = 'train', partition: ["aachen", "original"] = 'aachen', mode: ["words", "lines"] = "words", image_height = 128, patch_width = 16, transforms = lambda x: x):
     dataset = IAMDataset(base_folder, split, partition, mode, image_height, patch_width, transforms)
     log_dataset(dataset)
+    return dataset
 
 def try_iii(base_folder = DEFAULT_IIIT, split: ["train", "test"] = 'train', image_height = 128, patch_width = 16, transforms = lambda x: x):
     dataset = IIIT5kDataset(base_folder, split, image_height, patch_width, transforms)
     log_dataset(dataset)
+    return dataset
 
 def try_mlt19( base_folder = DEFAULT_MLT, split: ["train", "val"] = 'train',\
                  language = ['Latin', 'Arabic',  "Chinese", "Japanese", "Korean", "Bangla", "Hindi", "Symbols", "Mixed", "None"],\
                 cross_val = 'cv1', image_height = 128, patch_width = 16, transforms = lambda x: x):
     dataset = MLT19Dataset(base_folder, split, language, cross_val, image_height, patch_width, transforms)
     log_dataset(dataset)
+    return dataset
 
 def try_parzival(base_folder = DEFAULT_PARZIVAL, split: ['train', 'test', 'val'] = 'train', mode = 'word', image_height = 128, patch_width = 16, transforms = lambda x: x):
 
     dataset = ParzivalDataset(base_folder, split, mode, image_height, patch_width, transforms)
     log_dataset(dataset)
+    return dataset

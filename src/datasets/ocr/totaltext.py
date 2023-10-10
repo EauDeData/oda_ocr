@@ -21,13 +21,14 @@ class TotalTextDataset(GenericDataset):
 
         gt_data = [os.path.join(base_folder, split, file) for file in os.listdir(
             os.path.join(base_folder, split)
-        )]
+        ) if file.endswith('.txt')]
 
         image_folder = os.path.join(
             base_folder, 'Images', split
         )
 
         for data in gt_data:
+
             image_file = data.split('/')[-1].replace('.txt', '.jpg').replace('poly_gt_', '')
             image_path = os.path.join(
                 image_folder, image_file
@@ -39,17 +40,18 @@ class TotalTextDataset(GenericDataset):
                     .replace("x: [[", "'x': '")\
                     .replace("y: [[", "'y': '")\
                     .replace("]], ", "', ")\
-                    .replace("ornt: [u", "'ornt': [")\
-                    .replace("transcriptions: [u", "'transcriptions': [") # Mare de Déu que és això si us plau
+                    .replace("ornt: [", "'ornt': [")\
+                    .replace("transcriptions: [", "'transcriptions': [") # Mare de Déu que és això si us plau
 
                 line_as_dict = eval("{" + line + "}")
+
                 points = [(int(x), int(y)) for x,y in zip(line_as_dict['x'].split(), line_as_dict['y'].split())]
 
                 box = (min(points, key = lambda x: x[0])[0], min(points, key = lambda x: x[1])[1], max(points, key = lambda x: x[0])[0], max(points, key = lambda x: x[1])[1])
                 self.data.append({
                     'image_path': image_path,
                     'bbx': box,
-                    'transciption': ' '.join(line_as_dict['transcriptions'])
+                    'transcription': ' '.join(line_as_dict['transcriptions'])
 
                 })
             
