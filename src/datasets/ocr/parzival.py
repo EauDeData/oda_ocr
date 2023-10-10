@@ -40,8 +40,7 @@ class ParzivalDataset(GenericDataset):
 
                 img_path = os.path.join(base_folder, "data", f"{mode}_images_normalized", file_id + '.png')
                 line_transcription = transcription\
-                .replace("pt", ".").replace("-", "").replace('|', ' ') # TODO: Solve strange characters
-                print(line_transcription)
+                .replace("pt", ".").replace("eq", "-").replace("-", "").replace('|', ' ') # TODO: Solve strange characters
 
                 self.data.append({
                     'image_path': img_path,
