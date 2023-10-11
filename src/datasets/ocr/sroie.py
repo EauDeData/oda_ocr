@@ -34,13 +34,14 @@ class SROIEDataset(GenericDataset):
 
             annotations = [
                 x.strip() for x in open(
-                    os.path.join(base_folder, split, img_id + '.txt')
+                    os.path.join(base_folder, split, img_id + '.txt'), errors='ignore'
                 ).readlines()
-            ]
+            ] # With Errors = ignore you just skip bad characters
 
             for annotation in annotations:
 
                 rows = annotation.split(',')
+                if len(rows) == 1: continue # empty row
                 xx, xy, yy, yx, x2x, x2y, y2y, y2x, transcription = rows[:8] + [','.join(rows[8:])]
                 points = [[int(y) for y in x] for x in [[xx, xy],
                                   [yy, yx],
@@ -72,10 +73,8 @@ class SROIEDataset(GenericDataset):
                            
                            ).crop((x, y, w, h)).convert('RGB')
         
-        original_width, _ = image.size
-        new_width = original_width + (original_width % self.patch_width)
-        
-        image_resized = image.resize((new_width, self.image_height))
+        image_resized = self.resize_image(image)
+
         input_tensor = self.transforms(image_resized)
         
         return {
@@ -84,6 +83,8 @@ class SROIEDataset(GenericDataset):
             "input_tensor": input_tensor,
             "annotation": metadata['transcription'],
             'dataset': self.name,
-            'split': self.split
+            'split': self.split,
+            'tokens': [char for char in metadata['transcription']]
+
         }
 

@@ -8,7 +8,7 @@ DEFAULT_COCOTEXT = "/data/users/amolina/OCR/COCOText"
 
 class COCOTextDataset(GenericDataset):
     name = 'cocotext_dataset'
-    def __init__(self, base_folder = DEFAULT_COCOTEXT, annots_name='cocotext.v2.json', split = 'train',
+    def __init__(self, base_folder = DEFAULT_COCOTEXT, annots_name='cocotext.v2.json', split: ['train', 'val'] = 'train',
                  langs = ['english', 'not english'], legibility = ['legible', 'illgible'],
                  image_height = 128, patch_width = 16, transforms = lambda x: x) -> None:
         super().__init__()
@@ -31,6 +31,7 @@ class COCOTextDataset(GenericDataset):
             for annot in img['annots']:
                 
                 annotation = json_annots['anns'][annot]
+
                 if annotation['legibility'] in legibility and annotation['language'] in langs:
                     self.samples[total_count] = {
                         'image_path': img['path'],
@@ -61,10 +62,7 @@ class COCOTextDataset(GenericDataset):
                            
                            ).crop((x, y, x+w, y+h)).convert('RGB')
         
-        original_width, _ = image.size
-        new_width = original_width + (original_width % self.patch_width)
-        
-        image_resized = image.resize((new_width, self.image_height))
+        image_resized = self.resize_image(image)
         input_tensor = self.transforms(image_resized)
         
         return {
@@ -73,7 +71,8 @@ class COCOTextDataset(GenericDataset):
             "input_tensor": input_tensor,
             "annotation": metadata['transcription'],
             'dataset': self.name,
-            'split': self.split
+            'split': self.split,
+            'tokens': [char for char in metadata['transcription']]
         }
             
                       

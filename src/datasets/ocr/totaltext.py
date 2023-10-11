@@ -42,7 +42,6 @@ class TotalTextDataset(GenericDataset):
                     .replace("]], ", "', ")\
                     .replace("ornt: [", "'ornt': [")\
                     .replace("transcriptions: [", "'transcriptions': [") # Mare de Déu que és això si us plau
-
                 line_as_dict = eval("{" + line + "}")
 
                 points = [(int(x), int(y)) for x,y in zip(line_as_dict['x'].split(), line_as_dict['y'].split())]
@@ -69,10 +68,8 @@ class TotalTextDataset(GenericDataset):
                            
                            ).crop((x, y, w, h)).convert('RGB')
         
-        original_width, _ = image.size
-        new_width = original_width + (original_width % self.patch_width)
-        
-        image_resized = image.resize((new_width, self.image_height))
+        image_resized = self.resize_image(image)
+
         input_tensor = self.transforms(image_resized)
         
         return {
@@ -81,6 +78,8 @@ class TotalTextDataset(GenericDataset):
             "input_tensor": input_tensor,
             "annotation": metadata['transcription'],
             'dataset': self.name,
-            'split': self.split
+            'split': self.split,
+            'tokens': [char for char in metadata['transcription']]
+
         }
                 
