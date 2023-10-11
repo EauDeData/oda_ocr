@@ -9,7 +9,6 @@ from src.datasets.ocr.iit5k import IIIT5kDataset
 from src.datasets.ocr.mlt19 import MLT19Dataset
 from src.datasets.ocr.parzival import ParzivalDataset
 from src.datasets.ocr.xfund import XFundDataset
-
 from src.datasets.ocr.totaltext import TotalTextDataset
 from src.datasets.ocr.textocr import TextOCRDataset
 from src.datasets.ocr.svt import SVTDataset
@@ -31,7 +30,7 @@ def load_datasets(args, transforms = lambda x: x):
 
     common = {
         'image_height': args.image_height,
-        'patch_with': args.patch_width,
+        'patch_width': args.patch_width,
         'transforms': transforms
     }
 
@@ -85,4 +84,117 @@ def load_datasets(args, transforms = lambda x: x):
                 'val': None
             }
         )
-    # TODO: Amb calma i en ordre, ves fent d'adalt abaix...
+    
+    if args.use_iam:
+        
+        datasets.append(
+            {
+                'train': IAMDataset(base_folder=args.iam_path, split = 'train', mode = args.iam_level, **common),
+                'test': IAMDataset(base_folder=args.iam_path, split = 'test', mode = args.iam_level, **common),
+                'val':  IAMDataset(base_folder=args.iam_path, split = 'val', mode = args.iam_level, **common)
+            }
+        )
+    
+    if args.use_iiit:
+        
+        datasets.append(
+            {
+                'train': IIIT5kDataset(base_folder=args.iiit_path, split = 'train', **common),
+                'test':  IIIT5kDataset(base_folder=args.iiit_path, split = 'test', **common),
+                'val': None
+            }
+        )
+    
+    if args.use_mlt:
+        
+        datasets.append(
+            {
+                'train': MLT19Dataset(base_folder=args.mlt_path, split = 'train', language=args.mlt19_langs, cross_val=args.mlt19_cross_validation_fold, **common),
+                'val': MLT19Dataset(base_folder=args.mlt_path, split = 'val', language=args.mlt19_langs, cross_val=args.mlt19_cross_validation_fold, **common),
+                'test': None
+            }
+        )
+    
+    if args.use_parzival:
+        
+        datasets.append(
+            {
+                'train': ParzivalDataset(base_folder=args.parzival_path, split = 'train', mode = args.parzival_level, **common),
+                'val': ParzivalDataset(base_folder=args.parzival_path, split = 'valid', mode = args.parzival_level, **common),
+                'test': ParzivalDataset(base_folder=args.parzival_path, split = 'test', mode = args.parzival_level, **common)
+
+            }
+        )
+    
+    if args.use_saint_gall:
+        
+        datasets.append(
+            {
+                'train': SaintGallDataset(base_folder=args.saint_gall_path, split='train', **common),
+                'test': SaintGallDataset(base_folder=args.saint_gall_path, split='test', **common),
+                'val': SaintGallDataset(base_folder=args.saint_gall_path, split='valid', **common)
+            }
+        )
+    
+    if args.use_sroie:
+        
+        datasets.append(
+            {
+                'train': SROIEDataset(base_folder=args.sroie_path, split = 'train', **common),
+                'test': SROIEDataset(base_folder=args.sroie_path, split = 'test', **common),
+                'val': None
+            }
+        )
+    
+    if args.use_svt:
+        
+        datasets.append(
+            {
+                'train': SVTDataset(base_folder=args.svt_path, split = 'train', **common),
+                'test': SVTDataset(base_folder=args.svt_path, split = 'test', **common),
+                'val': None
+
+            }
+        )
+    
+    if args.use_textocr:
+        
+        datasets.append(
+            {
+                'train': TextOCRDataset(base_folder=args.textocr_path, split = 'train', **common),
+                'val': TextOCRDataset(base_folder=args.textocr_path, split = 'val', **common),
+                'test': None
+            }
+        )
+    
+    if args.use_totaltext:
+        
+        datasets.append(
+            {
+                'train': TotalTextDataset(base_folder=args.totaltext_path, split='Train', **common),
+                'test': TotalTextDataset(base_folder=args.totaltext_path, split='Test', **common),
+                'val': None
+            }
+        )
+    
+    if args.use_washington:
+        
+        datasets.append(
+            {
+                'train': GWDataset(base_folder=args.washington_path, split = 'train', cross_val=args.washington_cross_validation_fold, mode = args.washington_level, **common),
+                'test':  GWDataset(base_folder=args.washington_path, split = 'test', cross_val=args.washington_cross_validation_fold, mode = args.washington_level, **common),
+                'val':  GWDataset(base_folder=args.washington_path, split = 'valid', cross_val=args.washington_cross_validation_fold, mode = args.washington_level, **common)
+            }
+        )
+    
+    if args.use_xfund:
+        
+        datasets.append(
+            {
+                'train': XFundDataset(base_folder=args.xfund_path, split='train', lang=args.xfund_langs, **common),
+                'test': None,
+                'val': XFundDataset(base_folder=args.xfund_path, split='val', lang=args.xfund_langs, **common),
+            }
+        )
+    
+    return datasets

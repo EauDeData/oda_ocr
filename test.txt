@@ -1,0 +1,198 @@
+Whole COCO
+total: 163476
+{'original_image': <PIL.Image.Image image mode=RGB size=11x10 at 0x7F2FA4D8B2B0>, 'resized_image': <PIL.Image.Image image mode=RGB size=22x128 at 0x7F2E625B3610>, 'input_tensor': <PIL.Image.Image image mode=RGB size=22x128 at 0x7F2E625B3610>, 'annotation': 'Z', 'dataset': 'cocotext_dataset', 'split': 'trainenglish_not english_legible_illegible'}
+Coco Val
+total: 37650
+{'original_image': <PIL.Image.Image image mode=RGB size=8x5 at 0x7F2FA4D8B310>, 'resized_image': <PIL.Image.Image image mode=RGB size=16x128 at 0x7F2E625B33A0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=16x128 at 0x7F2E625B33A0>, 'annotation': '', 'dataset': 'cocotext_dataset', 'split': 'valenglish_not english_legible_illegible'}
+English vs Non-English
+total: 157579
+{'original_image': <PIL.Image.Image image mode=RGB size=11x10 at 0x7F2FA4D8B2E0>, 'resized_image': <PIL.Image.Image image mode=RGB size=22x128 at 0x7F2E625B33A0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=22x128 at 0x7F2E625B33A0>, 'annotation': 'Z', 'dataset': 'cocotext_dataset', 'split': 'trainenglish_legible_illegible'}
+total: 5897
+{'original_image': <PIL.Image.Image image mode=RGB size=44x11 at 0x7F2FA4D8B2E0>, 'resized_image': <PIL.Image.Image image mode=RGB size=56x128 at 0x7F2FA4D859A0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=56x128 at 0x7F2FA4D859A0>, 'annotation': '', 'dataset': 'cocotext_dataset', 'split': 'trainnot english_legible_illegible'}
+Legible vs iLegible
+total: 65919
+{'original_image': <PIL.Image.Image image mode=RGB size=100x34 at 0x7F2FA4D8B310>, 'resized_image': <PIL.Image.Image image mode=RGB size=104x128 at 0x7F2FA4D8B220>, 'input_tensor': <PIL.Image.Image image mode=RGB size=104x128 at 0x7F2FA4D8B220>, 'annotation': 'LIMIT', 'dataset': 'cocotext_dataset', 'split': 'trainenglish_not english_legible'}
+total: 97557
+{'original_image': <PIL.Image.Image image mode=RGB size=5x2 at 0x7F2FA4D8B310>, 'resized_image': <PIL.Image.Image image mode=RGB size=10x128 at 0x7F2FA4D8B220>, 'input_tensor': <PIL.Image.Image image mode=RGB size=10x128 at 0x7F2FA4D8B220>, 'annotation': '', 'dataset': 'cocotext_dataset', 'split': 'trainenglish_not english_illegible'}
+Whole esposalles - words
+total: 23588
+{'original_image': <PIL.Image.Image image mode=RGB size=58x61 at 0x7F2E625B3370>, 'resized_image': <PIL.Image.Image image mode=RGB size=68x128 at 0x7F2FA4D8B040>, 'input_tensor': <PIL.Image.Image image mode=RGB size=68x128 at 0x7F2FA4D8B040>, 'annotation': 'de', 'dataset': 'esposalles_dataset', 'split': 'cv1_train'}
+Whole esposalles - lines
+total: 2288
+{'original_image': <PIL.Image.Image image mode=RGB size=1592x125 at 0x7F2E625B3370>, 'resized_image': <PIL.Image.Image image mode=RGB size=1600x128 at 0x7F2FA4D8B310>, 'input_tensor': <PIL.Image.Image image mode=RGB size=1600x128 at 0x7F2FA4D8B310>, 'annotation': 'donsella filla de francesch Llinas pages de Vilamajor y de Juana', 'dataset': 'esposalles_dataset', 'split': 'cv1_train'}
+whole funsd
+total: 22512
+{'original_image': <PIL.Image.Image image mode=RGB size=85x20 at 0x7F2E6259E520>, 'resized_image': <PIL.Image.Image image mode=RGB size=90x128 at 0x7F2E625B3370>, 'input_tensor': <PIL.Image.Image image mode=RGB size=90x128 at 0x7F2E625B3370>, 'annotation': 'Professor', 'dataset': 'funsd_dataset', 'split': 'train'}
+funsd - test
+total: 8973
+{'original_image': <PIL.Image.Image image mode=RGB size=30x15 at 0x7F2E6259EF10>, 'resized_image': <PIL.Image.Image image mode=RGB size=44x128 at 0x7F2FA4D8B040>, 'input_tensor': <PIL.Image.Image image mode=RGB size=44x128 at 0x7F2FA4D8B040>, 'annotation': 'Rick', 'dataset': 'funsd_dataset', 'split': 'test'}
+Whole GW - words
+total: 2433
+{'original_image': <PIL.Image.Image image mode=RGB size=184x120 at 0x7F2E6259EF10>, 'resized_image': <PIL.Image.Image image mode=RGB size=192x128 at 0x7F2FA4D8B310>, 'input_tensor': <PIL.Image.Image image mode=RGB size=192x128 at 0x7F2FA4D8B310>, 'annotation': 'Arms,', 'dataset': 'gw_dataset', 'split': 'cv1_train', 'path': '/data/users/amolina/OCR/GW/data/word_images_normalized/270-05-08.png'}
+Whole GW - lines
+total: 325
+{'original_image': <PIL.Image.Image image mode=RGB size=1264x120 at 0x7F2E6259E520>, 'resized_image': <PIL.Image.Image image mode=RGB size=1264x128 at 0x7F2E6259EFA0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=1264x128 at 0x7F2E6259EFA0>, 'annotation': 'are to be made to the Aid de Camp.', 'dataset': 'gw_dataset', 'split': 'cv1_train', 'path': '/data/users/amolina/OCR/GW/data/line_images_normalized/270-33.png'}
+Whole GW - val lines
+total: 168
+{'original_image': <PIL.Image.Image image mode=RGB size=1404x120 at 0x7F2FA4D8B310>, 'resized_image': <PIL.Image.Image image mode=RGB size=1416x128 at 0x7F2FA4D8B220>, 'input_tensor': <PIL.Image.Image image mode=RGB size=1416x128 at 0x7F2FA4D8B220>, 'annotation': 'to hear the result of you Honours Letter', 'dataset': 'gw_dataset', 'split': 'cv1_valid', 'path': '/data/users/amolina/OCR/GW/data/line_images_normalized/300-34.png'}
+Whole GW - val words
+total: 1293
+{'original_image': <PIL.Image.Image image mode=RGB size=93x120 at 0x7F2FA4D8B310>, 'resized_image': <PIL.Image.Image image mode=RGB size=106x128 at 0x7F2FA4D8B040>, 'input_tensor': <PIL.Image.Image image mode=RGB size=106x128 at 0x7F2FA4D8B040>, 'annotation': 'no', 'dataset': 'gw_dataset', 'split': 'cv1_valid', 'path': '/data/users/amolina/OCR/GW/data/word_images_normalized/300-07-05.png'}
+Whole GW - test lines
+total: 163
+{'original_image': <PIL.Image.Image image mode=RGB size=1415x120 at 0x7F2E6259E520>, 'resized_image': <PIL.Image.Image image mode=RGB size=1422x128 at 0x7F2E6259EFA0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=1422x128 at 0x7F2E6259EFA0>, 'annotation': 'Fort Cumberland for curing the provisions, you', 'dataset': 'gw_dataset', 'split': 'cv1_test', 'path': '/data/users/amolina/OCR/GW/data/line_images_normalized/305-33.png'}
+Whole GW - test words
+total: 1168
+{'original_image': <PIL.Image.Image image mode=RGB size=53x120 at 0x7F2FA4D8B310>, 'resized_image': <PIL.Image.Image image mode=RGB size=58x128 at 0x7F2FA4D8B040>, 'input_tensor': <PIL.Image.Image image mode=RGB size=58x128 at 0x7F2FA4D8B040>, 'annotation': 'of', 'dataset': 'gw_dataset', 'split': 'cv1_test', 'path': '/data/users/amolina/OCR/GW/data/word_images_normalized/305-06-05.png'}
+Whole HierText
+total: 925545
+{'original_image': <PIL.Image.Image image mode=RGB size=46x12 at 0x7F2FA4D8B2E0>, 'resized_image': <PIL.Image.Image image mode=RGB size=60x128 at 0x7F2E625B3580>, 'input_tensor': <PIL.Image.Image image mode=RGB size=60x128 at 0x7F2E625B3580>, 'annotation': 'RNS', 'dataset': 'hiertext_dataset', 'split': 'train_legibility-[True, False]_handwritten-[True, False]', 'vertical': False}
+Hier Text Val
+total: 191433
+{'original_image': <PIL.Image.Image image mode=RGB size=359x95 at 0x7F2E4D4970A0>, 'resized_image': <PIL.Image.Image image mode=RGB size=366x128 at 0x7F2E6259E520>, 'input_tensor': <PIL.Image.Image image mode=RGB size=366x128 at 0x7F2E6259E520>, 'annotation': 'OLYMPUS', 'dataset': 'hiertext_dataset', 'split': 'val_legibility-[True, False]_handwritten-[True, False]', 'vertical': False}
+Hier Text HW
+total: 63100
+{'original_image': <PIL.Image.Image image mode=RGB size=243x71 at 0x7F2E4D4970A0>, 'resized_image': <PIL.Image.Image image mode=RGB size=246x128 at 0x7F2E6259EFA0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=246x128 at 0x7F2E6259EFA0>, 'annotation': 'RETURNED', 'dataset': 'hiertext_dataset', 'split': 'train_legibility-[True, False]_handwritten-[True]', 'vertical': False}
+HierText Printed
+total: 862445
+{'original_image': <PIL.Image.Image image mode=RGB size=46x12 at 0x7F2E4D4970A0>, 'resized_image': <PIL.Image.Image image mode=RGB size=60x128 at 0x7F2E6259E520>, 'input_tensor': <PIL.Image.Image image mode=RGB size=60x128 at 0x7F2E6259E520>, 'annotation': 'RNS', 'dataset': 'hiertext_dataset', 'split': 'train_legibility-[True, False]_handwritten-[False]', 'vertical': False}
+HierText words
+total: 925545
+{'original_image': <PIL.Image.Image image mode=RGB size=46x12 at 0x7F2E4D4970A0>, 'resized_image': <PIL.Image.Image image mode=RGB size=60x128 at 0x7F2FA4D8B2E0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=60x128 at 0x7F2FA4D8B2E0>, 'annotation': 'RNS', 'dataset': 'hiertext_dataset', 'split': 'train_legibility-[True, False]_handwritten-[True, False]', 'vertical': False}
+HierText lines
+total: 435138
+{'original_image': <PIL.Image.Image image mode=RGB size=180x29 at 0x7F2E4D4970A0>, 'resized_image': <PIL.Image.Image image mode=RGB size=184x128 at 0x7F2E6259E520>, 'input_tensor': <PIL.Image.Image image mode=RGB size=184x128 at 0x7F2E6259E520>, 'annotation': 'coconut water', 'dataset': 'hiertext_dataset', 'split': 'train_legibility-[True, False]_handwritten-[True, False]', 'vertical': False}
+Historical Maps
+total: 25478
+{'original_image': <PIL.Image.Image image mode=RGB size=135x44 at 0x7F2FA4D8B2E0>, 'resized_image': <PIL.Image.Image image mode=RGB size=142x128 at 0x7F2FA4D8B2B0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=142x128 at 0x7F2FA4D8B2B0>, 'annotation': 'SHINGLE', 'dataset': 'hist_maps', 'split': 'train_cv1'}
+IAM Dataset
+total: 14331
+{'original_image': <PIL.Image.Image image mode=RGB size=18x34 at 0x7F2E4D497160>, 'resized_image': <PIL.Image.Image image mode=RGB size=20x128 at 0x7F2FA4D8B2B0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=20x128 at 0x7F2FA4D8B2B0>, 'annotation': ',', 'dataset': 'iam_dataset', 'split': 'train_aachen_words'}
+iam validation
+total: 413
+{'original_image': <PIL.Image.Image image mode=RGB size=166x63 at 0x7F2E4D497190>, 'resized_image': <PIL.Image.Image image mode=RGB size=172x128 at 0x7F2E4D497070>, 'input_tensor': <PIL.Image.Image image mode=RGB size=172x128 at 0x7F2E4D497070>, 'annotation': 'and', 'dataset': 'iam_dataset', 'split': 'val_aachen_words'}
+iam test
+total: 1422
+{'original_image': <PIL.Image.Image image mode=RGB size=167x103 at 0x7F2E4D497160>, 'resized_image': <PIL.Image.Image image mode=RGB size=174x128 at 0x7F2E4D4970A0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=174x128 at 0x7F2E4D4970A0>, 'annotation': 'sing', 'dataset': 'iam_dataset', 'split': 'test_aachen_words'}
+IIIT Dataset
+total: 2000
+{'original_image': <PIL.Image.Image image mode=RGB size=73x24 at 0x7F2E4A325EE0>, 'resized_image': <PIL.Image.Image image mode=RGB size=82x128 at 0x7F2FA4D8B310>, 'input_tensor': <PIL.Image.Image image mode=RGB size=82x128 at 0x7F2FA4D8B310>, 'annotation': 'ERATTUPETTA', 'dataset': 'iiit5k_dataset', 'split': 'train'}
+iii test
+total: 3000
+{'original_image': <PIL.Image.Image image mode=RGB size=53x34 at 0x7F2E48CA6190>, 'resized_image': <PIL.Image.Image image mode=RGB size=58x128 at 0x7F2E48CA6100>, 'input_tensor': <PIL.Image.Image image mode=RGB size=58x128 at 0x7F2E48CA6100>, 'annotation': 'BANK', 'dataset': 'iiit5k_dataset', 'split': 'test'}
+MLT19 dataset
+total: 82662
+{'original_image': <PIL.Image.Image image mode=RGB size=314x99 at 0x7F2E48CA61C0>, 'resized_image': <PIL.Image.Image image mode=RGB size=324x128 at 0x7F2E48CA6040>, 'input_tensor': <PIL.Image.Image image mode=RGB size=324x128 at 0x7F2E48CA6040>, 'annotation': 'SttaBe', 'dataset': 'mlt19_dataset', 'split': 'train_cv1'}
+MLT train Latin
+total: 51296
+{'original_image': <PIL.Image.Image image mode=RGB size=22x47 at 0x7F2E48CA6130>, 'resized_image': <PIL.Image.Image image mode=RGB size=28x128 at 0x7F2E48CA6190>, 'input_tensor': <PIL.Image.Image image mode=RGB size=28x128 at 0x7F2E48CA6190>, 'annotation': '###', 'dataset': 'mlt19_dataset', 'split': 'train_cv1'}
+MLT train Arabic
+total: 4013
+{'original_image': <PIL.Image.Image image mode=RGB size=298x115 at 0x7F2E48CA6160>, 'resized_image': <PIL.Image.Image image mode=RGB size=308x128 at 0x7F2E48CA61F0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=308x128 at 0x7F2E48CA61F0>, 'annotation': 'رجال', 'dataset': 'mlt19_dataset', 'split': 'train_cv1'}
+MLT train Chinese
+total: 2545
+{'original_image': <PIL.Image.Image image mode=RGB size=226x212 at 0x7F2E48CA60D0>, 'resized_image': <PIL.Image.Image image mode=RGB size=228x128 at 0x7F2E48CA6070>, 'input_tensor': <PIL.Image.Image image mode=RGB size=228x128 at 0x7F2E48CA6070>, 'annotation': '刻章', 'dataset': 'mlt19_dataset', 'split': 'train_cv1'}
+MLT train Japanese
+total: 4920
+{'original_image': <PIL.Image.Image image mode=RGB size=585x3863 at 0x7F2E48CA6250>, 'resized_image': <PIL.Image.Image image mode=RGB size=594x128 at 0x7F2E48CA6130>, 'input_tensor': <PIL.Image.Image image mode=RGB size=594x128 at 0x7F2E48CA6130>, 'annotation': '御殿場高原ビル', 'dataset': 'mlt19_dataset', 'split': 'train_cv1'}
+MLT train Korean
+total: 5447
+{'original_image': <PIL.Image.Image image mode=RGB size=572x262 at 0x7F2E48CA6220>, 'resized_image': <PIL.Image.Image image mode=RGB size=584x128 at 0x7F2E48CA61F0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=584x128 at 0x7F2E48CA61F0>, 'annotation': '편안한', 'dataset': 'mlt19_dataset', 'split': 'train_cv1'}
+MLT train Bangla
+total: 3169
+{'original_image': <PIL.Image.Image image mode=RGB size=202x190 at 0x7F2E48CA6190>, 'resized_image': <PIL.Image.Image image mode=RGB size=212x128 at 0x7F2E48CA6070>, 'input_tensor': <PIL.Image.Image image mode=RGB size=212x128 at 0x7F2E48CA6070>, 'annotation': 'করা', 'dataset': 'mlt19_dataset', 'split': 'train_cv1'}
+MLT train Hindi
+total: 3033
+{'original_image': <PIL.Image.Image image mode=RGB size=18x13 at 0x7F2E48CA6190>, 'resized_image': <PIL.Image.Image image mode=RGB size=20x128 at 0x7F2E48CA6070>, 'input_tensor': <PIL.Image.Image image mode=RGB size=20x128 at 0x7F2E48CA6070>, 'annotation': 'शंकर', 'dataset': 'mlt19_dataset', 'split': 'train_cv1'}
+MLT train Symbols
+total: 1295
+{'original_image': <PIL.Image.Image image mode=RGB size=38x45 at 0x7F2E48CA6280>, 'resized_image': <PIL.Image.Image image mode=RGB size=44x128 at 0x7F2E48CA61F0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=44x128 at 0x7F2E48CA61F0>, 'annotation': '||', 'dataset': 'mlt19_dataset', 'split': 'train_cv1'}
+MLT train Mixed
+total: 179
+{'original_image': <PIL.Image.Image image mode=RGB size=87x45 at 0x7F2E48CA6220>, 'resized_image': <PIL.Image.Image image mode=RGB size=94x128 at 0x7F2E48CA6130>, 'input_tensor': <PIL.Image.Image image mode=RGB size=94x128 at 0x7F2E48CA6130>, 'annotation': 'H클럽', 'dataset': 'mlt19_dataset', 'split': 'train_cv1'}
+MLT train None
+total: 6765
+{'original_image': <PIL.Image.Image image mode=RGB size=113x95 at 0x7F2E48CA6190>, 'resized_image': <PIL.Image.Image image mode=RGB size=114x128 at 0x7F2E48CA6070>, 'input_tensor': <PIL.Image.Image image mode=RGB size=114x128 at 0x7F2E48CA6070>, 'annotation': '###', 'dataset': 'mlt19_dataset', 'split': 'train_cv1'}
+MLT19 val
+total: 29336
+{'original_image': <PIL.Image.Image image mode=RGB size=65x16 at 0x7F2E48CA61C0>, 'resized_image': <PIL.Image.Image image mode=RGB size=66x128 at 0x7F2E48CA6190>, 'input_tensor': <PIL.Image.Image image mode=RGB size=66x128 at 0x7F2E48CA6190>, 'annotation': 'زوار', 'dataset': 'mlt19_dataset', 'split': 'val_cv1'}
+Parzival dataset
+total: 5872
+{'original_image': <PIL.Image.Image image mode=RGB size=78x120 at 0x7F2E48CA62E0>, 'resized_image': <PIL.Image.Image image mode=RGB size=92x128 at 0x7F2E48CA6070>, 'input_tensor': <PIL.Image.Image image mode=RGB size=92x128 at 0x7F2E48CA6070>, 'annotation': 'und', 'dataset': 'parzival_dataset', 'split': 'word_train', 'path': '/data/users/amolina/OCR/Parzival/data/word_images_normalized/d-006a-022_03.png'}
+Parzival test word
+total: 5872
+{'original_image': <PIL.Image.Image image mode=RGB size=78x120 at 0x7F2E48CA6160>, 'resized_image': <PIL.Image.Image image mode=RGB size=92x128 at 0x7F2E48CA6280>, 'input_tensor': <PIL.Image.Image image mode=RGB size=92x128 at 0x7F2E48CA6280>, 'annotation': 'und', 'dataset': 'parzival_dataset', 'split': 'word_train', 'path': '/data/users/amolina/OCR/Parzival/data/word_images_normalized/d-006a-022_03.png'}
+Parzival validation word
+total: 2936
+{'original_image': <PIL.Image.Image image mode=RGB size=27x120 at 0x7F2E48CA61C0>, 'resized_image': <PIL.Image.Image image mode=RGB size=38x128 at 0x7F2E48CA62E0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=38x128 at 0x7F2E48CA62E0>, 'annotation': 'hp115i', 'dataset': 'parzival_dataset', 'split': 'word_valid', 'path': '/data/users/amolina/OCR/Parzival/data/word_images_normalized/d-006b-001_01.png'}
+Parzival dataset line
+total: 2237
+{'original_image': <PIL.Image.Image image mode=RGB size=436x120 at 0x7F2E48CA6250>, 'resized_image': <PIL.Image.Image image mode=RGB size=440x128 at 0x7F2E48CA6280>, 'input_tensor': <PIL.Image.Image image mode=RGB size=440x128 at 0x7F2E48CA6280>, 'annotation': 'Gahmvret Anhp115civin .', 'dataset': 'parzival_dataset', 'split': 'line_train', 'path': '/data/users/amolina/OCR/Parzival/data/line_images_normalized/d-006b-016.png'}
+Parzival test line
+total: 2237
+{'original_image': <PIL.Image.Image image mode=RGB size=436x120 at 0x7F2E48CA6220>, 'resized_image': <PIL.Image.Image image mode=RGB size=440x128 at 0x7F2E48CA62E0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=440x128 at 0x7F2E48CA62E0>, 'annotation': 'Gahmvret Anhp115civin .', 'dataset': 'parzival_dataset', 'split': 'line_train', 'path': '/data/users/amolina/OCR/Parzival/data/line_images_normalized/d-006b-016.png'}
+Parzival validation line
+total: 912
+{'original_image': <PIL.Image.Image image mode=RGB size=597x120 at 0x7F2E48CA6130>, 'resized_image': <PIL.Image.Image image mode=RGB size=602x128 at 0x7F2E48CA6280>, 'input_tensor': <PIL.Image.Image image mode=RGB size=602x128 at 0x7F2E48CA6280>, 'annotation': 'ich hp115olz verhp115vchen ob ich mach .', 'dataset': 'parzival_dataset', 'split': 'line_valid', 'path': '/data/users/amolina/OCR/Parzival/data/line_images_normalized/d-007a-053.png'}
+saint gall train
+total: 468
+{'original_image': <PIL.Image.Image image mode=RGB size=1765x120 at 0x7F2E48CA62B0>, 'resized_image': <PIL.Image.Image image mode=RGB size=1770x128 at 0x7F2E48CA6160>, 'input_tensor': <PIL.Image.Image image mode=RGB size=1770x128 at 0x7F2E48CA6160>, 'annotation': 'propinquorum & praediorum dulcedine mentis ardorem', 'dataset': 'saint_gall_dataset', 'split': 'train'}
+saint gall test
+total: 707
+{'original_image': <PIL.Image.Image image mode=RGB size=1823x120 at 0x7F2E48CA6310>, 'resized_image': <PIL.Image.Image image mode=RGB size=1838x128 at 0x7F2E48CA6250>, 'input_tensor': <PIL.Image.Image image mode=RGB size=1838x128 at 0x7F2E48CA6250>, 'annotation': 'commisisti vestro quidem imperio quod nullo sanctitatis merito BREAK', 'dataset': 'saint_gall_dataset', 'split': 'test'}
+saint gall valid
+total: 235
+{'original_image': <PIL.Image.Image image mode=RGB size=1724x120 at 0x7F2E48CA61C0>, 'resized_image': <PIL.Image.Image image mode=RGB size=1736x128 at 0x7F2E48CA62E0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=1736x128 at 0x7F2E48CA62E0>, 'annotation': 'ego plane ob ultionem iniuriae quam dux iste & sociis tuis', 'dataset': 'saint_gall_dataset', 'split': 'valid'}
+sroie train
+total: 34930
+{'original_image': <PIL.Image.Image image mode=RGB size=186x29 at 0x7F2E48CA61C0>, 'resized_image': <PIL.Image.Image image mode=RGB size=196x128 at 0x7F2E48CA6250>, 'input_tensor': <PIL.Image.Image image mode=RGB size=196x128 at 0x7F2E48CA6250>, 'annotation': '03-41318972', 'dataset': 'sroie_dataset', 'split': 'train'}
+sroie test
+total: 19386
+{'original_image': <PIL.Image.Image image mode=RGB size=17x19 at 0x7F2E48CA6280>, 'resized_image': <PIL.Image.Image image mode=RGB size=18x128 at 0x7F2E48CA61C0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=18x128 at 0x7F2E48CA61C0>, 'annotation': '0', 'dataset': 'sroie_dataset', 'split': 'test'}
+svt train
+/home/amolina/miniconda3/envs/oda/lib/python3.9/site-packages/bs4/builder/__init__.py:545: XMLParsedAsHTMLWarning: It looks like you're parsing an XML document using an HTML parser. If this really is an HTML document (maybe it's XHTML?), you can ignore or filter this warning. If it's XML, you should know that using an XML parser will be more reliable. To parse this document as XML, make sure you have the lxml package installed, and pass the keyword argument `features="xml"` into the BeautifulSoup constructor.
+  warnings.warn(
+total: 257
+{'original_image': <PIL.Image.Image image mode=RGB size=84x31 at 0x7F2E08B951F0>, 'resized_image': <PIL.Image.Image image mode=RGB size=88x128 at 0x7F2E08B95940>, 'input_tensor': <PIL.Image.Image image mode=RGB size=88x128 at 0x7F2E08B95940>, 'annotation': 'SUITES', 'dataset': 'svt_dataset', 'split': 'train'}
+svt test
+total: 647
+{'original_image': <PIL.Image.Image image mode=RGB size=169x36 at 0x7F2D082A0A60>, 'resized_image': <PIL.Image.Image image mode=RGB size=178x128 at 0x7F2D082831F0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=178x128 at 0x7F2D082831F0>, 'annotation': 'SAKANA', 'dataset': 'svt_dataset', 'split': 'test'}
+text ocr train
+total: 714770
+{'original_image': <PIL.Image.Image image mode=RGB size=54x9 at 0x7F2E09392FA0>, 'resized_image': <PIL.Image.Image image mode=RGB size=60x128 at 0x7F2E4E789FD0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=60x128 at 0x7F2E4E789FD0>, 'annotation': 'INSURANCE', 'dataset': 'text_ocr_dataset', 'split': 'train'}
+text ocr val
+total: 107802
+{'original_image': <PIL.Image.Image image mode=RGB size=105x28 at 0x7F2E09392F10>, 'resized_image': <PIL.Image.Image image mode=RGB size=114x128 at 0x7F2E09392EE0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=114x128 at 0x7F2E09392EE0>, 'annotation': 'RICHARD', 'dataset': 'text_ocr_dataset', 'split': 'val'}
+total text
+total: 10589
+{'original_image': <PIL.Image.Image image mode=RGB size=84x26 at 0x7F2E09392EE0>, 'resized_image': <PIL.Image.Image image mode=RGB size=88x128 at 0x7F2E09392C70>, 'input_tensor': <PIL.Image.Image image mode=RGB size=88x128 at 0x7F2E09392C70>, 'annotation': 'PhFax', 'dataset': 'total_text_dataset', 'split': 'Train'}
+totaltext test
+total: 2547
+{'original_image': <PIL.Image.Image image mode=RGB size=114x131 at 0x7F2E09392BE0>, 'resized_image': <PIL.Image.Image image mode=RGB size=116x128 at 0x7F2E09392EE0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=116x128 at 0x7F2E09392EE0>, 'annotation': '#', 'dataset': 'total_text_dataset', 'split': 'Test'}
+xfund train
+total: 71999
+{'original_image': <PIL.Image.Image image mode=RGB size=126x41 at 0x7F2E09392CD0>, 'resized_image': <PIL.Image.Image image mode=RGB size=140x128 at 0x7F2E4A5AAE50>, 'input_tensor': <PIL.Image.Image image mode=RGB size=140x128 at 0x7F2E4A5AAE50>, 'annotation': '[x] Nein', 'dataset': 'xfund_dataset', 'split': 'train'}
+xFund DE
+total: 8632
+{'original_image': <PIL.Image.Image image mode=RGB size=126x41 at 0x7F2E09392B50>, 'resized_image': <PIL.Image.Image image mode=RGB size=140x128 at 0x7F2E09392B80>, 'input_tensor': <PIL.Image.Image image mode=RGB size=140x128 at 0x7F2E09392B80>, 'annotation': '[x] Nein', 'dataset': 'xfund_dataset', 'split': 'train'}
+xFund ES
+total: 11449
+{'original_image': <PIL.Image.Image image mode=RGB size=407x53 at 0x7F2E09392C40>, 'resized_image': <PIL.Image.Image image mode=RGB size=414x128 at 0x7F2E093926A0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=414x128 at 0x7F2E093926A0>, 'annotation': 'Nombre Esposo(a) :', 'dataset': 'xfund_dataset', 'split': 'train'}
+xFund FR
+total: 8816
+{'original_image': <PIL.Image.Image image mode=RGB size=104x45 at 0x7F2E09392940>, 'resized_image': <PIL.Image.Image image mode=RGB size=112x128 at 0x7F2E093926A0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=112x128 at 0x7F2E093926A0>, 'annotation': 'Nom', 'dataset': 'xfund_dataset', 'split': 'train'}
+xFund IT
+total: 12215
+{'original_image': <PIL.Image.Image image mode=RGB size=779x48 at 0x7F2E093921F0>, 'resized_image': <PIL.Image.Image image mode=RGB size=790x128 at 0x7F2E093926A0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=790x128 at 0x7F2E093926A0>, 'annotation': 'AMMANCO DI CASSA + R.C. PATRIMONIALE', 'dataset': 'xfund_dataset', 'split': 'train'}
+xFund JA
+total: 9005
+{'original_image': <PIL.Image.Image image mode=RGB size=232x59 at 0x7F2E09392760>, 'resized_image': <PIL.Image.Image image mode=RGB size=240x128 at 0x7F2E093926A0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=240x128 at 0x7F2E093926A0>, 'annotation': '申請者氏名', 'dataset': 'xfund_dataset', 'split': 'train'}
+xFund PT
+total: 11654
+{'original_image': <PIL.Image.Image image mode=RGB size=377x64 at 0x7F2E09392C10>, 'resized_image': <PIL.Image.Image image mode=RGB size=386x128 at 0x7F2E093926A0>, 'input_tensor': <PIL.Image.Image image mode=RGB size=386x128 at 0x7F2E093926A0>, 'annotation': '15800-3401', 'dataset': 'xfund_dataset', 'split': 'train'}
+xFund ZH
+total: 10228
+{'original_image': <PIL.Image.Image image mode=RGB size=188x46 at 0x7F2E09392FA0>, 'resized_image': <PIL.Image.Image image mode=RGB size=200x128 at 0x7F2E09392C10>, 'input_tensor': <PIL.Image.Image image mode=RGB size=200x128 at 0x7F2E09392C10>, 'annotation': '*证件有效期:2021年9', 'dataset': 'xfund_dataset', 'split': 'train'}
+xfund val
+total: 25013
+{'original_image': <PIL.Image.Image image mode=RGB size=94x44 at 0x7F2E09392C40>, 'resized_image': <PIL.Image.Image image mode=RGB size=108x128 at 0x7F2E09392E80>, 'input_tensor': <PIL.Image.Image image mode=RGB size=108x128 at 0x7F2E09392E80>, 'annotation': 'Ja■', 'dataset': 'xfund_dataset', 'split': 'val'}

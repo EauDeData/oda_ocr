@@ -74,6 +74,8 @@ def parse_arguments():
 
     ### TOKENIZER ARGS ###
     dataset_group.add_argument('--tokenizer_name', type = str, default = 'char_tokenizer')
-    dataset_group.add_argument('--tokenizer_location', type = str, default = 'tmp_/')
+    dataset_group.add_argument('--tokenizer_location', type = str, default = 'tmp_/tokenizers/')
     dataset_group.add_argument('--save_tokenizer', action='store_false')
+    
+    return parser.parse_args()
 

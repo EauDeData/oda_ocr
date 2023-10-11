@@ -1,5 +1,5 @@
 import os
-import pickle
+import json
 from tqdm import tqdm
 import math
 import numpy as np
@@ -19,13 +19,14 @@ class CharTokenizer:
 
     def __init__(self, dataset = None, local_path = 'tmp_/tokenizers/', tokenizer_name = 'tokenizer', save_on_init = True) -> None:
         
-        self.full_path = os.path.join(local_path, tokenizer_name + '.pkl')
+        os.makedirs(local_path, exist_ok=True)
+        self.full_path = os.path.join(local_path, tokenizer_name + '.json')
         if os.path.exists(
             self.full_path
         ):
             print(f'Tokenizer {tokenizer_name} found in {local_path}, loading tokens from local storage.')
-            self.tokens = pickle.load(
-                open(self.full_path, 'rb')
+            self.tokens = json.load(
+                open(self.full_path, 'r')
             )
 
             return None
@@ -63,7 +64,7 @@ class CharTokenizer:
         self.tokens = {token: num for num, token in enumerate(sorted(tokens_with_freqs.keys(), reverse = True, key = lambda x: tokens_with_freqs[x]))}
         if save:
             print(f"Tokens saved at {self.full_path}!")
-            pickle.dump(
-                self.tokens, open(self.full_path, 'wb')
+            json.dump(
+                self.tokens, open(self.full_path, 'w')
             ) 
 
