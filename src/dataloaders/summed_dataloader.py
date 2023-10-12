@@ -9,10 +9,13 @@ class GenericDataset:
     def resize_image(self, image):
 
         original_width, original_height = image.size
+        
+        original_height = max(original_height, 1)
         scale = self.image_height / original_height
         
         resized_width = int(round(scale * original_width, 0))
         new_width = resized_width + (resized_width % self.patch_width)
+        new_width = max(new_width, self.patch_width)
         
         return image.resize((new_width, self.image_height))
 
