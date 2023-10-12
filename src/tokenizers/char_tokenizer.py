@@ -39,7 +39,7 @@ class CharTokenizer:
     def __call__(self, tokens: list) -> np.ndarray:
 
         return np.array([
-            self.tokens[token] if token in self.tokens else self.tokens[self.unk]
+            self.tokens[token.lower()] if token.lower() in self.tokens else self.tokens[self.unk]
             
                 for token in [self.bos, self.cls_token] + tokens + [self.eos]
         ])
@@ -58,6 +58,7 @@ class CharTokenizer:
             
             for char in dataset[idx]['tokens']:
 
+                char = char.lower()
                 if not char in tokens_with_freqs: tokens_with_freqs[char] = 0
                 tokens_with_freqs[char] += 1
 
