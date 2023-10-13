@@ -2,6 +2,8 @@ import os
 import torch, torchvision
 import numpy as np
 import wandb
+import torch.optim as optim
+
 
 from src.io.args import parse_arguments, get_model_name
 from src.io.load_datasets import load_datasets
@@ -10,6 +12,23 @@ from src.tokenizers.char_tokenizer import CharTokenizer
 from src.vision.models import ViTEncoder
 from src.linearize import LinearizedModel
 from src.evaluation.eval import eval_dataset
+from src.train_steps.base_ctc import train_ctc
+
+def prepare_optimizer(model, args):
+    if args.optimizer == 'sgd':
+        optimizer = optim.SGD(model.parameters(), lr=args.learning_rate)
+    elif args.optimizer == 'adam':
+        optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
+    elif args.optimizer == 'adagrad':
+        optimizer = optim.Adagrad(model.parameters(), lr=args.learning_rate)
+    elif args.optimizer == 'adadelta':
+        optimizer = optim.Adadelta(model.parameters(), lr=args.learning_rate)
+    elif args.optimizer == 'rmsprop':
+        optimizer = optim.RMSprop(model.parameters(), lr=args.learning_rate)
+    else:
+        raise ValueError("Unsupported optimizer choice.")
+
+    return optimizer
 
 def merge_datasets(datasets, split = 'train'):
     
@@ -50,6 +69,7 @@ def prepare_model(vocab_size, args):
 
 def evaluation_epoch(datasets, model, tokenizer, collator, args):
     
+    evals = []
     for dataset in datasets:
         for split in ['val', 'test']:
             if dataset[split] is not None:
@@ -57,18 +77,21 @@ def evaluation_epoch(datasets, model, tokenizer, collator, args):
                 print(f"Evaluation on {dataset_name} with {len(dataset[split])} samples")
                 dataloader = torch.utils.data.DataLoader(dataset[split], batch_size = args.batch_size, collate_fn = collator.collate, num_workers = args.num_workers_test)
                 
-                eval_dataset(dataloader, model, dataset_name, tokenizer, wandb)
+                evals.append(eval_dataset(dataloader, model, dataset_name, tokenizer, wandb))
+    return evals
                 
 # We will heve to define training strategies for "simple", "continual" and "arithmetic".
 ## Arithmetic models are trained normally, but they are linearized with the modules
 
-def loop(epoches, model, datasets, collator, tokenizer, args, train_function = None, **kwargs):
+def loop(epoches, model, datasets, collator, tokenizer, args, train_dataloader, optimizer, loss_function, train_function = train_ctc, **kwargs):
     
     ## TEMPORALLY LOOKING BAD. IT SHOULD RECEIVE PROPER ARGS NOT KWARGS ###
     for epoch in range(epoches):
         
-        # train_function()
+        
         print(f"{epoch} / {epoches} epoches")
+        
+        train_function(epoch, train_dataloader, optimizer, model, loss_function, args.patch_width, wandb)
         evals = evaluation_epoch(datasets, model, tokenizer, collator, args)
         print(evals)
 
@@ -95,15 +118,18 @@ def main(args):
     whole_train = merge_datasets(datasets, split = 'train')
     
     tokenizer, collator = prepare_tokenizer_and_collator(whole_train, args)
+    
     train_dataloader = prepare_train_loaders(whole_train, collator, args.num_workers_train, args.batch_size)
     
     model = prepare_model(len(tokenizer), args)
+    optimizer = prepare_optimizer(model, args)
+    loss_function = torch.nn.CTCLoss(blank=tokenizer.tokens[tokenizer.ctc_blank])
     
     wandb.init(project='oda_ocr')
     wandb.config.update(args)
     wandb.run.name = model_name
     
-    loop(args.epoches, model, datasets, collator, tokenizer, args)
+    loop(args.epoches, model, datasets, collator, tokenizer, args, train_dataloader, optimizer, loss_function)
 
 if __name__ == '__main__': 
     

@@ -17,8 +17,9 @@ class CharTokenizer:
     unk = '<UNK>'
     cls_token = '<CLS>'
     padding_token = '<PAD>'
+    ctc_blank = '<BLANK>'
 
-    special_tokens = [bos, eos, unk, cls_token, padding_token]
+    special_tokens = [bos, eos, unk, cls_token, padding_token, ctc_blank]
     def __init__(self, dataset = None, local_path = 'tmp_/tokenizers/', tokenizer_name = 'tokenizer', save_on_init = True) -> None:
         
         os.makedirs(local_path, exist_ok=True)
@@ -34,9 +35,10 @@ class CharTokenizer:
         else:   
             self.init_tokens(dataset, save_on_init)
             
+        self.tokens[self.padding_token] = max(self.tokens.values()) + 1
+        self.tokens[self.ctc_blank] = max(self.tokens.values()) + 1
+        
         self.decode_array = np.array(list(self.tokens.keys()))
-        self.tokens[self.padding_token] = max(self.tokens.values())
-
 
     def __len__(self):
         return len(self.tokens)
@@ -46,7 +48,7 @@ class CharTokenizer:
         return np.array([
             self.tokens[token.lower() if not token in self.special_tokens else token] if (token.lower() if not token in self.special_tokens else token) in self.tokens else self.tokens[self.unk]
             
-                for token in [self.bos, self.cls_token] + tokens + [self.eos]
+                for token in tokens 
         ])
 
     def decode(self, vector):

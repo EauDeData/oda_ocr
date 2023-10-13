@@ -70,7 +70,7 @@ class CollateFNs:
     def collate(self, batch):
 
         max_patches = max([x['input_tensor'].shape[2] // self.patch_width for x in batch])
-        max_tokens = max([3 + len(x['tokens']) for x in batch])
+        max_tokens = max([len(x['tokens']) for x in batch])
         
         visual_tokens = []
         text_tokens = []
@@ -109,7 +109,9 @@ class CollateFNs:
                 'labels': torch.stack(text_tokens),
                 'raw_text_gt': raw_texts,
                 'sources': sources,
-                'original_images': resized_images
+                'original_images': resized_images,
+                'input_lengths': [x.size[0] // self.patch_width for x in resized_images],
+                'output_lengths':  [len(list(x)) for x in raw_texts]
                 }
 
 
