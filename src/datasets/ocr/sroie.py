@@ -43,7 +43,7 @@ class SROIEDataset(GenericDataset):
                 rows = annotation.split(',')
                 if len(rows) == 1: continue # empty row
                 xx, xy, yy, yx, x2x, x2y, y2y, y2x, transcription = rows[:8] + [','.join(rows[8:])]
-                points = [[int(y) for y in x] for x in [[xx, xy],
+                points = [[float(y) for y in x] for x in [[xx, xy],
                                   [yy, yx],
                                   [x2x, x2y],
                                   [y2y, y2x]]]

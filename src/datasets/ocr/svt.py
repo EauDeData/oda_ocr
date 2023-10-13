@@ -38,7 +38,7 @@ class SVTDataset(GenericDataset):
                 self.data.append(
                     {
                         'image_path': image_path,
-                        'bbx': (int(a) for a in (x, y, h, w)),
+                        'bbx': (float(a) for a in (x, y, h, w)),
                         'transcription': rect.find('tag').text
                     }
                 )

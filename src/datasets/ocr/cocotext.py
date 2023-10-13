@@ -35,7 +35,7 @@ class COCOTextDataset(GenericDataset):
                 if annotation['legibility'] in legibility and annotation['language'] in langs:
                     self.samples[total_count] = {
                         'image_path': img['path'],
-                        'bbx': [int(x) for x in annotation['bbox']],
+                        'bbx': [float(x) for x in annotation['bbox']],
                         'transcription': annotation['utf8_string'],
                     }
                     total_count += 1

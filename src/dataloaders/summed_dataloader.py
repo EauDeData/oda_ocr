@@ -81,11 +81,13 @@ class CollateFNs:
         raw_texts = []
         sources = []
         resized_images = []
+        original_images = []
         
          
         for item in batch:
             
             image, text_token, raw_text, split, dataset, original_image = item['input_tensor'], item['tokens'], item['annotation'], item['split'], item['dataset'], item['resized_image']
+            original_images.append(item['original_image'])
             
             resized_images.append(original_image)
             sources.append(f"{split}_ {dataset}")
@@ -121,7 +123,8 @@ class CollateFNs:
                 'sources': sources,
                 'original_images': resized_images,
                 'input_lengths': [x.size[0] // self.patch_width for x in resized_images],
-                'output_lengths':  [len([char for char in x]) for x in raw_texts]
+                'output_lengths':  [len([char for char in x]) for x in raw_texts],
+                'pre_resize_images': original_images
                 }
 
 

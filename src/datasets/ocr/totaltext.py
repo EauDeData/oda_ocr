@@ -44,7 +44,7 @@ class TotalTextDataset(GenericDataset):
                     .replace("transcriptions: [", "'transcriptions': [") # Mare de Déu que és això si us plau
                 line_as_dict = eval("{" + line + "}")
 
-                points = [(int(x), int(y)) for x,y in zip(line_as_dict['x'].split(), line_as_dict['y'].split())]
+                points = [(float(x), float(y)) for x,y in zip(line_as_dict['x'].split(), line_as_dict['y'].split())]
 
                 box = (min(points, key = lambda x: x[0])[0], min(points, key = lambda x: x[1])[1], max(points, key = lambda x: x[0])[0], max(points, key = lambda x: x[1])[1])
                 self.data.append({

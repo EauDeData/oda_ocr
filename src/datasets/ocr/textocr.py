@@ -43,7 +43,7 @@ class TextOCRDataset(GenericDataset):
                 if annotation['utf8_string'] == '.': continue # Unreadable characters
                 self.data.append({
                     'image_path': image['path'],
-                    'bbx': [int(x) for x in annotation['bbox']],
+                    'bbx': [float(x) for x in annotation['bbox']],
                     'transcription': annotation['utf8_string'],
                 })
     def __len__(self):

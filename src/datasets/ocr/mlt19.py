@@ -45,7 +45,7 @@ class MLT19Dataset(GenericDataset):
 
                     if lang in language:
 
-                        points = [[int(y) for y in x] for x in [[xx, xy],
+                        points = [[float(y) for y in x] for x in [[xx, xy],
                                   [yy, yx],
                                   [x2x, x2y],
                                   [y2y, y2x]]]
