@@ -9,6 +9,7 @@ from src.dataloaders.summed_dataloader import CollateFNs
 from src.tokenizers.char_tokenizer import CharTokenizer
 from src.vision.models import ViTEncoder
 from src.linearize import LinearizedModel
+from src.evaluation.eval import eval_dataset
 
 def merge_datasets(datasets, split = 'train'):
     
@@ -47,15 +48,36 @@ def prepare_model(vocab_size, args):
     
     return model
 
+def evaluation_epoch(datasets, model, tokenizer, collator, args):
+    
+    for dataset in datasets:
+        for split in ['val', 'test']:
+            if dataset[split] is not None:
+                dataset_name = f"{dataset[split].name}_{dataset[split].split}"
+                print(f"Evaluation on {dataset_name} with {len(dataset[split])} samples")
+                dataloader = torch.utils.data.DataLoader(dataset[split], batch_size = args.batch_size, collate_fn = collator.collate, num_workers = args.num_workers_test)
+                
+                eval_dataset(dataloader, model, dataset_name, tokenizer, wandb)
+                
 # We will heve to define training strategies for "simple", "continual" and "arithmetic".
 ## Arithmetic models are trained normally, but they are linearized with the modules
 
+def loop(epoches, model, datasets, collator, tokenizer, args, train_function = None, **kwargs):
+    
+    ## TEMPORALLY LOOKING BAD. IT SHOULD RECEIVE PROPER ARGS NOT KWARGS ###
+    for epoch in range(epoches):
+        
+        # train_function()
+        print(f"{epoch} / {epoches} epoches")
+        evals = evaluation_epoch(datasets, model, tokenizer, collator, args)
+        print(evals)
+
 def main(args):
+    
     
     model_name = get_model_name(args)
     print(model_name)
-    wandb.config.update(args)
-    wandb.run.name = model_name
+
     
     normalize = {
         'normalize': lambda x: (x - x.min()) / (x.max() - x.min()),
@@ -77,9 +99,11 @@ def main(args):
     
     model = prepare_model(len(tokenizer), args)
     
-    for batch in train_dataloader:
-        print(model(batch).shape)
-        break
+    wandb.init(project='oda_ocr')
+    wandb.config.update(args)
+    wandb.run.name = model_name
+    
+    loop(args.epoches, model, datasets, collator, tokenizer, args)
 
 if __name__ == '__main__': 
     

@@ -1,0 +1,28 @@
+2023-10-13 15:45:07,936 INFO    MainThread:68486 [wandb_setup.py:_flush():76] Current SDK version is 0.15.12
+2023-10-13 15:45:07,936 INFO    MainThread:68486 [wandb_setup.py:_flush():76] Configure stats pid to 68486
+2023-10-13 15:45:07,936 INFO    MainThread:68486 [wandb_setup.py:_flush():76] Loading settings from /home/amolina/.config/wandb/settings
+2023-10-13 15:45:07,936 INFO    MainThread:68486 [wandb_setup.py:_flush():76] Loading settings from /home/amolina/oda_ocr/wandb/settings
+2023-10-13 15:45:07,936 INFO    MainThread:68486 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2023-10-13 15:45:07,936 INFO    MainThread:68486 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2023-10-13 15:45:07,936 INFO    MainThread:68486 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program_relpath': 'main.py', 'program_abspath': '/home/amolina/oda_ocr/main.py', 'program': '/home/amolina/oda_ocr/main.py'}
+2023-10-13 15:45:07,936 INFO    MainThread:68486 [wandb_init.py:_log_setup():528] Logging user logs to /home/amolina/oda_ocr/wandb/run-20231013_154507-ae6a5vkc/logs/debug.log
+2023-10-13 15:45:07,936 INFO    MainThread:68486 [wandb_init.py:_log_setup():529] Logging internal logs to /home/amolina/oda_ocr/wandb/run-20231013_154507-ae6a5vkc/logs/debug-internal.log
+2023-10-13 15:45:07,936 INFO    MainThread:68486 [wandb_init.py:init():568] calling init triggers
+2023-10-13 15:45:07,936 INFO    MainThread:68486 [wandb_init.py:init():575] wandb.init called with sweep_config: {}
+config: {}
+2023-10-13 15:45:07,936 INFO    MainThread:68486 [wandb_init.py:init():618] starting backend
+2023-10-13 15:45:07,936 INFO    MainThread:68486 [wandb_init.py:init():622] setting up manager
+2023-10-13 15:45:07,939 INFO    MainThread:68486 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2023-10-13 15:45:07,940 INFO    MainThread:68486 [wandb_init.py:init():628] backend started and connected
+2023-10-13 15:45:07,942 INFO    MainThread:68486 [wandb_init.py:init():720] updated telemetry
+2023-10-13 15:45:07,981 INFO    MainThread:68486 [wandb_init.py:init():753] communicating run to backend with 90.0 second timeout
+2023-10-13 15:45:08,479 INFO    MainThread:68486 [wandb_run.py:_on_init():2220] communicating current version
+2023-10-13 15:45:08,562 INFO    MainThread:68486 [wandb_run.py:_on_init():2229] got version response 
+2023-10-13 15:45:08,562 INFO    MainThread:68486 [wandb_init.py:init():804] starting run threads in backend
+2023-10-13 15:45:09,752 INFO    MainThread:68486 [wandb_run.py:_console_start():2199] atexit reg
+2023-10-13 15:45:09,752 INFO    MainThread:68486 [wandb_run.py:_redirect():2054] redirect: wrap_raw
+2023-10-13 15:45:09,753 INFO    MainThread:68486 [wandb_run.py:_redirect():2119] Wrapping output streams.
+2023-10-13 15:45:09,753 INFO    MainThread:68486 [wandb_run.py:_redirect():2144] Redirects installed.
+2023-10-13 15:45:09,754 INFO    MainThread:68486 [wandb_init.py:init():845] run started, returning control to user process
+2023-10-13 15:45:09,755 INFO    MainThread:68486 [wandb_run.py:_config_callback():1324] config_cb None None {'device': 'cuda', 'epoches': 1, 'image_height': 128, 'patch_width': 16, 'use_cocotext': False, 'cocotext_path': '/data/users/amolina/OCR/COCOText', 'use_esposalles': True, 'esposalles_path': '/data/users/amolina/OCR/ESPOSALLES', 'use_funsd': False, 'funsd_path': '/data/users/amolina/OCR/FUNSD', 'use_hiertext': False, 'hiertext_path': '/data/users/amolina/OCR/HierText', 'use_hist_maps': False, 'hist_maps_path': '/data/users/amolina/OCR/HistoricalMaps', 'use_iam': False, 'iam_path': '/data/users/amolina/OCR/IAM', 'use_iiit': False, 'iiit_path': '/data/users/amolina/OCR/IIIT5K/', 'use_mlt': False, 'mlt_path': '/data/users/amolina/OCR/MLT19/', 'use_parzival': False, 'parzival_path': '/data/users/amolina/OCR/Parzival', 'use_saint_gall': False, 'saint_gall_path': '/data/users/amolina/OCR/SaintGall', 'use_sroie': False, 'sroie_path': '/data/users/amolina/OCR/SROIE', 'use_svt': True, 'svt_path': '/data/users/amolina/OCR/SVT', 'use_textocr': False, 'textocr_path': '/data/users/amolina/OCR/TextOCR', 'use_totaltext': False, 'totaltext_path': '/data/users/amolina/OCR/TotalText', 'use_washington': False, 'washington_path': '/data/users/amolina/OCR/GW', 'use_xfund': False, 'xfund_path': '/data/users/amolina/OCR/xFUND', 'mlt19_langs': ['Arabic', 'Latin', 'Chinese', 'Japanese', 'Korean', 'Bangla', 'Hindi', 'Symbols', 'Mixed', 'None'], 'xfund_langs': ['ZH', 'JA', 'ES', 'FR', 'IT', 'DE', 'PT'], 'cocotext_langs': ['english', 'not english'], 'cocotext_visibility': ['legible'], 'hiertext_handwritten': ['true', 'false'], 'hiertext_include_non_visible': False, 'esposalles_level': 'words', 'hiertext_level': 'words', 'iam_level': 'words', 'washington_level': 'word', 'parzival_level': 'word', 'esposalles_cross_validation_fold': 'cv1', 'washington_cross_validation_fold': 'cv1', 'mlt19_cross_validation_fold': 'cv1', 'hist_maps_cross_validation_fold': 'cv1', 'tokenizer_name': 'char_tokenizer', 'tokenizer_location': 'tmp_/tokenizers/', 'save_tokenizer': True, 'num_workers_train': 12, 'num_workers_test': 6, 'batch_size': 224, 'standarize': False, 'linear_model': True, 'model_depth': 6, 'model_width': 8, 'dropout': 0.1, 'token_size': 224, 'visual_tokenizer_depth': 0, 'visual_tokenizer_width': 224, 'load_checkpoint': False, 'checkpoint_name': None}
+2023-10-13 15:45:16,618 WARNING MsgRouterThr:68486 [router.py:message_loop():77] message_loop has been closed

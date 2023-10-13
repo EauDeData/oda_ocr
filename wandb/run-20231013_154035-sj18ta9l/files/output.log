@@ -1,0 +1,16 @@
+0 / 1 epoches
+Evaluation on esposalles_dataset_test with 7913 samples
+Traceback (most recent call last):
+  File "/home/amolina/oda_ocr/main.py", line 111, in <module>
+    main(args)
+  File "/home/amolina/oda_ocr/main.py", line 106, in main
+    loop(args.epoches, model, datasets, collator, tokenizer, args)
+  File "/home/amolina/oda_ocr/main.py", line 72, in loop
+    evals = evaluation_epoch(datasets, model, tokenizer, collator, args)
+  File "/home/amolina/oda_ocr/main.py", line 60, in evaluation_epoch
+    eval_dataset(dataloader, model, dataset_name, tokenizer, wandb)
+  File "/home/amolina/oda_ocr/src/evaluation/eval.py", line 24, in eval_dataset
+    strings = tokenizer.decode(argmaxed_output)
+  File "/home/amolina/oda_ocr/src/tokenizers/char_tokenizer.py", line 53, in decode
+    strings = self.decode_array[vector.numpy()].tolist()
+AttributeError: 'CharTokenizer' object has no attribute 'decode_array'

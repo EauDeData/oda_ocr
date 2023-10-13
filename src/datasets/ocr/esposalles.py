@@ -22,13 +22,14 @@ class EsposalledDataset(GenericDataset):
         self.image_height = image_height
         self.patch_width = patch_width
 
-        self.base_folder = os.path.join(base_folder, split)
+        self.base_folder = os.path.join(base_folder, 'train')
         valid_records = [record.strip() for record in open(os.path.join(base_folder, 'splits', cross_val, split + '.txt'), 'r').readlines()]
 
         records = [{'folder': os.path.join(self.base_folder, page_id, mode),
                     'transcription_file': os.path.join(self.base_folder, page_id, mode, page_id + '_transcription.txt'),
                     'page_id': page_id} for page_id in os.listdir(self.base_folder) if page_id in valid_records and 'idPage' in page_id] # TODO: Check there's no leak and it's getting properly filtered
         samples = {}
+
         for record_folder in records:
             
             files = os.listdir(record_folder['folder'])

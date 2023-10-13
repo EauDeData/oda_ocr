@@ -31,11 +31,12 @@ class CharTokenizer:
                 open(self.full_path, 'r')
             )
 
-            return None
-        
-        self.init_tokens(dataset, save_on_init)
+        else:   
+            self.init_tokens(dataset, save_on_init)
+            
+        self.decode_array = np.array(list(self.tokens.keys()))
         self.tokens[self.padding_token] = max(self.tokens.values())
-        self.decode_array = np.array(self.tokens.keys())
+
 
     def __len__(self):
         return len(self.tokens)

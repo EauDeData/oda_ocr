@@ -33,6 +33,7 @@ cv_folds = ['cv1', 'cv2', 'cv3', 'cv4']
 def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')
+    parser.add_argument('--epoches', type=int, default=10)
     
     dataset_group = parser.add_argument_group('Dataset argument group.')
     

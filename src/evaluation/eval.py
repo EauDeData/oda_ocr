@@ -4,6 +4,15 @@ from torchmetrics.text import CharErrorRate
 from torchmetrics.text import EditDistance
 from torchmetrics.text import MatchErrorRate
 
+def clean_special_tokens(string, tokenizer):
+    
+    for token in tokenizer.special_tokens:
+        
+        string = string.replace(token, '')
+    
+    return string
+    
+
 def eval_dataset(dataloader, model, dataset_name, tokenizer, wandb_session):
     
     cer = CharErrorRate()
@@ -21,7 +30,8 @@ def eval_dataset(dataloader, model, dataset_name, tokenizer, wandb_session):
             
             tokens = model(batch)
             argmaxed_output = tokens.argmax(dim = 2).cpu()
-            strings = tokenizer.decode(argmaxed_output)
+            strings = [clean_special_tokens(x, tokenizer) for x in tokenizer.decode(argmaxed_output)]
+            
             
             metrics[f"CER_{dataset_name}"] += cer(strings, batch['raw_text_gt']).item()
             metrics[f"ED_{dataset_name}"] += ed(strings, batch['raw_text_gt']).item()
