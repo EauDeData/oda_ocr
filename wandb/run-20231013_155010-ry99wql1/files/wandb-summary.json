@@ -1,1 +1,0 @@
-{"CER_esposalles_dataset_test": 6.789490818977356, "ED_esposalles_dataset_test": 30.416666666666668, "MER_esposalles_dataset_test": 1.0, "_timestamp": 1697212220.0582623, "_runtime": 9.884772300720215, "_step": 1, "CER_svt_dataset_test": 12.232053756713867, "ED_svt_dataset_test": 71.66666666666667, "MER_svt_dataset_test": 1.0, "_wandb": {"runtime": 9}}
