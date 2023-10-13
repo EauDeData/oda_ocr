@@ -1,4 +1,6 @@
 import os
+import torch, torchvision
+import numpy as np
 
 from src.io.args import parse_arguments
 from src.io.load_datasets import load_datasets
@@ -23,7 +25,10 @@ def prepare_tokenizer_and_collator(merged_dataset, args):
   collator = CollateFNs(args.patch_width, args.image_height, tokenizer)
   
   return tokenizer, collator
-    
+
+def prepare_train_loaders(dataset, collator, num_workers, batch_size):
+    return torch.utils.data.DataLoader(dataset, batch_size = batch_size, collate_fn = collator.collate, num_workers = num_workers)
+
 def prepare_models():
     pass
 
@@ -32,21 +37,28 @@ def prepare_models():
 
 def main(args):
     
-    transforms = lambda x: x
+    
+    normalize = {
+        'normalize': lambda x: (x - x.min()) / (x.max() - x.min()),
+        'standarize': lambda x: x / x.max()
+    }
+    
+    transforms = torchvision.transforms.Compose((
+        torchvision.transforms.PILToTensor(),
+        normalize['normalize' if not args.standarize else 'standarize']) 
+    )
     
     print('Loading all datasets...')
     datasets = load_datasets(args, transforms)
     print(f"Loaded {len(datasets)} datasets")
-    if not os.path.exists(args.tokenizer_location + args.tokenizer_name + '.json'):
-        
-        whole_train = merge_datasets(datasets, split = 'train')
-        print(f'Total train size: {len(whole_train)}')
-    
-    else: whole_train = None
+    whole_train = merge_datasets(datasets, split = 'train')
     
     tokenizer, collator = prepare_tokenizer_and_collator(whole_train, args)
+    train_dataloader = prepare_train_loaders(whole_train, collator, args.num_workers_train, args.batch_size)
     
-    print(tokenizer(list('hello')))
+    for batch in train_dataloader:
+        print(batch['input_visual_seq'].shape)
+        break
 
 if __name__ == '__main__': 
     

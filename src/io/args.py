@@ -32,6 +32,7 @@ cv_folds = ['cv1', 'cv2', 'cv3', 'cv4']
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--device', type=str, default='cuda')
     
     dataset_group = parser.add_argument_group('Dataset argument group.')
     
@@ -76,6 +77,15 @@ def parse_arguments():
     dataset_group.add_argument('--tokenizer_name', type = str, default = 'char_tokenizer')
     dataset_group.add_argument('--tokenizer_location', type = str, default = 'tmp_/tokenizers/')
     dataset_group.add_argument('--save_tokenizer', action='store_false')
+
+
+    ### DATALOADER ARGS ###
+    dataset_group.add_argument('--num_workers_train', type = int, default = 12)
+    dataset_group.add_argument('--num_workers_test', type = int, default = 6)
     
+    dataset_group.add_argument('--batch_size', type = int, default = 224)
+    
+    preprocess_group =  parser.add_argument_group('Preprocesing argument group.')
+    preprocess_group.add_argument('--standarize', action='store_true')
     return parser.parse_args()
 

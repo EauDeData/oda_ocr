@@ -16,8 +16,9 @@ class CharTokenizer:
     eos = '<EOS>'
     unk = '<UNK>'
     cls_token = '<CLS>'
+    padding_token = '<PAD>'
 
-    special_tokens = [bos, eos, unk, cls_token]
+    special_tokens = [bos, eos, unk, cls_token, padding_token]
     def __init__(self, dataset = None, local_path = 'tmp_/tokenizers/', tokenizer_name = 'tokenizer', save_on_init = True) -> None:
         
         os.makedirs(local_path, exist_ok=True)
@@ -33,6 +34,7 @@ class CharTokenizer:
             return None
         
         self.init_tokens(dataset, save_on_init)
+        self.tokens[self.padding_token] = max(self.tokens.values())
 
     def __len__(self):
         return len(self.tokens)
