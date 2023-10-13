@@ -1,8 +1,9 @@
 import os
 import torch, torchvision
 import numpy as np
+import wandb
 
-from src.io.args import parse_arguments
+from src.io.args import parse_arguments, get_model_name
 from src.io.load_datasets import load_datasets
 from src.dataloaders.summed_dataloader import CollateFNs
 from src.tokenizers.char_tokenizer import CharTokenizer
@@ -18,8 +19,6 @@ def merge_datasets(datasets, split = 'train'):
         data = data + datasets[idx][split]
         
     return data
-    
-    
 
 def prepare_tokenizer_and_collator(merged_dataset, args):
   
@@ -53,6 +52,10 @@ def prepare_model(vocab_size, args):
 
 def main(args):
     
+    model_name = get_model_name(args)
+    print(model_name)
+    wandb.config.update(args)
+    wandb.run.name = model_name
     
     normalize = {
         'normalize': lambda x: (x - x.min()) / (x.max() - x.min()),

@@ -35,6 +35,7 @@ class CharTokenizer:
         
         self.init_tokens(dataset, save_on_init)
         self.tokens[self.padding_token] = max(self.tokens.values())
+        self.decode_array = np.array(self.tokens.keys())
 
     def __len__(self):
         return len(self.tokens)
@@ -47,6 +48,10 @@ class CharTokenizer:
                 for token in [self.bos, self.cls_token] + tokens + [self.eos]
         ])
 
+    def decode(self, vector):
+        vector = vector.permute(1, 0)
+        strings = self.decode_array[vector.numpy()].tolist()
+        return [''.join(word) for word in strings] 
     
     def init_tokens(self, dataset, save):
 

@@ -106,3 +106,57 @@ def parse_arguments():
     
     return parser.parse_args()
 
+def get_model_name(args):
+    # Initialize an empty list to store components of the model name
+    name_components = []
+
+    # Datasets
+    for dataset_name, _ in dataset_defaults.items():
+        if getattr(args, f'use_{dataset_name}', False):
+            name_components.append(dataset_name)
+            
+            # Check if the level is defined for the dataset
+            if getattr(args, f'{dataset_name}_level', False):
+                name_components.append(getattr(args, f'{dataset_name}_level'))
+
+            # Check if the cross-validation fold is defined for the dataset
+            if getattr(args, f'{dataset_name}_cross_validation_fold', False):
+                name_components.append(getattr(args, f'{dataset_name}_cross_validation_fold'))
+
+
+    # Languages
+    if args.mlt19_langs and getattr(args, f'use_mlt', False):
+        name_components.extend(['mlt_19_langs'] + args.mlt19_langs)
+    if args.xfund_langs and getattr(args, f'use_xfund', False):
+        name_components.extend(['xfund_langs'] + args.xfund_langs)
+    if args.cocotext_langs and getattr(args, f'use_cocotext', False):
+        name_components.extend(['cocotext_langs'] + args.cocotext_langs)
+
+    # Other dataset-related options
+    if args.hiertext_handwritten and getattr(args, f'use_hiertext', False):
+        name_components.append('hiertext_also_handwritten')
+    if args.hiertext_include_non_visible and getattr(args, f'use_hiertext', False):
+        name_components.append('hiertext_non-visible')
+    if args.cocotext_visibility and getattr(args, f'use_cocotext', False):
+        name_components.extend(['cocotext_visibility'] + args.cocotext_visibility)
+
+
+    # Dataloader
+    name_components.extend(['batch_size', args.batch_size])
+
+    # Preprocessing
+    if args.standarize:
+        name_components.append('standarized_images')
+    else: name_components.append('normalized_images')
+
+    # Model
+    if args.linear_model:
+        name_components.append('linear_model')
+    else: name_components.append('non-linear')
+    name_components.extend(['depth', args.model_depth, 'width', args.model_width, 'dropout', args.dropout, 'token_size', args.token_size])
+    name_components.extend(['image_height', args.image_height, 'patch_width', args.patch_width])
+
+    # Join all components to create the model name
+    model_name = 'ViT_CTC_' + '_'.join(map(str, name_components))
+
+    return model_name
