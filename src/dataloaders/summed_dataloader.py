@@ -70,7 +70,7 @@ class CollateFNs:
     def collate(self, batch):
 
         max_tokens = max([len(x['tokens']) for x in batch])
-        max_patches = max([x['input_tensor'].shape[2] // self.patch_width for x in batch] + [max_tokens])
+        max_patches = max([x['input_tensor'].shape[2] // self.patch_width for x in batch] + [2 * max_tokens])
         
         visual_tokens = []
         text_tokens = []
@@ -98,7 +98,6 @@ class CollateFNs:
             patches = list(image.chunk(image.shape[2] // self.patch_width, dim=-1))
             required_patches = max(text_tokenized.shape[0], len(patches))
             
-            patches = patches + [self.visual_padding_token] * (required_patches - len(patches))
             patches = patches + [self.visual_padding_token] * (max_patches - len(patches))
             
             

@@ -38,8 +38,8 @@ def parse_arguments():
     dataset_group = parser.add_argument_group('Dataset argument group.')
     
     ### COMMON DATASET ARGS ####
-    dataset_group.add_argument('--image_height', nargs=int, default=128)
-    dataset_group.add_argument('--patch_width', nargs=int, default=16)
+    dataset_group.add_argument('--image_height', type=int, default=128)
+    dataset_group.add_argument('--patch_width', type=int, default=16)
 
     ## DATASET USAGE ##
     # Loop through the dataset_defaults dictionary to add arguments for each dataset
