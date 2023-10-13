@@ -17,6 +17,7 @@ class CharTokenizer:
     unk = '<UNK>'
     cls_token = '<CLS>'
 
+    special_tokens = [bos, eos, unk, cls_token]
     def __init__(self, dataset = None, local_path = 'tmp_/tokenizers/', tokenizer_name = 'tokenizer', save_on_init = True) -> None:
         
         os.makedirs(local_path, exist_ok=True)
@@ -39,7 +40,7 @@ class CharTokenizer:
     def __call__(self, tokens: list) -> np.ndarray:
 
         return np.array([
-            self.tokens[token.lower()] if token.lower() in self.tokens else self.tokens[self.unk]
+            self.tokens[token.lower() if not token in self.special_tokens else token] if (token.lower() if not token in self.special_tokens else token) in self.tokens else self.tokens[self.unk]
             
                 for token in [self.bos, self.cls_token] + tokens + [self.eos]
         ])
