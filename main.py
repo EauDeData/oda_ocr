@@ -131,6 +131,11 @@ def main(args):
     
     tokenizer, collator = prepare_tokenizer_and_collator(whole_train, args)
     
+    message = 'Last message indicates that tokenizer is working'
+    encoded = torch.tensor(tokenizer(list(message))).unsqueeze(0)
+    decoded = tokenizer.decode(encoded)[0]
+    print(f"{encoded}\n{decoded}")
+       
     train_dataloader = prepare_train_loaders(whole_train, collator, args.num_workers_train, args.batch_size)
     
     model = prepare_model(len(tokenizer), args)
