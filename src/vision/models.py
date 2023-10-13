@@ -36,7 +36,7 @@ class PositionalEncoding(nn.Module):
         return self.dropout(x)
 
 class ViTEncoder(nn.Module):
-    def __init__(self, image_height = 128, nchannels = 3, token_size = 224, visual_tokenizer_arch = [], nlayers = 6, nheads = 8, vocab_size = None, dropout = 0.1):
+    def __init__(self, image_height = 128, nchannels = 3, token_size = 224, visual_tokenizer_arch = [], nlayers = 6, nheads = 8, vocab_size = None, dropout = 0.1, device = 'cuda'):
         
         self.visual_tokenizer = linear_constructor(
                 [image_height * nchannels] + visual_tokenizer_arch + [token_size]
@@ -49,10 +49,11 @@ class ViTEncoder(nn.Module):
         self.lm_softmax = nn.Softmax(dim = 2)
 
         self.positional_encoding = PositionalEncoding(token_size, dropout=dropout)
+        self.device = device
     
     def forward(self, input_dict):
         
-        input_visual_tokens = input_dict['input_visual_seq']
+        input_visual_tokens = input_dict['input_visual_seq'].to(self.device)
         batch_size, seq_len, channels, width, height = input_visual_tokens.shape
         
         flat_tokens = input_visual_tokens.view(batch_size, seq_len, channels * width * height).permute(1, 0, 2)

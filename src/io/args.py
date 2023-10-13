@@ -87,5 +87,22 @@ def parse_arguments():
     
     preprocess_group =  parser.add_argument_group('Preprocesing argument group.')
     preprocess_group.add_argument('--standarize', action='store_true')
+    
+    
+    ### MODEL ARGS ####
+    model_group =  parser.add_argument_group('Model argument group.')
+    model_group.add_argument('--linear_model', action='store_true')
+    model_group.add_argument('--model_depth', type = int, default=6)
+    model_group.add_argument('--model_width', type = int, default=8)
+    model_group.add_argument('--dropout', type=float, default = 0.1)
+    model_group.add_argument('--token_size', type=int, default=224)
+    
+    model_group.add_argument('--visual_tokenizer_depth', type=int, default=0)
+    model_group.add_argument('--visual_tokenizer_width', type=int, default=224)
+    
+    model_group.add_argument('--load_checkpoint', action='store_true')
+    model_group.add_argument('--checkpoint_name', type=str, default=None)
+    
+    
     return parser.parse_args()
 

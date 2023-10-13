@@ -6,6 +6,7 @@ from src.io.args import parse_arguments
 from src.io.load_datasets import load_datasets
 from src.dataloaders.summed_dataloader import CollateFNs
 from src.tokenizers.char_tokenizer import CharTokenizer
+from src.vision.models import ViTEncoder
 
 def merge_datasets(datasets, split = 'train'):
     
@@ -29,8 +30,18 @@ def prepare_tokenizer_and_collator(merged_dataset, args):
 def prepare_train_loaders(dataset, collator, num_workers, batch_size):
     return torch.utils.data.DataLoader(dataset, batch_size = batch_size, collate_fn = collator.collate, num_workers = num_workers)
 
-def prepare_models():
-    pass
+def prepare_model(vocab_size, args):
+    #### LOAD MODEL ###
+    if args.load_checkpoint:
+        raise NotImplementedError(f"Won't load {args.checkpoint_name}, model loading is not implemented yet.")
+    
+    else:
+        model = ViTEncoder(args.image_height, 3, args.token_size, [args.visual_tokenizer_width] * args.visual_tokenizer_depth, args.model_depth, args.model_width, vocab_size, args.dropout, args.device)
+        model.to(args.device)
+
+    ### LINEARIZE ###
+    
+    return model
 
 # We will heve to define training strategies for "simple", "continual" and "arithmetic".
 ## Arithmetic models are trained normally, but they are linearized with the modules
@@ -56,8 +67,10 @@ def main(args):
     tokenizer, collator = prepare_tokenizer_and_collator(whole_train, args)
     train_dataloader = prepare_train_loaders(whole_train, collator, args.num_workers_train, args.batch_size)
     
+    model = prepare_model(len(tokenizer), args)
+    
     for batch in train_dataloader:
-        print(batch['input_visual_seq'].shape)
+        print(model(batch))
         break
 
 if __name__ == '__main__': 
