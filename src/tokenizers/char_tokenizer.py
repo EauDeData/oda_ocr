@@ -20,7 +20,7 @@ class CharTokenizer:
     ctc_blank = '<BLANK>'
 
     special_tokens = [bos, eos, unk, cls_token, padding_token, ctc_blank]
-    def __init__(self, dataset = None, local_path = 'tmp_/tokenizers/', tokenizer_name = 'tokenizer', save_on_init = True) -> None:
+    def __init__(self, dataset = None, include_secial=False, local_path = 'tmp_/tokenizers/', tokenizer_name = 'tokenizer', save_on_init = True) -> None:
         
         os.makedirs(local_path, exist_ok=True)
         self.full_path = os.path.join(local_path, tokenizer_name + '.json')
@@ -39,6 +39,7 @@ class CharTokenizer:
         self.tokens[self.ctc_blank] = max(self.tokens.values()) + 1
         
         self.decode_array = np.array(list(self.tokens.keys()))
+        self.include_special = include_secial
 
     def __len__(self):
         return len(self.tokens)
@@ -48,7 +49,8 @@ class CharTokenizer:
         return np.array([
             self.tokens[token.lower() if not token in self.special_tokens else token] if (token.lower() if not token in self.special_tokens else token) in self.tokens else self.tokens[self.unk]
             
-                for token in tokens 
+                for token in (tokens if not self.include_special
+                              else [self.bos, self.cls_token] + tokens + [self.bos])
         ])
 
     def decode(self, vector):

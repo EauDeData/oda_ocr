@@ -104,11 +104,14 @@ def parse_arguments():
     model_group.add_argument('--load_checkpoint', action='store_true')
     model_group.add_argument('--checkpoint_name', type=str, default=None)
     
+    
+    ### OPTIM GROUP ####
     optimization_group = parser.add_argument_group('Optimization group')
     
     optimizer_choices = ['sgd', 'adam', 'adagrad', 'adadelta', 'rmsprop']
     optimization_group.add_argument('--optimizer', choices=optimizer_choices, default='adam', help='Optimizer choice')
     optimization_group.add_argument('--learning_rate', type=float, default=5e-5, help='Learning rate')
+    optimization_group.add_argument('--loss_function', type=str, default='ctc', choices=['ctc', 'cross_entropy'])
     
     return parser.parse_args()
 
@@ -160,7 +163,7 @@ def get_model_name(args):
         name_components.append('linear_model')
     else: name_components.append('non-linear')
     name_components.extend(['depth', args.model_depth, 'width', args.model_width, 'dropout', args.dropout, 'token_size', args.token_size])
-    name_components.extend(['image_height', args.image_height, 'patch_width', args.patch_width, 'optimizer', args.optimizer, 'lr', args.learning_rate])
+    name_components.extend(['loss', args.loss_function, 'image_height', args.image_height, 'patch_width', args.patch_width, 'optimizer', args.optimizer, 'lr', args.learning_rate])
 
     # Join all components to create the model name
     model_name = 'ViT_CTC_' + '_'.join(map(str, name_components))

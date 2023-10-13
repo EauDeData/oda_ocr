@@ -13,6 +13,7 @@ from src.vision.models import ViTEncoder
 from src.linearize import LinearizedModel
 from src.evaluation.eval import eval_dataset
 from src.train_steps.base_ctc import train_ctc
+from src.train_steps.base_cross_entropy import train_cross_entropy
 
 def prepare_optimizer(model, args):
     if args.optimizer == 'sgd':
@@ -30,6 +31,12 @@ def prepare_optimizer(model, args):
 
     return optimizer
 
+def get_lost_and_train(args, tokenizer = None):
+    if args.loss_function == 'ctc':
+        return torch.nn.CTCLoss(blank=tokenizer.tokens[tokenizer.ctc_blank]), train_ctc
+    elif args.loss_function == 'cross_entropy':
+        return torch.nn.NLLLoss(), train_cross_entropy
+
 def merge_datasets(datasets, split = 'train'):
     
     data = datasets[0][split]
@@ -42,7 +49,7 @@ def merge_datasets(datasets, split = 'train'):
 
 def prepare_tokenizer_and_collator(merged_dataset, args):
   
-  tokenizer = CharTokenizer(merged_dataset, args.tokenizer_location, args.tokenizer_name, args.save_tokenizer)
+  tokenizer = CharTokenizer(merged_dataset, not args.loss_function == 'ctc', args.tokenizer_location, args.tokenizer_name, args.save_tokenizer)
   collator = CollateFNs(args.patch_width, args.image_height, tokenizer)
   
   return tokenizer, collator
@@ -123,13 +130,13 @@ def main(args):
     
     model = prepare_model(len(tokenizer), args)
     optimizer = prepare_optimizer(model, args)
-    loss_function = torch.nn.CTCLoss(blank=tokenizer.tokens[tokenizer.ctc_blank])
+    loss_function, train_function = get_lost_and_train(args, tokenizer)
     
     wandb.init(project='oda_ocr')
     wandb.config.update(args)
     wandb.run.name = model_name
     
-    loop(args.epoches, model, datasets, collator, tokenizer, args, train_dataloader, optimizer, loss_function)
+    loop(args.epoches, model, datasets, collator, tokenizer, args, train_dataloader, optimizer, loss_function, train_function=train_function)
 
 if __name__ == '__main__': 
     
