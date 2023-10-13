@@ -28,7 +28,7 @@ def prepare_tokenizer_and_collator(merged_dataset, args):
   return tokenizer, collator
 
 def prepare_train_loaders(dataset, collator, num_workers, batch_size):
-    return torch.utils.data.DataLoader(dataset, batch_size = batch_size, collate_fn = collator.collate, num_workers = num_workers)
+    return torch.utils.data.DataLoader(dataset, batch_size = batch_size, collate_fn = collator.collate, num_workers = num_workers, shuffle = True)
 
 def prepare_model(vocab_size, args):
     #### LOAD MODEL ###
