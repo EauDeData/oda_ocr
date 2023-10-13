@@ -111,7 +111,7 @@ def parse_arguments():
     optimizer_choices = ['sgd', 'adam', 'adagrad', 'adadelta', 'rmsprop']
     optimization_group.add_argument('--optimizer', choices=optimizer_choices, default='adam', help='Optimizer choice')
     optimization_group.add_argument('--learning_rate', type=float, default=5e-5, help='Learning rate')
-    optimization_group.add_argument('--loss_function', type=str, default='ctc', choices=['ctc', 'cross_entropy'])
+    optimization_group.add_argument('--loss_function', type=str, default='ctc', choices=['ctc', 'cross_entropy', 'nll'])
     
     return parser.parse_args()
 

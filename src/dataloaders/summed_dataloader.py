@@ -61,16 +61,20 @@ class DummyDataset(GenericDataset):
 
 class CollateFNs:
 
-    def __init__(self, patch_width, image_height, character_tokenizer) -> None:
+    def __init__(self, patch_width, image_height, character_tokenizer, seq2seq_same_size = False) -> None:
         self.patch_width = patch_width
         self.image_height = image_height
         self.character_tokenizer = character_tokenizer
         self.visual_padding_token = torch.zeros((3, self.image_height, self.patch_width))
+        self.same_size = seq2seq_same_size
     
     def collate(self, batch):
 
         max_tokens = max([len(x['tokens']) for x in batch])
-        max_patches = max([x['input_tensor'].shape[2] // self.patch_width for x in batch] + [2 * max_tokens])
+        max_patches = max([x['input_tensor'].shape[2] // self.patch_width for x in batch] + \
+                            [max_tokens * 1 if not self.same_size else 2])
+        if self.same_size:
+            max_patches = max_tokens = max(max_patches, max_tokens)
         
         visual_tokens = []
         text_tokens = []

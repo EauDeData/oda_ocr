@@ -35,8 +35,13 @@ def get_lost_and_train(args, tokenizer = None):
     if args.loss_function == 'ctc':
         return torch.nn.CTCLoss(blank=tokenizer.tokens[tokenizer.ctc_blank]), train_ctc
     elif args.loss_function == 'cross_entropy':
+        return torch.nn.CrossEntropyLoss(), train_cross_entropy
+    elif args.loss_function == 'nll':
         return torch.nn.NLLLoss(), train_cross_entropy
-
+    
+    else:
+        raise ValueError('I really wonder how did you reach that point, genuinely.')
+    
 def merge_datasets(datasets, split = 'train'):
     
     data = datasets[0][split]
@@ -50,7 +55,7 @@ def merge_datasets(datasets, split = 'train'):
 def prepare_tokenizer_and_collator(merged_dataset, args):
   
   tokenizer = CharTokenizer(merged_dataset, not args.loss_function == 'ctc', args.tokenizer_location, args.tokenizer_name, args.save_tokenizer)
-  collator = CollateFNs(args.patch_width, args.image_height, tokenizer)
+  collator = CollateFNs(args.patch_width, args.image_height, tokenizer, seq2seq_same_size= not args.loss_function == 'ctc' )
   
   return tokenizer, collator
 
