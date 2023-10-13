@@ -54,8 +54,10 @@ class CharTokenizer:
         ])
 
     def decode(self, vector):
+        
         vector = vector.permute(1, 0)
         strings = self.decode_array[vector.numpy()].tolist()
+
         return [''.join(word) for word in strings] 
     
     def init_tokens(self, dataset, save):

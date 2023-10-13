@@ -41,7 +41,8 @@ class LinearizedModel(nn.Module):
         self.params = nn.ParameterList(params)
         self.params0 = nn.ParameterList(params0)
         self._model_name = model.__class__.__name__
-
+        self.device = model.device
+        
         # The intial parameters are not trainable.
         for p in self.params0:
             p.requires_grad = False
