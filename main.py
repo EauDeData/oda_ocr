@@ -36,7 +36,7 @@ def prepare_model(vocab_size, args):
         raise NotImplementedError(f"Won't load {args.checkpoint_name}, model loading is not implemented yet.")
     
     else:
-        model = ViTEncoder(args.image_height, 3, args.token_size, [args.visual_tokenizer_width] * args.visual_tokenizer_depth, args.model_depth, args.model_width, vocab_size, args.dropout, args.device)
+        model = ViTEncoder(args.image_height, args.patch_width, 3, args.token_size, [args.visual_tokenizer_width] * args.visual_tokenizer_depth, args.model_depth, args.model_width, vocab_size, args.dropout, args.device)
         model.to(args.device)
 
     ### LINEARIZE ###
@@ -70,7 +70,7 @@ def main(args):
     model = prepare_model(len(tokenizer), args)
     
     for batch in train_dataloader:
-        print(model(batch))
+        print(model(batch).shape)
         break
 
 if __name__ == '__main__': 

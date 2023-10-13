@@ -3,6 +3,7 @@ import torch.nn as nn
 import math
 from torch import Tensor
 
+
 def linear_constructor(topology: list):
 
     seq = []
@@ -12,7 +13,22 @@ def linear_constructor(topology: list):
             nn.Linear(size, topology[n + 1])
         ])
     
-    return nn.Sequential(*seq)
+    return seq
+
+class LinearConstructor(nn.Module):
+    def __init__(self, topology, device) -> None:
+        super().__init__()
+        
+        self.layers = [layer.to(device) for layer in linear_constructor(topology)]
+    
+    def forward(self, x):
+        
+        for layer in self.layers:
+            
+            x = layer(x)
+        
+        return x
+
 
 class PositionalEncoding(nn.Module):
 
@@ -36,10 +52,11 @@ class PositionalEncoding(nn.Module):
         return self.dropout(x)
 
 class ViTEncoder(nn.Module):
-    def __init__(self, image_height = 128, nchannels = 3, token_size = 224, visual_tokenizer_arch = [], nlayers = 6, nheads = 8, vocab_size = None, dropout = 0.1, device = 'cuda'):
+    def __init__(self, image_height = 128, patch_width = 16, nchannels = 3, token_size = 224, visual_tokenizer_arch = [], nlayers = 6, nheads = 8, vocab_size = None, dropout = 0.1, device = 'cuda'):
+        super(ViTEncoder, self).__init__()
         
-        self.visual_tokenizer = linear_constructor(
-                [image_height * nchannels] + visual_tokenizer_arch + [token_size]
+        self.visual_tokenizer = LinearConstructor(
+                [image_height * nchannels * patch_width] + visual_tokenizer_arch + [token_size], device
             )
     
         self.encoder_layer = nn.TransformerEncoderLayer(d_model=token_size, nhead=nheads, dropout=dropout)
@@ -57,11 +74,11 @@ class ViTEncoder(nn.Module):
         batch_size, seq_len, channels, width, height = input_visual_tokens.shape
         
         flat_tokens = input_visual_tokens.view(batch_size, seq_len, channels * width * height).permute(1, 0, 2)
-        positional_encoded_tokens = self.positional_encoding(flat_tokens)
-        
-        tokenizer_patches = self.visual_tokenizer(positional_encoded_tokens)
-        
-        context_tokens = self.transformer_encoder(tokenizer_patches)
+
+        tokenizer_patches = self.visual_tokenizer(flat_tokens)
+        positional_encoded_tokens = self.positional_encoding(tokenizer_patches)
+
+        context_tokens = self.transformer_encoder(positional_encoded_tokens)
         
         logits = self.lm_head(context_tokens)
         
