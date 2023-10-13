@@ -85,7 +85,7 @@ class CollateFNs:
             
             resized_images.append(original_image)
             sources.append(f"{split}_ {dataset}")
-            raw_texts.append(raw_text)
+            raw_texts.append(raw_text.lower())
             
             text_tokens.append(torch.from_numpy(
                 self.character_tokenizer(
@@ -97,6 +97,8 @@ class CollateFNs:
             patches = list(image.chunk(image.shape[2] // self.patch_width, dim=-1))
             
             patches = patches + [self.visual_padding_token] * (max_patches - len(patches))
+            if len(patches) < len(text_tokens[-1]):
+                patches = patches + [self.visual_padding_token] * (len(text_tokens[-1]) - len(patches))
             
             visual_tokens.append(
                 torch.stack(
@@ -111,7 +113,7 @@ class CollateFNs:
                 'sources': sources,
                 'original_images': resized_images,
                 'input_lengths': [x.size[0] // self.patch_width for x in resized_images],
-                'output_lengths':  [len(list(x)) for x in raw_texts]
+                'output_lengths':  [len([char for char in x]) for x in raw_texts]
                 }
 
 
