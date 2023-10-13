@@ -25,13 +25,13 @@ def eval_dataset(dataloader, model, dataset_name, tokenizer, wandb_session):
         f"MER_{dataset_name}": 0    
     }
     total_steps = 0
+    model.eval()
     with torch.no_grad():
         for batch in dataloader:
             
             tokens = model(batch)
             argmaxed_output = tokens.argmax(dim = 2).cpu()
             strings = [clean_special_tokens(x, tokenizer) for x in tokenizer.decode(argmaxed_output)]
-            
             
             metrics[f"CER_{dataset_name}"] += cer(strings, batch['raw_text_gt']).item()
             metrics[f"ED_{dataset_name}"] += ed(strings, batch['raw_text_gt']).item()

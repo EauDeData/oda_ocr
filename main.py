@@ -71,7 +71,7 @@ def evaluation_epoch(datasets, model, tokenizer, collator, args):
     
     evals = []
     for dataset in datasets:
-        for split in ['val', 'test']:
+        for split in ['val', 'test', 'train']:
             if dataset[split] is not None:
                 dataset_name = f"{dataset[split].name}_{dataset[split].split}"
                 print(f"Evaluation on {dataset_name} with {len(dataset[split])} samples")

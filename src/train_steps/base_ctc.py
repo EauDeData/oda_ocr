@@ -6,9 +6,8 @@ def train_ctc(epoch, dataloader, optimizer, model, loss_function, patch_width, w
     buffer = 0
     counter = 0
     
+    model.train()
     for batch in tqdm(dataloader, desc=f"Training classic approach - epoch {epoch}"):
-        
-        
         
         optimizer.zero_grad()
         
