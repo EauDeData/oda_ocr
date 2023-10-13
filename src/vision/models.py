@@ -36,25 +36,29 @@ class PositionalEncoding(nn.Module):
         return self.dropout(x)
 
 class ViTEncoder(nn.Module):
-    def __init__(self, image_height = 128, nchannels = 3, token_size = 224, visual_tokenizer_arch = [], nlayers = 6, nheads = 8, vocab_size = None):
+    def __init__(self, image_height = 128, nchannels = 3, token_size = 224, visual_tokenizer_arch = [], nlayers = 6, nheads = 8, vocab_size = None, dropout = 0.1):
         
         self.visual_tokenizer = linear_constructor(
                 [image_height * nchannels] + visual_tokenizer_arch + [token_size]
             )
     
-        self.encoder_layer = nn.TransformerEncoderLayer(d_model=token_size, nhead=nheads, batch_first=True)
+        self.encoder_layer = nn.TransformerEncoderLayer(d_model=token_size, nhead=nheads, dropout=dropout)
         self.transformer_encoder = nn.TransformerEncoder(self.encoder_layer, num_layers=nlayers) # Out: (BATCH_SIZE, SEQ_SIZE, TOKEN_SIZE)
         
         self.lm_head = nn.Linear(token_size, vocab_size) # Out: (BATCH_SIZE, SEQ_SIZE, TOKEN_SIZE)
         self.lm_softmax = nn.Softmax(dim = 2)
+
+        self.positional_encoding = PositionalEncoding(token_size, dropout=dropout)
     
     def forward(self, input_dict):
         
         input_visual_tokens = input_dict['input_visual_seq']
         batch_size, seq_len, channels, width, height = input_visual_tokens.shape
         
-        flat_tokens = input_visual_tokens.view(batch_size, seq_len, channels * width * height) 
-        tokenizer_patches = self.visual_tokenizer(flat_tokens)
+        flat_tokens = input_visual_tokens.view(batch_size, seq_len, channels * width * height).permute(1, 0, 2)
+        positional_encoded_tokens = self.positional_encoding(flat_tokens)
+        
+        tokenizer_patches = self.visual_tokenizer(positional_encoded_tokens)
         
         context_tokens = self.transformer_encoder(tokenizer_patches)
         
