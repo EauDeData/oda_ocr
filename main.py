@@ -7,6 +7,7 @@ from src.io.load_datasets import load_datasets
 from src.dataloaders.summed_dataloader import CollateFNs
 from src.tokenizers.char_tokenizer import CharTokenizer
 from src.vision.models import ViTEncoder
+from src.linearize import LinearizedModel
 
 def merge_datasets(datasets, split = 'train'):
     
@@ -40,6 +41,10 @@ def prepare_model(vocab_size, args):
         model.to(args.device)
 
     ### LINEARIZE ###
+    ### The loaded model is already linear?
+    if args.linear_model:
+        print('Linearizing ViT model...')
+        model = LinearizedModel(model)
     
     return model
 
