@@ -33,7 +33,7 @@ def prepare_optimizer(model, args):
 
 def get_lost_and_train(args, tokenizer = None):
     if args.loss_function == 'ctc':
-        return torch.nn.CTCLoss(blank=tokenizer.tokens[tokenizer.ctc_blank]), train_ctc
+        return torch.nn.CTCLoss(blank=tokenizer.tokens[tokenizer.ctc_blank], zero_infinity = True), train_ctc
     elif args.loss_function == 'cross_entropy':
         return torch.nn.CrossEntropyLoss(), train_cross_entropy
     elif args.loss_function == 'nll':
