@@ -42,7 +42,7 @@ class CharTokenizer:
         self.include_special = include_secial
 
     def __len__(self):
-        return len(self.tokens)
+        return max(self.tokens.values()) + 1
     
     def __call__(self, tokens: list) -> np.ndarray:
 
