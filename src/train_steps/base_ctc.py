@@ -35,6 +35,7 @@ def train_ctc(epoch, dataloader, optimizer, model, loss_function, patch_width, w
 
             print('input_sizes:')
             print([x.size for x in batch['original_images']])
+            batch['original_images'][0].save('tmp_nan.png')
 
             exit()
         loss.backward()

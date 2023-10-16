@@ -63,7 +63,7 @@ class ViTEncoder(nn.Module):
         self.transformer_encoder = nn.TransformerEncoder(self.encoder_layer, num_layers=nlayers) # Out: (BATCH_SIZE, SEQ_SIZE, TOKEN_SIZE)
         
         self.lm_head = nn.Linear(token_size, vocab_size) # Out: (BATCH_SIZE, SEQ_SIZE, TOKEN_SIZE)
-        self.lm_softmax = nn.Softmax(dim = 2)
+        self.lm_softmax = nn.functional.log_softmax # nn.LogSoftmax(dim = -1)
 
         self.positional_encoding = PositionalEncoding(token_size, dropout=dropout)
         self.device = device
@@ -83,4 +83,3 @@ class ViTEncoder(nn.Module):
         logits = self.lm_head(context_tokens)
         
         return self.lm_softmax(logits)
-        
