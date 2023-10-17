@@ -83,3 +83,46 @@ class ViTEncoder(nn.Module):
         logits = self.lm_head(context_tokens)
         
         return self.lm_softmax(logits)
+
+class ConvVitEncoder(nn.Module):
+
+    def __init__(self, image_height = 128, patch_width = 16, nchannels = 3, token_size = 224, stride = 8, nlayers = 6, nheads = 8, vocab_size = None, dropout = 0.1, device = 'cuda', aggregation = 'max'):
+
+        self.image_height = image_height
+        self.patch_width = patch_width
+
+        self.conv_1 = nn.Conv2d(nchannels, token_size, kernel_size = (image_height, patch_width), stride = stride)
+        
+        self.encoder_layer = nn.TransformerEncoderLayer(d_model=token_size, nhead=nheads, dropout=dropout)
+        self.transformer_encoder = nn.TransformerEncoder(self.encoder_layer, num_layers=nlayers) # Out: (BATCH_SIZE, SEQ_SIZE, TOKEN_SIZE)
+        self.positional_encoding = PositionalEncoding(token_size, dropout=dropout)
+        
+        self.lm_head = nn.Linear(token_size, vocab_size) # Out: (BATCH_SIZE, SEQ_SIZE, TOKEN_SIZE)
+        if aggregation == 'max':
+            self.pooling = torch.max
+
+        else: raise NotImplementedError(f"{aggregation} token aggregation strategy")
+
+        self.device = device
+
+    def forward(self, input_dict):
+        
+        input_visual_tensor = input_dict['images_tensor'].to(self.device) # full images (BS, CHANNEL, HEIGHT, WIDTH)
+        convolved_tokens = self.conv_1(input_visual_tensor) # tokens (BS, TOKEN_SIZE, SEQ_SIZE, ?)
+        tokens = self.pooling(convolved_tokens, dim = -1).permute(2, 1, 0) # tokens (SEQ_SIZE; BS; TOKEN_SIZE)
+        positional_encoded_tokens = self.positional_encoding(tokens)
+
+        context_tokens = self.transformer_encoder(positional_encoded_tokens)
+        
+        logits = self.lm_head(context_tokens)
+        
+        return self.lm_softmax(logits)
+    
+if __name__ == '__main__':
+
+    input_dictionary = {
+        'images_tensor': torch.rand(3, 3, 128, 16 * 5)
+    }
+
+    encoder = ConvVitEncoder(vocab_size = 10)
+    print(encoder(input_dictionary).shape)
