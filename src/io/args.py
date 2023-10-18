@@ -171,6 +171,6 @@ def get_model_name(args):
         name_components.extend(['stride', args.conv_stride])
 
     # Join all components to create the model name
-    model_name = args.model_architecture + '_'.join(map(str, name_components))
+    model_name = args.model_architecture + '_' + '_'.join(map(str, name_components))
 
     return model_name
