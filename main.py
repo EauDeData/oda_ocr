@@ -9,7 +9,7 @@ from src.io.args import parse_arguments, get_model_name
 from src.io.load_datasets import load_datasets
 from src.dataloaders.summed_dataloader import CollateFNs
 from src.tokenizers.char_tokenizer import CharTokenizer
-from src.vision.models import ViTEncoder
+from src.vision.models import ViTEncoder, ConvVitEncoder
 from src.linearize import LinearizedModel
 from src.evaluation.eval import eval_dataset
 from src.train_steps.base_ctc import train_ctc
@@ -68,9 +68,15 @@ def prepare_model(vocab_size, args):
         raise NotImplementedError(f"Won't load {args.checkpoint_name}, model loading is not implemented yet.")
     
     else:
-        model = ViTEncoder(args.image_height, args.patch_width, 3, args.token_size, [args.visual_tokenizer_width] * args.visual_tokenizer_depth, args.model_depth, args.model_width, vocab_size, args.dropout, args.device)
-        model.to(args.device)
 
+        if args.model_architecture == 'vit_encoder_vertical_patch':
+            model = ViTEncoder(args.image_height, args.patch_width, 3, args.token_size, [args.visual_tokenizer_width] * args.visual_tokenizer_depth, args.model_depth, args.model_width, vocab_size, args.dropout, args.device)
+        
+        elif args.model_architecture == 'conv_vit_encoder':
+            model = ConvVitEncoder(args.image_height, args.patch_width, 3, args.token_size, args.conv_stride, args.model_depth, args.model_width. vocab_size, args.dropout, args.device)
+        
+
+    model.to(args.device)
     ### LINEARIZE ###
     ### The loaded model is already linear?
     if args.linear_model:

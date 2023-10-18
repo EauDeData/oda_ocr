@@ -11,10 +11,11 @@ def train_cross_entropy(epoch, dataloader, optimizer, model, loss_function, patc
         
         optimizer.zero_grad()
         
-        predicted_seq = model(batch)
+        predicted_seq_logits = model(batch)
+
         target_seq = batch['labels'].to(model.device)
         
-        loss = loss_function(predicted_seq.view(-1, predicted_seq.shape[-1]), target_seq.view(-1))
+        loss = loss_function(predicted_seq_logits.view(-1, predicted_seq_logits.shape[-1]), target_seq.view(-1))
         if loss == loss:
         
             loss.backward()

@@ -103,6 +103,9 @@ def parse_arguments():
     
     model_group.add_argument('--load_checkpoint', action='store_true')
     model_group.add_argument('--checkpoint_name', type=str, default=None)
+
+    model_group.add_argument('--model_architecture', type=str, choices=['conv_vit_encoder', 'vit_encoder_vertical_patch'], default='conv_vit_encoder')
+    model_group.add_argument('--conv_stride', type=int, default=8)
     
     
     ### OPTIM GROUP ####
@@ -164,8 +167,10 @@ def get_model_name(args):
     else: name_components.append('non-linear')
     name_components.extend(['depth', args.model_depth, 'width', args.model_width, 'dropout', args.dropout, 'token_size', args.token_size])
     name_components.extend(['loss', args.loss_function, 'image_height', args.image_height, 'patch_width', args.patch_width, 'optimizer', args.optimizer, 'lr', args.learning_rate])
+    if 'conv' in args.model_architecture:
+        name_components.append(['stride', args.conv_stride])
 
     # Join all components to create the model name
-    model_name = 'ViT_CTC_' + '_'.join(map(str, name_components))
+    model_name = args.model_architecture + '_'.join(map(str, name_components))
 
     return model_name
