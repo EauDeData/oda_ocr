@@ -26,6 +26,8 @@ def prepare_optimizer(model, args):
         optimizer = optim.Adadelta(model.parameters(), lr=args.learning_rate)
     elif args.optimizer == 'rmsprop':
         optimizer = optim.RMSprop(model.parameters(), lr=args.learning_rate)
+    elif args.optimizer == 'adamw':
+        optimizer = optim.AdamW(model.parameters(), lr=args.learning_rate)
     else:
         raise ValueError("Unsupported optimizer choice.")
 
@@ -35,7 +37,7 @@ def get_lost_and_train(args, tokenizer = None):
     if args.loss_function == 'ctc':
         return torch.nn.CTCLoss(blank=tokenizer.tokens[tokenizer.ctc_blank], zero_infinity = True), train_ctc
     elif args.loss_function == 'cross_entropy':
-        return torch.nn.CrossEntropyLoss(), train_cross_entropy
+        return torch.nn.CrossEntropyLoss(ignore_index = tokenizer.tokens[tokenizer.padding_token]), train_cross_entropy
     elif args.loss_function == 'nll':
         return torch.nn.NLLLoss(), train_cross_entropy
     
@@ -73,7 +75,8 @@ def prepare_model(vocab_size, args):
             model = ViTEncoder(args.image_height, args.patch_width, 3, args.token_size, [args.visual_tokenizer_width] * args.visual_tokenizer_depth, args.model_depth, args.model_width, vocab_size, args.dropout, args.device)
         
         elif args.model_architecture == 'conv_vit_encoder':
-            model = ConvVitEncoder(args.image_height, args.patch_width, 3, args.token_size, args.conv_stride, args.model_depth, args.model_width. vocab_size, args.dropout, args.device)
+            assert args.conv_stride == args.patch_width, 'Num tokens will missmatch'
+            model = ConvVitEncoder(args.image_height, args.patch_width, 3, args.token_size, args.conv_stride, args.model_depth, args.model_width, vocab_size, args.dropout, args.device)
         
 
     model.to(args.device)
@@ -108,21 +111,24 @@ def loop(epoches, model, datasets, collator, tokenizer, args, train_dataloader, 
         
         
         print(f"{epoch} / {epoches} epoches")
-        
+
+
         train_function(epoch, train_dataloader, optimizer, model, loss_function, args.patch_width, wandb)
+        
         evals = evaluation_epoch(datasets, model, tokenizer, collator, args)
         print(evals)
 
 def main(args):
     
     
+    torch.autograd.set_detect_anomaly(True)
     model_name = get_model_name(args)
     print(model_name)
 
     
     normalize = {
-        'normalize': lambda x: (x - x.min()) / (x.max() - x.min()),
-        'standarize': lambda x: x / x.max()
+        'normalize': lambda x: (x - x.min()) / max((x.max() - x.min()), 0.01),
+        'standarize': lambda x: x / max(x.max(), 1)
     }
     
     transforms = torchvision.transforms.Compose((
@@ -136,7 +142,8 @@ def main(args):
     whole_train = merge_datasets(datasets, split = 'train')
     
     tokenizer, collator = prepare_tokenizer_and_collator(whole_train, args)
-       
+    print('tokenizer num tokens:', len(tokenizer))
+
     train_dataloader = prepare_train_loaders(whole_train, collator, args.num_workers_train, args.batch_size)
     
     model = prepare_model(len(tokenizer), args)

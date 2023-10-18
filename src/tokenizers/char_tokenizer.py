@@ -50,7 +50,7 @@ class CharTokenizer:
             self.tokens[token.lower() if not token in self.special_tokens else token] if (token.lower() if not token in self.special_tokens else token) in self.tokens else self.tokens[self.unk]
             
                 for token in (tokens if not self.include_special
-                              else [self.bos, self.cls_token] + tokens + [self.bos])
+                              else [self.bos] + tokens + [self.bos])
         ])
 
     def decode(self, vector):

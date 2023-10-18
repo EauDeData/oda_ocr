@@ -168,7 +168,7 @@ def get_model_name(args):
     name_components.extend(['depth', args.model_depth, 'width', args.model_width, 'dropout', args.dropout, 'token_size', args.token_size])
     name_components.extend(['loss', args.loss_function, 'image_height', args.image_height, 'patch_width', args.patch_width, 'optimizer', args.optimizer, 'lr', args.learning_rate])
     if 'conv' in args.model_architecture:
-        name_components.append(['stride', args.conv_stride])
+        name_components.extend(['stride', args.conv_stride])
 
     # Join all components to create the model name
     model_name = args.model_architecture + '_'.join(map(str, name_components))

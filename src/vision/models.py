@@ -99,6 +99,8 @@ class ConvVitEncoder(nn.Module):
         
         self.lm_head = nn.Linear(token_size, vocab_size) # Out: (BATCH_SIZE, SEQ_SIZE, TOKEN_SIZE)
 
+        self.visual_bos, self.visual_eos = nn.Linear(1, token_size), nn.Linear(1, token_size)
+
         self.device = device
 
     def forward(self, input_dict):
@@ -109,7 +111,13 @@ class ConvVitEncoder(nn.Module):
 
         tokens = convolved_tokens.permute(2, 3, 0, 1)[0] # tokens (SEQ_SIZE; BS; TOKEN_SIZE)
 
-        positional_encoded_tokens = self.positional_encoding(tokens)
+        ones = torch.ones(1, tokens.shape[1], 1).to(self.device)
+        visual_bos = self.visual_bos(ones)
+        visual_eos = self.visual_eos(ones)
+        
+        tokens_with_bos_and_eos = torch.cat((visual_bos, tokens, visual_eos), dim=0)
+
+        positional_encoded_tokens = self.positional_encoding(tokens_with_bos_and_eos)
 
         context_tokens = self.transformer_encoder(positional_encoded_tokens)
         

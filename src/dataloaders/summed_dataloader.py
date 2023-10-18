@@ -70,11 +70,9 @@ class CollateFNs:
     
     def collate(self, batch):
 
-        max_tokens = max([len(x['tokens']) for x in batch])
-        max_patches = max([x['input_tensor'].shape[2] // self.patch_width for x in batch] + \
-                            [max_tokens * 1 if not self.same_size else 2])
-        if self.same_size:
-            max_patches = max_tokens = max(max_patches, max_tokens)
+        max_tokens = max([len(x['tokens']) for x in batch]) 
+        max_patches = max([x['input_tensor'].shape[2] // self.patch_width for x in batch])
+        max_tokens_both = max(max_patches, max_tokens) 
         
         visual_tokens = []
         text_tokens = []
@@ -82,7 +80,7 @@ class CollateFNs:
         sources = []
         resized_images = []
         original_images = []
-        
+        images_tesnor_full = []
          
         for item in batch:
             
@@ -93,31 +91,32 @@ class CollateFNs:
             sources.append(f"{split}_ {dataset}")
             raw_texts.append(raw_text.lower())
             
+            patches = list(image.chunk(image.shape[2] // self.patch_width, dim=-1))
+            
+
+            patches = patches + [self.visual_padding_token] * (max_tokens_both - len(patches))
+                        
             text_tokenized = torch.from_numpy(
                 self.character_tokenizer(
-                    text_token + [self.character_tokenizer.padding_token] * (max_tokens - len(text_token))
+                    text_token + [self.character_tokenizer.padding_token] * ((max_tokens_both) - len(text_token))
                 )
             )
+
             text_tokens.append(text_tokenized)
 
 
-            patches = list(image.chunk(image.shape[2] // self.patch_width, dim=-1))
-            required_patches = max(text_tokenized.shape[0], len(patches))
-            
-            patches = patches + [self.visual_padding_token] * (max_patches - len(patches))
-            
-            
-            if len(patches) < len(text_tokens[-1]):
-                patches = patches + [self.visual_padding_token] * (len(text_tokens[-1]) - len(patches))
-            
             visual_tokens.append(
                 torch.stack(
                     patches
                 )
             )
+            images_tesnor_full.append(
+                torch.cat(patches, dim=2)
+            )
     
         return {
                 'input_visual_seq': torch.stack(visual_tokens),
+                'images_tensor': torch.stack(images_tesnor_full),
                 'labels': torch.stack(text_tokens),
                 'raw_text_gt': raw_texts,
                 'sources': sources,
