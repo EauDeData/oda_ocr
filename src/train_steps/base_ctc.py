@@ -11,9 +11,13 @@ def train_ctc(epoch, dataloader, optimizer, model, loss_function, patch_width, w
         
         optimizer.zero_grad()
         
-        softmaxed_output = model(batch)
+        softmaxed_output = torch.nn.functional.log_softmax (model(batch), dim = -1)
         
         ground_truth = batch['labels']
+
+        # import pdb
+        # pdb.set_trace()
+        
         
         loss = loss_function(softmaxed_output, ground_truth, tuple(batch['input_lengths']), tuple(batch['output_lengths']))
         if loss!=loss:

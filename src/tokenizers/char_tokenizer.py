@@ -34,10 +34,7 @@ class CharTokenizer:
 
         else:   
             self.init_tokens(dataset, save_on_init)
-            
-        self.tokens[self.padding_token] = max(self.tokens.values()) + 1
-        self.tokens[self.ctc_blank] = max(self.tokens.values()) + 1
-        
+                    
         self.decode_array = np.array(list(self.tokens.keys()))
         self.include_special = include_secial
 
@@ -66,7 +63,8 @@ class CharTokenizer:
             self.bos: math.inf,
             self.eos: math.inf,
             self.cls_token: math.inf,
-            self.unk: 0
+            self.unk: 0,
+            self.padding_token: math.inf
             }
         
         for idx in tqdm(range(len(dataset)), desc='tokenizing dataset...'):
@@ -77,7 +75,7 @@ class CharTokenizer:
                 if not char in tokens_with_freqs: tokens_with_freqs[char] = 0
                 tokens_with_freqs[char] += 1
 
-        self.tokens = {token: num for num, token in enumerate(sorted(tokens_with_freqs.keys(), reverse = True, key = lambda x: tokens_with_freqs[x]))}
+        self.tokens = {token: num for num, token in enumerate([self.ctc_blank] + sorted(tokens_with_freqs.keys(), reverse = True, key = lambda x: tokens_with_freqs[x]))}
         if save:
             print(f"Tokens saved at {self.full_path}!")
             json.dump(

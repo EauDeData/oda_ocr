@@ -33,14 +33,15 @@ def eval_dataset(dataloader, model, dataset_name, tokenizer, wandb_session):
 
             argmaxed_output = tokens.argmax(dim = 2).cpu()
 
-            strings = [x for x in tokenizer.decode(argmaxed_output)]
-            labels = [x for x in tokenizer.decode(batch['labels'].permute(1, 0))]
+            strings = [clean_special_tokens(x, tokenizer) for x in tokenizer.decode(argmaxed_output)]
+            labels = [clean_special_tokens(x, tokenizer) for x in tokenizer.decode(batch['labels'].permute(1, 0))]
+            for x, y in zip(strings, labels): print(x, y)
 
             metrics[f"CER_{dataset_name}"] += cer(strings, labels).item()
             metrics[f"ED_{dataset_name}"] += ed(strings, labels).item()
             metrics[f"MER_{dataset_name}"] += mer(strings, labels).item()
             total_steps += 1
-        
+
     final_scores = {key: metrics[key] / total_steps for key in metrics}
     wandb_session.log(
         final_scores

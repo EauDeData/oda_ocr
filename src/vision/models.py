@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import math
 from torch import Tensor
-
+from vit_pytorch import ViT
 
 def linear_constructor(topology: list):
 
@@ -108,8 +108,9 @@ class ConvVitEncoder(nn.Module):
         input_visual_tensor = input_dict['images_tensor'].to(self.device) # full images (BS, CHANNEL, HEIGHT, WIDTH)
 
         convolved_tokens = self.conv_1(input_visual_tensor) # tokens (BS, TOKEN_SIZE, 1, SEQ_SIZE)
+        unlinearized_tokens = torch.nn.functional.relu(convolved_tokens)
 
-        tokens = convolved_tokens.permute(2, 3, 0, 1)[0] # tokens (SEQ_SIZE; BS; TOKEN_SIZE)
+        tokens = unlinearized_tokens.permute(2, 3, 0, 1)[0] # tokens (SEQ_SIZE; BS; TOKEN_SIZE)
 
         ones = torch.ones(1, tokens.shape[1], 1).to(self.device)
         visual_bos = self.visual_bos(ones)
@@ -125,9 +126,10 @@ class ConvVitEncoder(nn.Module):
         
         return logits
 
-class SillyViTEncoderDecoder(nn.Module):
-    # Approach " a saco "
-    pass
+class FullyConvolutionalEncoder(nn.Module):
+
+    def __init__(self, image_height = 128, patch_width = 16, nchannels = 3, token_size = 224, stride = 8, nlayers = 6, nheads = 8, vocab_size = None, dropout = 0.1, device = 'cpu', aggregation = 'max'):
+        super(ConvVitEncoder, self).__init__()
 
 if __name__ == '__main__':
 
