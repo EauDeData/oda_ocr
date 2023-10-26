@@ -92,7 +92,15 @@ def prepare_model(vocab_size, args):
                                    args.model_depth, args.model_width, vocab_size, args.dropout, args.device)
 
         elif args.model_architecture == 'vit_lucid':
-            model = ViT(
+
+            class _ProtoModel(torch.nn.Module):
+                def __init__(self, model):
+                    self.model = model
+
+                def forward(self, x):
+                    return self.model(x['totally_padded_image'])
+
+            model = _ProtoModel(ViT(
                 image_size = args.square_image_max_size,
                 patch_size = args.patch_width,
                 num_classes = vocab_size,
@@ -102,7 +110,7 @@ def prepare_model(vocab_size, args):
                 mlp_dim = 2048,
                 dropout = args.dropout,
                 emb_dropout = args.dropout
-            )
+            ))
 
     model.to(args.device)
     ### LINEARIZE ###
