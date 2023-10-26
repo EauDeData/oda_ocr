@@ -134,6 +134,7 @@ class FullyConvolutionalEncoder(nn.Module):
 
 class _ProtoModel(torch.nn.Module):
     def __init__(self, model):
+        super(_ProtoModel, self).__init__()
         self.model = model
 
     def forward(self, x):
