@@ -3,6 +3,7 @@ import torch, torchvision
 import numpy as np
 import wandb
 import torch.optim as optim
+from vit_pytorch import ViT
 
 from src.io.args import parse_arguments, get_model_name, model_choices_lookup
 from src.io.load_datasets import load_datasets
@@ -59,7 +60,8 @@ def prepare_tokenizer_and_collator(merged_dataset, transforms, args):
     tokenizer = CharTokenizer(merged_dataset, not args.loss_function == 'ctc', args.tokenizer_location,
                               args.tokenizer_name, args.save_tokenizer)
     collator = CollateFNs(args.patch_width, args.image_height, tokenizer,
-                          seq2seq_same_size=not args.loss_function == 'ctc', max_size = args.square_image_max_size, transforms = transforms)
+                          seq2seq_same_size=not args.loss_function == 'ctc', max_size=args.square_image_max_size,
+                          transforms=transforms)
 
     return tokenizer, collator
 
@@ -74,7 +76,8 @@ def prepare_model(vocab_size, args):
     if args.load_checkpoint and args.checkpoint_name not in model_choices_lookup:
         raise NotImplementedError(f"Won't load {args.checkpoint_name}, model is not implemented yet.\n"
                                   f"availible models are: {model_choices_lookup}")
-    if args.use_transformers: raise NotImplementedError
+    if args.use_transformers:
+        raise NotImplementedError
 
     else:
 
@@ -87,6 +90,19 @@ def prepare_model(vocab_size, args):
             assert args.conv_stride == args.patch_width, 'Num tokens will missmatch'
             model = ConvVitEncoder(args.image_height, args.patch_width, 3, args.token_size, args.conv_stride,
                                    args.model_depth, args.model_width, vocab_size, args.dropout, args.device)
+
+        elif args.model_architecture == 'vit_lucid':
+            model = ViT(
+                image_size = args.square_image_max_size,
+                patch_size = args.patch_width,
+                num_classes = vocab_size,
+                dim = args.token_size,
+                depth = args.model_depth,
+                heads = args.model_width,
+                mlp_dim = 2048,
+                dropout = args.dropout,
+                emb_dropout = args.dropout
+            )
 
     model.to(args.device)
     ### LINEARIZE ###
