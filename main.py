@@ -9,7 +9,7 @@ from src.io.args import parse_arguments, get_model_name, model_choices_lookup
 from src.io.load_datasets import load_datasets
 from src.dataloaders.summed_dataloader import CollateFNs
 from src.tokenizers.char_tokenizer import CharTokenizer
-from src.vision.models import ViTEncoder, ConvVitEncoder
+from src.vision.models import ViTEncoder, ConvVitEncoder, _ProtoModel
 from src.linearize import LinearizedModel
 from src.evaluation.eval import eval_dataset
 from src.train_steps.base_ctc import train_ctc
@@ -92,13 +92,6 @@ def prepare_model(vocab_size, args):
                                    args.model_depth, args.model_width, vocab_size, args.dropout, args.device)
 
         elif args.model_architecture == 'vit_lucid':
-
-            class _ProtoModel(torch.nn.Module):
-                def __init__(self, model):
-                    self.model = model
-
-                def forward(self, x):
-                    return self.model(x['totally_padded_image'])
 
             model = _ProtoModel(ViT(
                 image_size = args.square_image_max_size,

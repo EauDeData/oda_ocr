@@ -131,6 +131,13 @@ class FullyConvolutionalEncoder(nn.Module):
     def __init__(self, image_height = 128, patch_width = 16, nchannels = 3, token_size = 224, stride = 8, nlayers = 6, nheads = 8, vocab_size = None, dropout = 0.1, device = 'cpu', aggregation = 'max'):
         super(ConvVitEncoder, self).__init__()
 
+
+class _ProtoModel(torch.nn.Module):
+    def __init__(self, model):
+        self.model = model
+
+    def forward(self, x):
+        return self.model(x['totally_padded_image'])
 if __name__ == '__main__':
 
     input_dictionary = {
