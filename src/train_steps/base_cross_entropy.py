@@ -15,7 +15,7 @@ def train_cross_entropy(epoch, dataloader, optimizer, model, loss_function, patc
         target_seq = (batch['labels'].to(model.device)) # (BS, SEQ_LEN)
         padding = torch.ones(target_seq.shape[0], predicted_seq_logits.shape[0]) * padding_token
         padding[:target_seq.shape[0], :target_seq.shape[1]] = target_seq
-        padded_labels = padding.view(-1)
+        padded_labels = padding.view(-1).to(model.device)
 
         predicted_seq_logits = predicted_seq_logits.permute(1, 0, 2).reshape(predicted_seq_logits.shape[0]*predicted_seq_logits.shape[1], predicted_seq_logits.shape[2])
         
