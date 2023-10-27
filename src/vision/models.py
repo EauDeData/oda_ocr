@@ -162,7 +162,7 @@ class CLIPWrapper(torch.nn.Module):
 
     def forward(self, x):
 
-        x = self.conv1(x['totally_padded_image'].to(self.device))  # shape = [*, width, grid, grid]
+        x = self.conv1(x['images_tensor'].to(self.device))  # shape = [*, width, grid, grid]
         x = x.reshape(x.shape[0], x.shape[1], -1)  # shape = [*, width, grid ** 2]
         x = x.permute(0, 2, 1)  # shape = [*, grid ** 2, width]
         x = torch.cat([self.class_embedding.to(x.dtype) + torch.zeros(x.shape[0], 1, x.shape[-1], dtype=x.dtype,

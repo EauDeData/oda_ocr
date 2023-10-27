@@ -5,6 +5,10 @@ import torch
 
 class GenericDataset:
 
+    def __init__(self):
+        self.patch_width = None
+        self.image_height = None
+
     def add(self, dataset):
         return SummedDataset(self, dataset)
 
@@ -112,7 +116,6 @@ class CollateFNs:
             raw_texts.append(raw_text.lower())
 
             patches = list(image.chunk(image.shape[2] // self.patch_width, dim=-1))
-
             patches = patches + [self.visual_padding_token] * (max_tokens_both - len(patches))
 
             text_tokenized = torch.from_numpy(
