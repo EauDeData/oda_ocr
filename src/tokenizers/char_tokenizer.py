@@ -53,7 +53,7 @@ class CharTokenizer:
     def decode(self, vector):
         
         vector = vector.permute(1, 0)
-        strings = self.decode_array[vector.numpy()].tolist()
+        strings = self.decode_array[vector].tolist()
 
         return [''.join(word) for word in strings] 
     
