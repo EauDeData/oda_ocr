@@ -141,7 +141,7 @@ class CollateFNs:
 
 def resize_to_max_size(image, max_size):
     width, height = image.size
-    return image.resize(min(max_size, width), min(max_size, height))
+    return image.resize((min(max_size, width), min(max_size, height)))
 
 
 if __name__ == '__main__':
