@@ -33,11 +33,9 @@ def eval_dataset(dataloader, model, dataset_name, tokenizer, wandb_session):
 
             tokens = model(batch).cpu().detach().numpy()
             decoded_tokens = decoder({'ctc_output': tokens}, None)
-            import pdb
-            pdb.set_trace()
 
             strings = [clean_special_tokens(x, tokenizer) for x in
-                       tokenizer.decode(np.stack([x['text'] for x in decoded_tokens]))]
+                       tokenizer.decode_from_numpy_list([x['text'] for x in decoded_tokens])]
             labels = [clean_special_tokens(x, tokenizer) for x in tokenizer.decode(batch['labels'].permute(1, 0))]
             for x, y in zip(strings, labels): print(x, y)
 
