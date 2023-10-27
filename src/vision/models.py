@@ -142,7 +142,7 @@ class _ProtoModel(torch.nn.Module):
         return self.model(x['totally_padded_image'].to(self.device))
 
 class CLIPWrapper(torch.nn.Module):
-    def __init__(self, vocab_size, patch_size = 32, device = 'cuda'):
+    def __init__(self, vocab_size, patch_size = 32,device = 'cuda'):
         super(CLIPWrapper, self).__init__()
         model, _ = clip.load(f"ViT-B/{patch_size}", device='cpu')
 
@@ -168,7 +168,7 @@ class CLIPWrapper(torch.nn.Module):
         x = torch.cat([self.class_embedding.to(x.dtype) + torch.zeros(x.shape[0], 1, x.shape[-1], dtype=x.dtype,
                                                                       device=x.device), x],
                       dim=1)  # shape = [*, grid ** 2 + 1, width]
-        x = x + self.positional_embedding.to(x.dtype)
+        # x = x + self.positional_embedding.to(x.dtype)
         x = self.ln_pre(x)
 
         x = x.permute(1, 0, 2)  # NLD -> LND
