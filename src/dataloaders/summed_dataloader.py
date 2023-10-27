@@ -58,7 +58,6 @@ class DummyDataset(GenericDataset):
             'image': self.samples[idx]
         }
 
-
 class CollateFNs:
 
     def __init__(self, patch_width, image_height, character_tokenizer, seq2seq_same_size=False, max_size=224,
@@ -93,10 +92,11 @@ class CollateFNs:
                 'resized_image']
             original_images.append(original_image)
 
-            image_to_be_patched = self.transforms(resize_to_max_size(resized_image, self.max_size))
+            resized_image = resize_to_max_size(resized_image, self.max_size)
+            image_to_be_patched = self.transforms(resized_image)
             _, w, h = image_to_be_patched.shape
 
-            final_image = self.total_visual_padding.copy()
+            final_image = self.total_visual_padding.clone()
             final_image[:, :w, :h] = image_to_be_patched
             patched_images.append(final_image)
 
@@ -135,9 +135,9 @@ class CollateFNs:
             'input_lengths': [x.size[0] // self.patch_width for x in resized_images],
             'output_lengths': [len([char for char in x]) for x in raw_texts],
             'pre_resize_images': original_images,
-            'totally_padded_image': torch.stack(patched_images)
+            'totally_padded_image': torch.stack(patched_images),
+            'input_lengths_clip': [224 // self.patch_width for _ in resized_images]
         }
-
 
 def resize_to_max_size(image, max_size):
     width, height = image.size

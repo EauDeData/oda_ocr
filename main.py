@@ -12,7 +12,7 @@ from src.tokenizers.char_tokenizer import CharTokenizer
 from src.vision.models import ViTEncoder, ConvVitEncoder, _ProtoModel, CLIPWrapper
 from src.linearize import LinearizedModel
 from src.evaluation.eval import eval_dataset
-from src.train_steps.base_ctc import train_ctc
+from src.train_steps.base_ctc import train_ctc, train_ctc_clip
 from src.train_steps.base_cross_entropy import train_cross_entropy
 
 
@@ -37,7 +37,8 @@ def prepare_optimizer(model, args):
 
 def get_lost_and_train(args, tokenizer=None):
     if args.loss_function == 'ctc':
-        return torch.nn.CTCLoss(blank=tokenizer.tokens[tokenizer.ctc_blank], zero_infinity=True), train_ctc
+        train_function = train_ctc if args.model_architecture != 'clip' else train_ctc_clip
+        return torch.nn.CTCLoss(blank=tokenizer.tokens[tokenizer.ctc_blank], zero_infinity=True), train_function
     elif args.loss_function == 'cross_entropy':
         return torch.nn.CrossEntropyLoss(ignore_index=tokenizer.tokens[tokenizer.padding_token]), train_cross_entropy
     elif args.loss_function == 'nll':
