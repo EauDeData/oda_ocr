@@ -144,7 +144,7 @@ def loop(epoches, model, datasets, collator, tokenizer, args, train_dataloader, 
     for epoch in range(epoches):
         print(f"{epoch} / {epoches} epoches")
 
-        train_function(epoch, train_dataloader, optimizer, model, loss_function, args.patch_width, wandb, tokenizer.padding_token)
+        train_function(epoch, train_dataloader, optimizer, model, loss_function, args.patch_width, wandb, tokenizer.tokens[tokenizer.padding_token])
 
         evals = evaluation_epoch(datasets, model, tokenizer, collator, args)
         print(evals)
