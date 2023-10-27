@@ -153,7 +153,7 @@ class CLIPWrapper(torch.nn.Module):
         self.conv1 = self.model.conv1
         self.class_embedding = self.model.class_embedding
 
-        self.positional_embedding = self.model.positional_embedding
+        self.positional_embedding = torch.nn.Parameter(torch.rand((1, 256, 768), dtype=self.model.dtype))
         self.ln_pre = self.model.ln_pre
         self.transformer = self.model.transformer
 
@@ -168,8 +168,10 @@ class CLIPWrapper(torch.nn.Module):
         x = torch.cat([self.class_embedding.to(x.dtype) + torch.zeros(x.shape[0], 1, x.shape[-1], dtype=x.dtype,
                                                                       device=x.device), x],
                       dim=1)  # shape = [*, grid ** 2 + 1, width]
-        # x = x + self.positional_embedding.to(x.dtype)
+
         x = self.ln_pre(x)
+        x = x + self.positional_embedding.to(x.dtype)
+
 
         x = x.permute(1, 0, 2)  # NLD -> LND
         x = self.transformer(x)
