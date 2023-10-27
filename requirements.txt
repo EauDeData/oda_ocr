@@ -13,7 +13,7 @@ filelock==3.12.4
 fonttools==4.43.1
 fsspec==2023.9.2
 ftfy==6.1.1
-functorch==2.0.0
+functorch
 gitdb==4.0.10
 GitPython==3.1.37
 huggingface-hub==0.18.0
@@ -79,7 +79,7 @@ termcolor==2.3.0
 timm==0.9.7
 torch==1.13.0
 torchmetrics==1.2.0
-torchvision==0.14.0
+torchvision
 tqdm==4.66.1
 triton==2.1.0
 typing_extensions==4.8.0

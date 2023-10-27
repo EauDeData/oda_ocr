@@ -123,7 +123,7 @@ def parse_arguments():
     model_group.add_argument('--checkpoint_name', choices=model_choices, type=str, default=None)
 
     model_group.add_argument('--model_architecture', type=str,
-                             choices=['conv_vit_encoder', 'vit_encoder_vertical_patch', 'vit_lucid'], default='conv_vit_encoder')
+                             choices=['conv_vit_encoder', 'vit_encoder_vertical_patch', 'vit_lucid', 'clip'], default='conv_vit_encoder')
     model_group.add_argument('--conv_stride', type=int, default=8)
 
     ### OPTIM GROUP ####

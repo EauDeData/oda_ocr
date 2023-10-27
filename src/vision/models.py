@@ -133,12 +133,13 @@ class FullyConvolutionalEncoder(nn.Module):
 
 
 class _ProtoModel(torch.nn.Module):
-    def __init__(self, model):
+    def __init__(self, model, device):
         super(_ProtoModel, self).__init__()
         self.model = model
+        self.device = device
 
     def forward(self, x):
-        return self.model(x['totally_padded_image'])
+        return self.model(x['totally_padded_image'].to(self.device))
 
 class CLIPWrapper(torch.nn.Module):
     def __init__(self, vocab_size, patch_size = 32, device = 'cuda'):
@@ -172,7 +173,7 @@ class CLIPWrapper(torch.nn.Module):
 
         x = x.permute(1, 0, 2)  # NLD -> LND
         x = self.transformer(x)
-        x = x.permute(1, 0, 2)  # LND -> NLD
+        x = self.lm_head(x)
 
         return x
 
@@ -183,5 +184,5 @@ if __name__ == '__main__':
         'totally_padded_image': torch.rand(3, 3, 224, 224)
     }
 
-    encoder = CLIPWrapper(100, 32)
-    print(encoder(input_dictionary))
+    encoder = CLIPWrapper(100, 16, 'cpu')
+    print(encoder(input_dictionary).shape)

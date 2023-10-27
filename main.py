@@ -9,7 +9,7 @@ from src.io.args import parse_arguments, get_model_name, model_choices_lookup
 from src.io.load_datasets import load_datasets
 from src.dataloaders.summed_dataloader import CollateFNs
 from src.tokenizers.char_tokenizer import CharTokenizer
-from src.vision.models import ViTEncoder, ConvVitEncoder, _ProtoModel
+from src.vision.models import ViTEncoder, ConvVitEncoder, _ProtoModel, CLIPWrapper
 from src.linearize import LinearizedModel
 from src.evaluation.eval import eval_dataset
 from src.train_steps.base_ctc import train_ctc
@@ -103,7 +103,12 @@ def prepare_model(vocab_size, args):
                 mlp_dim = 2048,
                 dropout = args.dropout,
                 emb_dropout = args.dropout
-            ))
+            ), args.device)
+        elif args.model_architecture == 'clip':
+
+            model = CLIPWrapper(vocab_size, args.patch_width, args.device)
+
+
 
     model.to(args.device)
     ### LINEARIZE ###
