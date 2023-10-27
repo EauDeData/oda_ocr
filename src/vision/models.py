@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import math
 from torch import Tensor
-from vit_pytorch import ViT
+import clip
 
 def linear_constructor(topology: list):
 
@@ -139,11 +139,49 @@ class _ProtoModel(torch.nn.Module):
 
     def forward(self, x):
         return self.model(x['totally_padded_image'])
+
+class CLIPWrapper(torch.nn.Module):
+    def __init__(self, vocab_size, patch_size = 32, device = 'cuda'):
+        super(CLIPWrapper, self).__init__()
+        model, _ = clip.load(f"ViT-B/{patch_size}", device='cpu')
+
+        self.model = model.visual
+        self.input_resolution = self.model.input_resolution
+        self.output_dim = self.model.output_dim
+
+        self.conv1 = self.model.conv1
+        self.class_embedding = self.model.class_embedding
+
+        self.positional_embedding = self.model.positional_embedding
+        self.ln_pre = self.model.ln_pre
+        self.transformer = self.model.transformer
+
+        self.lm_head = torch.nn.Linear(768, vocab_size)
+        self.device = device
+
+    def forward(self, x):
+
+        x = self.conv1(x['totally_padded_image'].to(self.device))  # shape = [*, width, grid, grid]
+        x = x.reshape(x.shape[0], x.shape[1], -1)  # shape = [*, width, grid ** 2]
+        x = x.permute(0, 2, 1)  # shape = [*, grid ** 2, width]
+        x = torch.cat([self.class_embedding.to(x.dtype) + torch.zeros(x.shape[0], 1, x.shape[-1], dtype=x.dtype,
+                                                                      device=x.device), x],
+                      dim=1)  # shape = [*, grid ** 2 + 1, width]
+        x = x + self.positional_embedding.to(x.dtype)
+        x = self.ln_pre(x)
+
+        x = x.permute(1, 0, 2)  # NLD -> LND
+        x = self.transformer(x)
+        x = x.permute(1, 0, 2)  # LND -> NLD
+
+        return x
+
 if __name__ == '__main__':
 
     input_dictionary = {
-        'images_tensor': torch.rand(3, 3, 128, 16 * 5)
+        'images_tensor': torch.rand(3, 3, 128, 16 * 5),
+        'totally_padded_image': torch.rand(3, 3, 224, 224)
     }
 
-    encoder = ConvVitEncoder(vocab_size = 10)
-    print(encoder(input_dictionary).shape)
+    encoder = CLIPWrapper(100, 32)
+    print(encoder(input_dictionary))
