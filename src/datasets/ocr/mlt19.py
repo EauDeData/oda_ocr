@@ -66,14 +66,14 @@ class MLT19Dataset(GenericDataset):
         
         metadata = self.data[idx]
         x,y,w,h = metadata['bbx']
-        if (w - 1) < 0: w = 2
-        if (h - 1) < 0: h = 2
-        
         image = Image.open(
                            
-                            metadata['image_path']
+                           metadata['image_path']
                            
-                           ).crop((x, y, w - 1, h - 1)).convert('RGB')
+                           )
+        
+        w,h = min(w, image.size[0]), min(h, image.size[1])
+        image = image.crop((x, y, w , h )).convert('RGB')
         
         image_resized = self.resize_image(image)
 
