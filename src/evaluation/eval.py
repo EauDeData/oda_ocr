@@ -4,6 +4,8 @@ from torchmetrics.text import CharErrorRate
 from torchmetrics.text import EditDistance
 from torchmetrics.text import MatchErrorRate
 
+from src.decoders.decoders import  GreedyTextDecoder
+
 def clean_special_tokens(string, tokenizer):
     
     for token in tokenizer.special_tokens:
@@ -14,7 +16,8 @@ def clean_special_tokens(string, tokenizer):
     
 
 def eval_dataset(dataloader, model, dataset_name, tokenizer, wandb_session):
-    
+
+    decoder = GreedyTextDecoder(False)
     cer = CharErrorRate()
     ed = EditDistance()
     mer = MatchErrorRate()
@@ -30,8 +33,9 @@ def eval_dataset(dataloader, model, dataset_name, tokenizer, wandb_session):
         for batch in dataloader:
             
             tokens = model(batch)
-
-            argmaxed_output = tokens.argmax(dim = 2).cpu()
+            decoded_tokens = decoder(tokens)
+            import pdb
+            pdb.set_trace()
 
             strings = [clean_special_tokens(x, tokenizer) for x in tokenizer.decode(argmaxed_output)]
             labels = [clean_special_tokens(x, tokenizer) for x in tokenizer.decode(batch['labels'].permute(1, 0))]
