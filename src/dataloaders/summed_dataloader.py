@@ -98,13 +98,13 @@ class CollateFNs:
             _, w, h = image_to_be_patched.shape
 
             final_image = self.total_visual_padding.clone()
-            mask = self.total_visual_padding.clone()
+            # mask = self.total_visual_padding.clone()
 
             final_image[:, :w, :h] = image_to_be_patched
-            mask[:, w:, h:] = 1
-            mask = 1 - mask
+            # mask[:, w:, h:] = 1
+            # mask = 1 - mask
 
-            masks.append(mask)
+            # masks.append(mask)
             patched_images.append(final_image)
 
             resized_images.append(resized_image)
