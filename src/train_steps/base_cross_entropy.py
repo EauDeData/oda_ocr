@@ -1,7 +1,7 @@
 import torch
 from tqdm import tqdm
 
-def train_cross_entropy(epoch, dataloader, optimizer, model, loss_function, patch_width, wandb_session):
+def train_cross_entropy(epoch, dataloader, optimizer, model, loss_function, patch_width, wandb_session, padding_token = 0):
     
     buffer = 0
     counter = 0
@@ -12,23 +12,14 @@ def train_cross_entropy(epoch, dataloader, optimizer, model, loss_function, patc
         
         predicted_seq_logits = model(batch)
 
-        target_seq = batch['labels'].to(model.device).view(-1) # (BS)
+        target_seq = (batch['labels'].to(model.device)) # (BS, SEQ_LEN)
+        padding = torch.ones((target_seq.shape[0], predicted_seq_logits.shape[0])) * padding_token
+        padding[:target_seq.shape[0], :target_seq.shape[1]] = target_seq
+        padded_labels = padding.view(-1)
 
         predicted_seq_logits = predicted_seq_logits.permute(1, 0, 2).reshape(predicted_seq_logits.shape[0]*predicted_seq_logits.shape[1], predicted_seq_logits.shape[2])
         
-        loss = loss_function(predicted_seq_logits, target_seq)
-
-        if loss != loss:
-
-            images = batch['images_tensor'][0].squeeze().cpu().numpy().transpose(1,2,0)
-            import matplotlib.pyplot as plt
-            plt.imshow(images)
-            plt.title(batch['raw_text_gt'][0])
-            plt.savefig('tmp.png')
-            batch['pre_resize_images'][0].save('la_temportalidad_del_ser.png')
-            exit()
-
-
+        loss = loss_function(predicted_seq_logits, padded_labels)
         loss.backward()
         optimizer.step()
         

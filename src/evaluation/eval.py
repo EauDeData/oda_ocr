@@ -32,7 +32,7 @@ def eval_dataset(dataloader, model, dataset_name, tokenizer, wandb_session):
         for batch in dataloader:
 
             tokens = model(batch).cpu().detach().numpy()
-            decoded_tokens = decoder({'ctc_output': tokens}, None)
+            decoded_tokens = decoder({'ctc_output': tokens}, tokenizer.ctc_blank, None)
 
             strings = [clean_special_tokens(x, tokenizer) for x in
                        tokenizer.decode_from_numpy_list([x['text'] for x in decoded_tokens])]
