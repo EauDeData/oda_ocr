@@ -178,7 +178,7 @@ class CLIPWrapper(torch.nn.Module):
         pdb.set_trace()
         x = self.ln_pre(x)
 
-        # x = x + self.positional_embedding.to(x.dtype)[:, :x.shape[1]]
+        x = x + self.positional_embedding.to(x.dtype)[:, :x.shape[1]] # Maybe the original positional embedding is too small
 
         x = x.permute(1, 0, 2)  # NLD -> LND
         x = self.transformer(x)
