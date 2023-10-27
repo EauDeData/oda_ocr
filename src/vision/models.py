@@ -174,8 +174,6 @@ class CLIPWrapper(torch.nn.Module):
                                                                       device=x.device), x],
                       dim=1)  # shape = [*, grid ** 2 + 1, width]
 
-        import pdb
-        pdb.set_trace()
         x = self.ln_pre(x)
 
         x = x + self.positional_embedding.to(x.dtype)[:, :x.shape[1]] # Maybe the original positional embedding is too small
