@@ -12,7 +12,7 @@ class GreedyTextDecoder:
         self._confidences = confidences
 
     def __call__(
-        self, model_output, batch
+        self, model_output, *args
     ) -> List[Dict[str, Any]]:
         """Convert a model output to a token sequence.
 

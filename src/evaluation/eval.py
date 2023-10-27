@@ -33,7 +33,7 @@ def eval_dataset(dataloader, model, dataset_name, tokenizer, wandb_session):
         for batch in dataloader:
             
             tokens = model(batch)
-            decoded_tokens = decoder(tokens)
+            decoded_tokens = decoder({'ctc_output': tokens}, None)
             import pdb
             pdb.set_trace()
 
