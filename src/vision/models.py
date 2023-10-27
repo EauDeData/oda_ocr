@@ -170,6 +170,9 @@ class CLIPWrapper(torch.nn.Module):
                       dim=1)  # shape = [*, grid ** 2 + 1, width]
 
         x = self.ln_pre(x)
+
+        import pdb
+        pdb.set_trace()
         x = x + self.positional_embedding.to(x.dtype)
 
 
