@@ -32,7 +32,7 @@ def eval_dataset(dataloader, model, dataset_name, tokenizer, wandb_session):
     with torch.no_grad():
         for batch in dataloader:
             
-            tokens = model(batch).cpu().detatch().numpy()
+            tokens = model(batch).cpu().detach().numpy()
             decoded_tokens = decoder({'ctc_output': tokens}, None)
             import pdb
             pdb.set_trace()
