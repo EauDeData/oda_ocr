@@ -141,10 +141,13 @@ def evaluation_epoch(datasets, model, tokenizer, collator, args):
 def loop(epoches, model, datasets, collator, tokenizer, args, train_dataloader, optimizer, loss_function,
          train_function=train_ctc, **kwargs):
     ## TEMPORALLY LOOKING BAD. IT SHOULD RECEIVE PROPER ARGS NOT KWARGS ###
+    if args.reduce_on_plateau: scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=args.reduce_on_plateau, threshold=0.01)
+    else: scheduler = None
+    
     for epoch in range(epoches):
         print(f"{epoch} / {epoches} epoches")
 
-        train_function(epoch, train_dataloader, optimizer, model, loss_function, args.patch_width, wandb, tokenizer.tokens[tokenizer.padding_token])
+        train_function(epoch, train_dataloader, optimizer, model, loss_function, args.patch_width, wandb, tokenizer = tokenizer.tokens[tokenizer.padding_token], scheduler = scheduler)
 
         evals = evaluation_epoch(datasets, model, tokenizer, collator, args)
         print(evals)

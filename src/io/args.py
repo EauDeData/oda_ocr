@@ -133,6 +133,7 @@ def parse_arguments():
     optimization_group.add_argument('--optimizer', choices=optimizer_choices, default='adam', help='Optimizer choice')
     optimization_group.add_argument('--learning_rate', type=float, default=5e-5, help='Learning rate')
     optimization_group.add_argument('--loss_function', type=str, default='ctc', choices=['ctc', 'cross_entropy', 'nll'])
+    optimization_group.add_argument('--reduce_on_plateau', type=int, default=0)
 
     return parser.parse_args()
 
@@ -193,6 +194,7 @@ def get_model_name(args):
          args.optimizer, 'lr', args.learning_rate])
     if 'conv' in args.model_architecture:
         name_components.extend(['stride', args.conv_stride])
+    if args.reduce_on_plateau: name_components.extend(['reduce_on_plateau', args.reduce_on_plateau])
 
     name_components.extend(['total_square_size', args.square_image_max_size])
     # Join all components to create the model name

@@ -52,7 +52,7 @@ def train_ctc(epoch, dataloader, optimizer, model, loss_function, patch_width, w
     wandb_session.log({'train loss': buffer / counter})
 
 
-def train_ctc_clip(epoch, dataloader, optimizer, model, loss_function, patch_width, wandb_session, *args):
+def train_ctc_clip(epoch, dataloader, optimizer, model, loss_function, patch_width, wandb_session, scheduler = None, tokenizer = None, *args):
     buffer = 0
     counter = 0
 
@@ -75,7 +75,8 @@ def train_ctc_clip(epoch, dataloader, optimizer, model, loss_function, patch_wid
         buffer += loss.item()
 
         wandb_session.log({'batch loss': loss.item()})
-    wandb_session.log({'train loss': buffer / counter})
+    wandb_session.log({'train loss': buffer / counter, 'lr': scheduler.optimizer.param_groups[0]['lr']})
+    scheduler.step(buffer / counter)
 
 
 
