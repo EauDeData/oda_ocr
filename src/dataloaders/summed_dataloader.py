@@ -90,7 +90,8 @@ class CollateFNs:
         images_tensor_full = []
         patched_images = []
         masks = []
-
+        clip_num_tokens = []
+        
         for item in batch:
             original_image, image, text_token, raw_text, split, dataset, resized_image = item['original_image'], item[
                 'input_tensor'], item['tokens'], item['annotation'], item['split'], item['dataset'], item[
@@ -100,6 +101,7 @@ class CollateFNs:
             resized_image = resize_to_max_size(resized_image, self.max_size)
             image_to_be_patched = self.transforms(resized_image)
             _, w, h = image_to_be_patched.shape
+            clip_num_tokens.append((w // self.patch_width) * (h // self.patch_width))
 
             final_image = self.total_visual_padding.clone()
             # mask = self.total_visual_padding.clone()
@@ -147,7 +149,8 @@ class CollateFNs:
             'pre_resize_images': original_images,
             'totally_padded_image': torch.stack(patched_images),
             'input_lengths_clip': [224 // self.patch_width for _ in resized_images],
-            'masks': masks
+            'masks': masks,
+            'inputLeng_clip': clip_num_tokens # this is without the padding (not 224)
         }
 
 def resize_to_max_size(image, max_size):
