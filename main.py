@@ -38,7 +38,7 @@ def prepare_optimizer(model, args):
 
 def get_lost_and_train(args, tokenizer=None):
     if args.loss_function == 'ctc':
-        train_function = train_ctc if args.model_architecture != 'clip' else train_ctc_clip
+        train_function = train_ctc if not args.model_architecture in ['clip', 'vit_atienza'] else train_ctc_clip
         return torch.nn.CTCLoss(blank=tokenizer.tokens[tokenizer.ctc_blank], zero_infinity=True), train_function
     elif args.loss_function == 'cross_entropy':
         return torch.nn.CrossEntropyLoss(ignore_index=tokenizer.tokens[tokenizer.padding_token]), train_cross_entropy
@@ -130,7 +130,7 @@ def prepare_model(vocab_size, args):
                                                                     vocab_size)
 
             model = _ProtoModel(base_model_wrapped, args.device, target = 'square_full_images')
-            print('Loaded model with:', len(list(model.parameters())), 'parameters.')
+            print('Loaded model with:', len(list(model.parameters())), 'modules.')
 
     if args.decoder_architecture is not None:
         if args.decoder_architecture == 'transformer':
