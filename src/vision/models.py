@@ -83,7 +83,7 @@ class ViTEncoder(nn.Module):
 
         logits = self.lm_head(context_tokens)
 
-        return logits
+        return {'features': context_tokens, 'language_head_output': logits}
 
 
 class ConvVitEncoder(nn.Module):
@@ -127,7 +127,7 @@ class ConvVitEncoder(nn.Module):
 
         logits = self.lm_head(context_tokens)
 
-        return logits
+        return {'features': context_tokens, 'language_head_output': logits}
 
 
 class FullyConvolutionalEncoder(nn.Module):
@@ -165,6 +165,7 @@ class CLIPWrapper(torch.nn.Module):
 
         self.lm_head = torch.nn.Linear(768, vocab_size)
         self.device = device
+        self.gelu_fn = torch.nn.GELU()
 
     def forward(self, x):
         x = self.conv1(x['totally_padded_image'].to(self.device))  # shape = [*, width, grid, grid]
@@ -178,10 +179,40 @@ class CLIPWrapper(torch.nn.Module):
         x = self.ln_pre(x)
         x = x.permute(1, 0, 2)  # NLD -> LND
         x = self.transformer(x)
-        x = self.lm_head(x)
+        x = self.gelu_fn(x)
+        language_head_output = self.lm_head(x)
 
-        return x
+        return {'features': x, 'language_head_output': language_head_output}
 
+class RNNDecoder(nn.Module):
+    def __init__(self, encoder, encoder_input_size, decoder_token_size, decoder_depth, vocab_size, kind='lstm'):
+        super(RNNDecoder, self).__init__()
+
+        self.encoder = encoder
+        self.projection = torch.nn.Linear(encoder_input_size, decoder_token_size)
+        self.gelu_fn = torch.nn.GELU()
+
+        if kind == 'lstm':
+            self.recurrent_module = torch.nn.LSTM(decoder_token_size, vocab_size, num_layers=decoder_depth)
+
+        elif kind == 'gru':
+            self.recurrent_module = torch.nn.GRU(decoder_token_size, vocab_size, num_layers=decoder_depth)
+
+        elif kind == 'rnn':
+            self.recurrent_module = torch.nn.RNN(decoder_token_size, vocab_size, num_layers=decoder_depth)
+
+        else: raise NotImplementedError(f"{kind} is not an implemented recurrent type.")
+
+    def forward(self, x):
+        features = self.encoder(x)['features']
+
+        projected_features = self.gelu_fn(self.projection(features))
+        output_sequence_logits = self.recurrent_module(projected_features)
+
+        return {
+            'features': projected_features,
+            'language_head_output': output_sequence_logits
+        }
 
 if __name__ == '__main__':
     input_dictionary = {

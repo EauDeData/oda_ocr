@@ -1,5 +1,6 @@
 import argparse
 import os
+from typing import List, Union, Any
 
 from src.datasets.ocr.test.ocr_datasets_unitary_testing import (DEFAULT_COCOTEXT, DEFAULT_ESPOSALLES, DEFAULT_FUNSD,
                                                                 DEFAULT_HIERTEXT, DEFAULT_HIST_MAPS, \
@@ -8,7 +9,7 @@ from src.datasets.ocr.test.ocr_datasets_unitary_testing import (DEFAULT_COCOTEXT
                                                                 DEFAULT_SROIE, DEFAULT_SVT, DEFAULT_TEXTOCR,
                                                                 DEFAULT_TOTALTEXT, DEFAULT_WASHINGTON, DEFAULT_XFUND)
 
-DEFAULT_OUPUT_FOLDER='/data/users/amolina/oda_ocr_output/'
+DEFAULT_OUPUT_FOLDER = '/data/users/amolina/oda_ocr_output/'
 
 dataset_defaults = {
     'cocotext': DEFAULT_COCOTEXT,
@@ -103,7 +104,6 @@ def parse_arguments():
     dataset_group.add_argument('--batch_size', type=int, default=224)
     dataset_group.add_argument('--square_image_max_size', type=int, default=224)
 
-
     preprocess_group = parser.add_argument_group('Preprocesing argument group.')
     preprocess_group.add_argument('--standarize', action='store_true')
 
@@ -123,8 +123,15 @@ def parse_arguments():
     model_group.add_argument('--checkpoint_name', choices=model_choices, type=str, default=None)
 
     model_group.add_argument('--model_architecture', type=str,
-                             choices=['conv_vit_encoder', 'vit_encoder_vertical_patch', 'vit_lucid', 'clip'], default='conv_vit_encoder')
+                             choices=['conv_vit_encoder', 'vit_encoder_vertical_patch', 'vit_lucid', 'clip'],
+                             default='conv_vit_encoder')
     model_group.add_argument('--conv_stride', type=int, default=8)
+
+    model_group.add_argument('--decoder_architecture', type=str,
+                             choices=['lstm', 'rnn', 'gru', None, 'transformer'], default=None)
+    model_group.add_argument('--decoder_token_size', type=int, default=224)
+    model_group.add_argument('--decoder_depth', type=int, default=1)
+    model_group.add_argument('--decoder_width', type=int, default=1)
 
     ### OPTIM GROUP ####
     optimization_group = parser.add_argument_group('Optimization group')
@@ -142,7 +149,7 @@ def get_model_name(args):
     os.makedirs(args.output_folder, exist_ok=True)
 
     # Initialize an empty list to store components of the model name
-    name_components = []
+    name_components: list[Union[str, Any]] = []
 
     # Datasets
     for dataset_name, _ in dataset_defaults.items():
@@ -194,6 +201,12 @@ def get_model_name(args):
          args.optimizer, 'lr', args.learning_rate])
     if 'conv' in args.model_architecture:
         name_components.extend(['stride', args.conv_stride])
+    if args.decoder_architecture is not None:
+        name_components.extend(['decoder_architecture', args.decoder_architecture,
+                                'decoder_token_size', args.decoder_token_size,
+                                'decoder_depth', args.decoder_depth])
+        if args.decoder_architecture == 'transformer':
+            name_components.extend(['decoder_width', args.decooder_width])
     if args.reduce_on_plateau: name_components.extend(['reduce_on_plateau', args.reduce_on_plateau])
 
     name_components.extend(['total_square_size', args.square_image_max_size])

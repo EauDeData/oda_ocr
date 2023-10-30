@@ -9,7 +9,7 @@ from src.io.args import parse_arguments, get_model_name, model_choices_lookup
 from src.io.load_datasets import load_datasets
 from src.dataloaders.summed_dataloader import CollateFNs
 from src.tokenizers.char_tokenizer import CharTokenizer
-from src.vision.models import ViTEncoder, ConvVitEncoder, _ProtoModel, CLIPWrapper
+from src.vision.models import ViTEncoder, ConvVitEncoder, _ProtoModel, CLIPWrapper, RNNDecoder
 from src.linearize import LinearizedModel
 from src.evaluation.eval import eval_dataset
 from src.train_steps.base_ctc import train_ctc, train_ctc_clip
@@ -74,23 +74,26 @@ def prepare_train_loaders(dataset, collator, num_workers, batch_size):
 
 def prepare_model(vocab_size, args):
     #### LOAD MODEL ###
+    feature_size, model = None, None
+
     if args.load_checkpoint and args.checkpoint_name not in model_choices_lookup:
         raise NotImplementedError(f"Won't load {args.checkpoint_name}, model is not implemented yet.\n"
                                   f"availible models are: {model_choices_lookup}")
     if args.use_transformers:
         raise NotImplementedError
-
     else:
 
         if args.model_architecture == 'vit_encoder_vertical_patch':
             model = ViTEncoder(args.image_height, args.patch_width, 3, args.token_size,
                                [args.visual_tokenizer_width] * args.visual_tokenizer_depth, args.model_depth,
                                args.model_width, vocab_size, args.dropout, args.device)
+            feature_size = args.token_size
 
         elif args.model_architecture == 'conv_vit_encoder':
             assert args.conv_stride == args.patch_width, 'Num tokens will missmatch'
             model = ConvVitEncoder(args.image_height, args.patch_width, 3, args.token_size, args.conv_stride,
                                    args.model_depth, args.model_width, vocab_size, args.dropout, args.device)
+            feature_size = args.token_size
 
         elif args.model_architecture == 'vit_lucid':
 
@@ -105,13 +108,20 @@ def prepare_model(vocab_size, args):
                 dropout = args.dropout,
                 emb_dropout = args.dropout
             ), args.device)
+            feature_size = args.token_size
         elif args.model_architecture == 'clip':
 
             model = CLIPWrapper(vocab_size, args.patch_width, args.device)
+            feature_size = 768
 
-
-
+    if args.decoder_architecture is not None:
+        if args.decoder_architecture == 'transformer':
+            raise NotImplementedError('transformer architecture not implemented for decoding stage.')
+        else:
+            model = RNNDecoder(model, feature_size, args.decoder_token_size, args.decoder_depth, vocab_size,
+                               args.decoder_architecture)
     model.to(args.device)
+
     ### LINEARIZE ###
     ### The loaded model is already linear?
     if args.linear_model:

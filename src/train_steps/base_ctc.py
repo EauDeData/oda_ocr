@@ -11,7 +11,7 @@ def train_ctc(epoch, dataloader, optimizer, model, loss_function, patch_width, w
         
         optimizer.zero_grad()
         
-        softmaxed_output = torch.nn.functional.log_softmax (model(batch), dim = -1)
+        softmaxed_output = torch.nn.functional.log_softmax (model(batch)['language_head_output'], dim = -1)
         
         ground_truth = batch['labels']
 
@@ -20,28 +20,7 @@ def train_ctc(epoch, dataloader, optimizer, model, loss_function, patch_width, w
         
         
         loss = loss_function(softmaxed_output, ground_truth, tuple(batch['input_lengths']), tuple(batch['output_lengths']))
-        if loss!=loss:
 
-            print('input_len_declarada')
-            print(batch['input_lengths'])
-
-            print('output_len_declarada')
-            print(tuple(batch['output_lengths']))
-
-            print('gt tokens:')
-            print([x for x in batch['raw_text_gt']])
-
-            print('gt lens:')
-            print([len(x) for x in batch['raw_text_gt']] )
-
-            print('input_patches:')
-            print([x.size[0] // patch_width for x in batch['original_images']])
-
-            print('input_sizes:')
-            print([x.size for x in batch['original_images']])
-            batch['original_images'][0].save('tmp_nan.png')
-
-            exit()
         loss.backward()
         optimizer.step()
         
@@ -61,7 +40,7 @@ def train_ctc_clip(epoch, dataloader, optimizer, model, loss_function, patch_wid
 
         optimizer.zero_grad()
 
-        softmaxed_output = torch.nn.functional.log_softmax(model(batch), dim=-1)
+        softmaxed_output = torch.nn.functional.log_softmax(model(batch)['language_head_output'], dim=-1)
 
         ground_truth = batch['labels']
 
