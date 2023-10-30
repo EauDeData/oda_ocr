@@ -120,8 +120,12 @@ def prepare_model(vocab_size, args):
             url = 'https://github.com/roatienza/deep-text-recognition-benchmark/releases/download/v0.1.0/vitstr_base_patch16_224_aug.pth'
             base_model = vitstr_base_patch16_224(pretrained=url)
             base_model_wrapped = ViTAtienzaWrapper(base_model)
+            base_model_wrapped.module.vitstr.head = torch.nn.Linear(base_model_wrapped.module.vitstr.head.in_features,
+                                                                    96) # Decretazo, otherwise weights missmatch LoL
+
             weights_state_dict = torch.load(model_choices_lookup['atienza_vit_base_augm'])
             base_model_wrapped.load_state_dict(weights_state_dict)
+
             base_model_wrapped.module.vitstr.head = torch.nn.Linear(base_model_wrapped.module.vitstr.head.in_features,
                                                                     vocab_size)
 
