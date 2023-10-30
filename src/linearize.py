@@ -7,6 +7,13 @@ from functorch import jvp, make_functional_with_buffers
 from src.modeling import ImageEncoder
 from src.utils import DotDict
 
+class AllMightyWrapper(nn.Module):
+    def __int__(self, non_linear_model):
+        super().__init__()
+        self.m = non_linear_model
+
+    def forward(self, x):
+        return self.m(x)['language_head_output']
 
 class LinearizedModel(nn.Module):
     """Creates a linearized version of a nn.Module.

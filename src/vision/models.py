@@ -208,16 +208,6 @@ class ViTAtienzaWrapper(torch.nn.Module):
         x = x.mean(1).unsqueeze(1)  # Grayscale Image (not true, but will work)
         return self.module(x).permute(1, 0, 2)
 
-
-class PreLinearizedModelWrapper(torch.nn.Module):
-    def __int__(self, model_to_linearize):
-        super(PreLinearizedModelWrapper, self).__init__()
-        self.module = model_to_linearize
-
-    def forward(self, x):
-        return self.module(x)['language_head_output']
-
-
 class RNNDecoder(nn.Module):
     def __init__(self, encoder, encoder_input_size, decoder_token_size, decoder_depth, vocab_size, kind='lstm'):
         super(RNNDecoder, self).__init__()
