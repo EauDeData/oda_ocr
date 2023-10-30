@@ -117,7 +117,9 @@ def prepare_model(vocab_size, args):
         elif args.model_architecture == 'vit_atienza':
 
             base_jit_model = torch.jit.load(model_choices_lookup['atienza_vit_base_augm'])
-            base_jit_model.vitstr.head = torch.nn.Linear(base_jit_model.vitstr.head.in_features, vocab_size)
+            base_jit_model.vitstr.head = torch.jit.script(
+                torch.nn.Linear(base_jit_model.vitstr.head.in_features, vocab_size)
+            )
             model = _ProtoModel(base_jit_model, target = 'square_full_images')
 
 
