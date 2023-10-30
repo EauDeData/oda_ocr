@@ -202,7 +202,7 @@ class ViTAtienzaWrapper(torch.nn.Module):
         self.module = GenericModule(model)
 
     def forward(self, x):
-        x = x.mean(1).unsqueeze(1)
+        x = x.mean(1).unsqueeze(1) # Grayscale Image (not true, but will work)
         return self.module(x)
 
 class RNNDecoder(nn.Module):
