@@ -129,8 +129,8 @@ def prepare_model(vocab_size, args):
             base_model_wrapped.module.vitstr.head = torch.nn.Linear(base_model_wrapped.module.vitstr.head.in_features,
                                                                     vocab_size)
 
-            base_model_wrapped.eval()
             model = _ProtoModel(model, args.device, target = 'square_full_images')
+            print('Loaded model with:', len(model.parameters()), 'parameters.')
 
     if args.decoder_architecture is not None:
         if args.decoder_architecture == 'transformer':
