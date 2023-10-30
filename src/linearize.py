@@ -8,9 +8,10 @@ from src.modeling import ImageEncoder
 from src.utils import DotDict
 
 class AllMightyWrapper(nn.Module):
-    def __int__(self, non_linear_model):
+    def __init__(self, non_linear_model = None, device = None):
         super().__init__()
         self.m = non_linear_model
+        self.device = device
 
     def forward(self, x):
         return self.m(x)['language_head_output']

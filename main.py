@@ -145,8 +145,8 @@ def prepare_model(vocab_size, args):
     ### The loaded model is already linear?
     if args.linear_model:
         print('Linearizing ViT model...')
-        model = AllMightyWrapper()
-        model = LinearizedModel(model)
+        wrapped = AllMightyWrapper(non_linear_model = model, device = args.device)
+        model = LinearizedModel(wrapped)
 
     model.to(args.device)
     model.train()
