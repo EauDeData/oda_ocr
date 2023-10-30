@@ -207,11 +207,12 @@ class RNNDecoder(nn.Module):
         features = self.encoder(x)['features']
 
         projected_features = self.gelu_fn(self.projection(features))
-        output_sequence_logits = self.recurrent_module(projected_features)
+        output_sequence_logits, (hn, cn) = self.recurrent_module(projected_features)
 
         return {
             'features': projected_features,
-            'language_head_output': output_sequence_logits
+            'language_head_output': output_sequence_logits,
+            'hidden_states': (hn, cn)
         }
 
 if __name__ == '__main__':
