@@ -198,7 +198,7 @@ def main(args):
 
     transforms = torchvision.transforms.Compose((
         torchvision.transforms.PILToTensor(),
-        lambda x: x if not 'vit_atienza' == args.model_architecture else torchvision.transforms.Grayscale(),
+        (lambda x: x) if not 'vit_atienza' == args.model_architecture else torchvision.transforms.Grayscale(),
         normalize['normalize' if not args.standarize else 'standarize'])
     )
 
