@@ -235,6 +235,13 @@ class RNNDecoder(nn.Module):
             'language_head_output': output_sequence_logits,
             'hidden_states': (hn, cn)
         }
+class PreLinearizedModelWrapper(torch.nn.Module):
+    def __int__(self, module):
+        super(PreLinearizedModelWrapper, self).__init__()
+        self.module = module
+
+    def forward(self, x):
+        return self.module(x)['language_head_output']
 
 if __name__ == '__main__':
     input_dictionary = {

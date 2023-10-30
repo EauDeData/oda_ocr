@@ -9,7 +9,7 @@ from src.io.args import parse_arguments, get_model_name, model_choices_lookup
 from src.io.load_datasets import load_datasets
 from src.dataloaders.summed_dataloader import CollateFNs
 from src.tokenizers.char_tokenizer import CharTokenizer
-from src.vision.models import ViTEncoder, ConvVitEncoder, _ProtoModel, CLIPWrapper, RNNDecoder, ViTAtienzaWrapper
+from src.vision.models import ViTEncoder, ConvVitEncoder, _ProtoModel, CLIPWrapper, RNNDecoder, ViTAtienzaWrapper, PreLinearizedModelWrapper
 from src.vision.vitstr import vitstr_base_patch16_224
 from src.linearize import LinearizedModel
 from src.evaluation.eval import eval_dataset
@@ -139,15 +139,17 @@ def prepare_model(vocab_size, args):
         else:
             model = RNNDecoder(model, feature_size, args.decoder_token_size, args.decoder_depth, vocab_size,
                                args.decoder_architecture)
-    model.to(args.device)
-    model.train()
+
 
     ### LINEARIZE ###
     ### The loaded model is already linear?
     if args.linear_model:
         print('Linearizing ViT model...')
+        model = PreLinearizedModelWrapper(model)
         model = LinearizedModel(model)
 
+    model.to(args.device)
+    model.train()
     return model
 
 
