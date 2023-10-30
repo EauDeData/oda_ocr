@@ -130,7 +130,7 @@ def prepare_model(vocab_size, args):
                                                                     vocab_size)
 
             model = _ProtoModel(model, args.device, target = 'square_full_images')
-            print('Loaded model with:', len(model.parameters()), 'parameters.')
+            print('Loaded model with:', len(list(model.parameters())), 'parameters.')
 
     if args.decoder_architecture is not None:
         if args.decoder_architecture == 'transformer':
