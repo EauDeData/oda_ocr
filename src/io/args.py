@@ -31,8 +31,7 @@ dataset_defaults = {
 }
 
 model_choices_lookup = {
-    'atienza_vit_base_augm': 'https://github.com/roatienza/deep-text-recognition-benchmark/releases/download/v0.1.0/vitstr_base_patch16_224_aug.pth',
-    'atienza_vit_small_augm': 'https://github.com/roatienza/deep-text-recognition-benchmark/releases/download/v0.1.0/vitstr_small_patch16_224_aug.pth'
+    'atienza_vit_base_augm': '/data/users/amolina/oda_ocr_output/models/vitstr_base_patch16_jit.pt',
 }
 
 model_choices = list(model_choices_lookup.keys()) + [None]
@@ -123,7 +122,7 @@ def parse_arguments():
     model_group.add_argument('--checkpoint_name', choices=model_choices, type=str, default=None)
 
     model_group.add_argument('--model_architecture', type=str,
-                             choices=['conv_vit_encoder', 'vit_encoder_vertical_patch', 'vit_lucid', 'clip'],
+                             choices=['conv_vit_encoder', 'vit_encoder_vertical_patch', 'vit_lucid', 'clip', 'vit_atienza'],
                              default='conv_vit_encoder')
     model_group.add_argument('--conv_stride', type=int, default=8)
 

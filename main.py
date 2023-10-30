@@ -114,6 +114,13 @@ def prepare_model(vocab_size, args):
             model = CLIPWrapper(vocab_size, args.patch_width, args.device)
             feature_size = 768
 
+        elif args.model_architecture == 'vit_atienza':
+
+            base_jit_model = torch.jit.load(model_choices_lookup['atienza_vit_base_augm'])
+            base_jit_model.vitstr.head = torch.nn.Linear(base_jit_model.vitstr.head.in_features, vocab_size)
+            model = _ProtoModel(base_jit_model, target = 'square_full_images')
+
+
     if args.decoder_architecture is not None:
         if args.decoder_architecture == 'transformer':
             raise NotImplementedError('transformer architecture not implemented for decoding stage.')

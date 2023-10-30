@@ -138,13 +138,18 @@ class FullyConvolutionalEncoder(nn.Module):
 
 
 class _ProtoModel(torch.nn.Module):
-    def __init__(self, model, device):
+    def __init__(self, model, device, target='totally_padded_image'):
         super(_ProtoModel, self).__init__()
         self.model = model
         self.device = device
+        self.target = target
 
     def forward(self, x):
-        return self.model(x['totally_padded_image'].to(self.device))
+        output = self.model(x[self.target].to(self.device))
+        return {
+            'features': output,
+            'language_head_output': output
+        }
 
 
 class CLIPWrapper(torch.nn.Module):
