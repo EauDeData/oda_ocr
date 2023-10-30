@@ -203,7 +203,7 @@ class ViTAtienzaWrapper(torch.nn.Module):
 
     def forward(self, x):
         x = x.mean(1).unsqueeze(1) # Grayscale Image (not true, but will work)
-        return self.module(x)
+        return self.module(x).permute(1, 0, 2)
 
 class RNNDecoder(nn.Module):
     def __init__(self, encoder, encoder_input_size, decoder_token_size, decoder_depth, vocab_size, kind='lstm'):
