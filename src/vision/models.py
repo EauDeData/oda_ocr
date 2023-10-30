@@ -4,6 +4,7 @@ import math
 from torch import Tensor
 import clip
 
+
 def linear_constructor(topology: list):
     seq = []
     for n, size in enumerate(topology[:-1]):
@@ -163,7 +164,7 @@ class CLIPWrapper(torch.nn.Module):
         self.conv1 = self.model.conv1
         self.class_embedding = self.model.class_embedding
 
-        self.positional_embedding = self.model.positional_embedding # torch.nn.Parameter(torch.rand((1, 512, 768)))
+        self.positional_embedding = self.model.positional_embedding  # torch.nn.Parameter(torch.rand((1, 512, 768)))
         self.ln_pre = self.model.ln_pre
         self.transformer = self.model.transformer
 
@@ -178,7 +179,7 @@ class CLIPWrapper(torch.nn.Module):
         x = torch.cat([self.class_embedding.to(x.dtype) + torch.zeros(x.shape[0], 1, x.shape[-1], dtype=x.dtype,
                                                                       device=x.device), x],
                       dim=1)  # shape = [*, grid ** 2 + 1, width]
-        x = x + self.positional_embedding.to(x.dtype) # Maybe the original positional embedding is too small
+        x = x + self.positional_embedding.to(x.dtype)  # Maybe the original positional embedding is too small
 
         x = self.ln_pre(x)
         x = x.permute(1, 0, 2)  # NLD -> LND
@@ -188,6 +189,7 @@ class CLIPWrapper(torch.nn.Module):
 
         return {'features': x, 'language_head_output': language_head_output}
 
+
 class GenericModule(torch.nn.Module):
     def __init__(self, module):
         super(GenericModule, self).__init__()
@@ -196,14 +198,16 @@ class GenericModule(torch.nn.Module):
     def forward(self, x):
         return self.vitstr(x)
 
+
 class ViTAtienzaWrapper(torch.nn.Module):
     def __init__(self, model):
         super(ViTAtienzaWrapper, self).__init__()
         self.module = GenericModule(model)
 
     def forward(self, x):
-        x = x.mean(1).unsqueeze(1) # Grayscale Image (not true, but will work)
+        x = x.mean(1).unsqueeze(1)  # Grayscale Image (not true, but will work)
         return self.module(x).permute(1, 0, 2)
+
 
 class RNNDecoder(nn.Module):
     def __init__(self, encoder, encoder_input_size, decoder_token_size, decoder_depth, vocab_size, kind='lstm'):
@@ -222,7 +226,8 @@ class RNNDecoder(nn.Module):
         elif kind == 'rnn':
             self.recurrent_module = torch.nn.RNN(decoder_token_size, vocab_size, num_layers=decoder_depth)
 
-        else: raise NotImplementedError(f"{kind} is not an implemented recurrent type.")
+        else:
+            raise NotImplementedError(f"{kind} is not an implemented recurrent type.")
 
     def forward(self, x):
         features = self.encoder(x)['features']
@@ -235,13 +240,16 @@ class RNNDecoder(nn.Module):
             'language_head_output': output_sequence_logits,
             'hidden_states': (hn, cn)
         }
+
+
 class PreLinearizedModelWrapper(torch.nn.Module):
-    def __int__(self, model):
-        super(PreLinearizedModelWrapper, self).__init__()
-        self.module = model
+    def __int__(self, model_to_linearize):
+        super(PreLinearizedModelWrapper, self)
+        self.module = model_to_linearize
 
     def forward(self, x):
         return self.module(x)['language_head_output']
+
 
 if __name__ == '__main__':
     input_dictionary = {
