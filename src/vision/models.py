@@ -236,9 +236,9 @@ class RNNDecoder(nn.Module):
             'hidden_states': (hn, cn)
         }
 class PreLinearizedModelWrapper(torch.nn.Module):
-    def __int__(self, module):
+    def __int__(self, model):
         super(PreLinearizedModelWrapper, self).__init__()
-        self.module = module
+        self.module = model
 
     def forward(self, x):
         return self.module(x)['language_head_output']
