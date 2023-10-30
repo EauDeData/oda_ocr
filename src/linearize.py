@@ -1,5 +1,6 @@
 import abc
 import os
+from typing import Dict, Any
 
 import torch
 import torch.nn as nn
@@ -8,7 +9,13 @@ from src.modeling import ImageEncoder
 from src.utils import DotDict
 
 class AllMightyWrapper(nn.Module):
+    '''
+     here to adapt our code.
+     This SHIT solution is not from the (good) original code.
+     :D
+    '''
     def __init__(self, non_linear_model = None, device = None):
+
         super().__init__()
         self.m = non_linear_model
         self.device = device
@@ -59,7 +66,7 @@ class LinearizedModel(nn.Module):
         for p in self.params:
             p.requires_grad = True
 
-    def __call__(self, x) -> torch.Tensor:
+    def __call__(self, x) -> dict[str, Any]:
         """Computes the linearized model output using a first-order Taylor decomposition."""
         dparams = [p - p0 for p, p0 in zip(self.params, self.params0)]
         out, dp = jvp(
@@ -67,7 +74,7 @@ class LinearizedModel(nn.Module):
             (tuple(self.params0),),
             (tuple(dparams),),
         )
-        return out + dp
+        return {'language_head_output': out + dp}
 
 
 class LinearizedImageEncoder(abc.ABC, nn.Module):
