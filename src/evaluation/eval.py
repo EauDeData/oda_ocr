@@ -31,7 +31,7 @@ def eval_dataset(dataloader, model, dataset_name, tokenizer, wandb_session):
     with torch.no_grad():
         for batch in dataloader:
 
-            tokens = model(batch).cpu().detach().numpy()
+            tokens = model(batch)['language_head_output'].cpu().detach().numpy()
             decoded_tokens = decoder({'ctc_output': tokens}, tokenizer.ctc_blank, None)
 
             strings = [clean_special_tokens(x, tokenizer) for x in
