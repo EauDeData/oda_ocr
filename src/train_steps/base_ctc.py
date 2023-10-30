@@ -44,7 +44,7 @@ def train_ctc_clip(epoch, dataloader, optimizer, model, loss_function, patch_wid
 
         ground_truth = batch['labels']
 
-        loss = loss_function(softmaxed_output, ground_truth, tuple([softmaxed_output.shape[0]] for _ in range(softmaxed_output.shape[1])),
+        loss = loss_function(softmaxed_output, ground_truth, tuple([softmaxed_output.shape[0] for _ in range(softmaxed_output.shape[1])]),
                              tuple(batch['output_lengths']))
 
         loss.backward()
