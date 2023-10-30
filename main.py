@@ -9,7 +9,8 @@ from src.io.args import parse_arguments, get_model_name, model_choices_lookup
 from src.io.load_datasets import load_datasets
 from src.dataloaders.summed_dataloader import CollateFNs
 from src.tokenizers.char_tokenizer import CharTokenizer
-from src.vision.models import ViTEncoder, ConvVitEncoder, _ProtoModel, CLIPWrapper, RNNDecoder
+from src.vision.models import ViTEncoder, ConvVitEncoder, _ProtoModel, CLIPWrapper, RNNDecoder, ViTAtienzaWrapper
+from src.vision.vitstr import vitstr_base_patch16_224
 from src.linearize import LinearizedModel
 from src.evaluation.eval import eval_dataset
 from src.train_steps.base_ctc import train_ctc, train_ctc_clip
@@ -98,15 +99,15 @@ def prepare_model(vocab_size, args):
         elif args.model_architecture == 'vit_lucid':
 
             model = _ProtoModel(ViT(
-                image_size = args.square_image_max_size,
-                patch_size = args.patch_width,
-                num_classes = vocab_size,
-                dim = args.token_size,
-                depth = args.model_depth,
-                heads = args.model_width,
-                mlp_dim = 2048,
-                dropout = args.dropout,
-                emb_dropout = args.dropout
+                image_size=args.square_image_max_size,
+                patch_size=args.patch_width,
+                num_classes=vocab_size,
+                dim=args.token_size,
+                depth=args.model_depth,
+                heads=args.model_width,
+                mlp_dim=2048,
+                dropout=args.dropout,
+                emb_dropout=args.dropout
             ), args.device)
             feature_size = args.token_size
         elif args.model_architecture == 'clip':
@@ -116,12 +117,15 @@ def prepare_model(vocab_size, args):
 
         elif args.model_architecture == 'vit_atienza':
 
-            base_jit_model = torch.jit.load(model_choices_lookup['atienza_vit_base_augm'])
-            base_jit_model.vitstr.head = torch.jit.script(
-                torch.nn.Linear(base_jit_model.vitstr.head.in_features, vocab_size)
-            )
-            model = _ProtoModel(base_jit_model, target = 'square_full_images')
+            base_model = vitstr_base_patch16_224(pretrained=True)
+            base_model_wrapped = ViTAtienzaWrapper(base_model)
+            weights_state_dict = torch.load(model_choices_lookup['atienza_vit_base_augm'])
+            base_model_wrapped.load_state_dict(weights_state_dict)
+            base_model_wrapped.module.vitstr.head = torch.nn.Linear(base_model_wrapped.module.vitstr.head.in_features,
+                                                                    vocab_size)
 
+            base_model_wrapped.eval()
+            model = _ProtoModel(model, args.device, target = 'square_full_images')
 
     if args.decoder_architecture is not None:
         if args.decoder_architecture == 'transformer':
@@ -130,6 +134,7 @@ def prepare_model(vocab_size, args):
             model = RNNDecoder(model, feature_size, args.decoder_token_size, args.decoder_depth, vocab_size,
                                args.decoder_architecture)
     model.to(args.device)
+    model.train()
 
     ### LINEARIZE ###
     ### The loaded model is already linear?
@@ -160,13 +165,17 @@ def evaluation_epoch(datasets, model, tokenizer, collator, args):
 def loop(epoches, model, datasets, collator, tokenizer, args, train_dataloader, optimizer, loss_function,
          train_function=train_ctc, **kwargs):
     ## TEMPORALLY LOOKING BAD. IT SHOULD RECEIVE PROPER ARGS NOT KWARGS ###
-    if args.reduce_on_plateau: scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=args.reduce_on_plateau, threshold=0.01)
-    else: scheduler = None
-    
+    if args.reduce_on_plateau:
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=args.reduce_on_plateau,
+                                                               threshold=0.01)
+    else:
+        scheduler = None
+
     for epoch in range(epoches):
         print(f"{epoch} / {epoches} epoches")
 
-        train_function(epoch, train_dataloader, optimizer, model, loss_function, args.patch_width, wandb, tokenizer = tokenizer.tokens[tokenizer.padding_token], scheduler = scheduler)
+        train_function(epoch, train_dataloader, optimizer, model, loss_function, args.patch_width, wandb,
+                       tokenizer=tokenizer.tokens[tokenizer.padding_token], scheduler=scheduler)
 
         evals = evaluation_epoch(datasets, model, tokenizer, collator, args)
         print(evals)

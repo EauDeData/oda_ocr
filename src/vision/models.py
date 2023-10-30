@@ -4,7 +4,6 @@ import math
 from torch import Tensor
 import clip
 
-
 def linear_constructor(topology: list):
     seq = []
     for n, size in enumerate(topology[:-1]):
@@ -188,6 +187,22 @@ class CLIPWrapper(torch.nn.Module):
         language_head_output = self.lm_head(x)
 
         return {'features': x, 'language_head_output': language_head_output}
+
+class GenericModule(torch.nn.Module):
+    def __init__(self, module):
+        super(GenericModule, self).__init__()
+        self.vitstr = module
+
+    def forward(self, x):
+        return self.vitstr(x)
+
+class ViTAtienzaWrapper(torch.nn.Module):
+    def __init__(self, model):
+        super(ViTAtienzaWrapper, self).__init__()
+        self.module = GenericModule(model)
+
+    def forward(self, x):
+        return self.module(x)
 
 class RNNDecoder(nn.Module):
     def __init__(self, encoder, encoder_input_size, decoder_token_size, decoder_depth, vocab_size, kind='lstm'):

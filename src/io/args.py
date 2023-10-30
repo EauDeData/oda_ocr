@@ -31,7 +31,7 @@ dataset_defaults = {
 }
 
 model_choices_lookup = {
-    'atienza_vit_base_augm': '/data/users/amolina/oda_ocr_output/models/vitstr_base_patch16_jit.pt',
+    'atienza_vit_base_augm': '/data/users/amolina/oda_ocr_output/models/vitstr_base_patch16_224_aug.pt',
 }
 
 model_choices = list(model_choices_lookup.keys()) + [None]
