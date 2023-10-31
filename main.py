@@ -180,7 +180,7 @@ def loop(epoches, model, datasets, collator, tokenizer, args, train_dataloader, 
     else:
         scheduler = None
     os.makedirs(os.path.join(args.output_folder, args.assigned_uuid), exist_ok=True)
-    open(os.path.join(args.output_folder, args.assigned_uuid, 'metadata.txt')).write(args.model_name_str)
+    open(os.path.join(args.output_folder, args.assigned_uuid, 'metadata.txt'), 'w').write(args.model_name_str)
 
     for epoch in range(epoches):
         print(f"{epoch} / {epoches} epoches")
