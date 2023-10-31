@@ -122,7 +122,8 @@ def parse_arguments():
     model_group.add_argument('--checkpoint_name', choices=model_choices, type=str, default=None)
 
     model_group.add_argument('--model_architecture', type=str,
-                             choices=['conv_vit_encoder', 'vit_encoder_vertical_patch', 'vit_lucid', 'clip', 'vit_atienza'],
+                             choices=['conv_vit_encoder', 'vit_encoder_vertical_patch', 'vit_lucid', 'clip',
+                                      'vit_atienza'],
                              default='conv_vit_encoder')
     model_group.add_argument('--conv_stride', type=int, default=8)
 
@@ -193,8 +194,10 @@ def get_model_name(args):
         name_components.append('linear_model')
     else:
         name_components.append('non-linear')
-    name_components.extend(
-        ['depth', args.model_depth, 'width', args.model_width, 'dropout', args.dropout, 'token_size', args.token_size])
+    if not args.model_architecture in ['vit_atienza', 'clip']:
+        name_components.extend(
+            ['depth', args.model_depth, 'width', args.model_width, 'dropout', args.dropout, 'token_size',
+             args.token_size])
     name_components.extend(
         ['loss', args.loss_function, 'image_height', args.image_height, 'patch_width', args.patch_width, 'optimizer',
          args.optimizer, 'lr', args.learning_rate])

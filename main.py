@@ -187,11 +187,13 @@ def loop(epoches, model, datasets, collator, tokenizer, args, train_dataloader, 
 
         evals = evaluation_epoch(datasets, model, tokenizer, collator, args)
         print(evals)
+        torch.save(model.state_dict(), os.path.join(args.output_folder, args.model_name_str))
 
 
 def main(args):
     torch.autograd.set_detect_anomaly(True)
     model_name = get_model_name(args)
+    args.model_name_str = model_name
     print(model_name)
 
     normalize = {
