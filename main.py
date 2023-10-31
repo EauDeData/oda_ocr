@@ -187,7 +187,7 @@ def loop(epoches, model, datasets, collator, tokenizer, args, train_dataloader, 
 
         evals = evaluation_epoch(datasets, model, tokenizer, collator, args)
         print(evals)
-        torch.save(model.state_dict(), os.path.join(args.output_folder, args.model_name_str))
+        torch.save(model.state_dict(), os.path.join(args.output_folder, args.model_name_str + '.pt'))
 
 
 def main(args):
