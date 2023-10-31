@@ -4,6 +4,7 @@ import numpy as np
 import wandb
 import torch.optim as optim
 from vit_pytorch import ViT
+import uuid
 
 from src.io.args import parse_arguments, get_model_name, model_choices_lookup
 from src.io.load_datasets import load_datasets
@@ -178,6 +179,8 @@ def loop(epoches, model, datasets, collator, tokenizer, args, train_dataloader, 
                                                                threshold=0.01)
     else:
         scheduler = None
+    os.makedirs(os.path.join(args.output_folder, args.assigned_uuid), exist_ok=True)
+    open(os.path.join(args.output_folder, args.assigned_uuid, 'metadata.txt')).write(args.model_name_str)
 
     for epoch in range(epoches):
         print(f"{epoch} / {epoches} epoches")
@@ -187,13 +190,15 @@ def loop(epoches, model, datasets, collator, tokenizer, args, train_dataloader, 
 
         evals = evaluation_epoch(datasets, model, tokenizer, collator, args)
         print(evals)
-        torch.save(model.state_dict(), os.path.join(args.output_folder, args.model_name_str + '.pt'))
+
+        torch.save(model.state_dict(), os.path.join(args.output_folder, args.assigned_uuid, args.assigned_uuid + '.pt'))
 
 
 def main(args):
     torch.autograd.set_detect_anomaly(True)
     model_name = get_model_name(args)
     args.model_name_str = model_name
+    args.assigned_uuid = str(uuid.uuid4())
     print(model_name)
 
     normalize = {
