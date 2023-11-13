@@ -30,19 +30,18 @@ def eval_dataset(dataloader, model, dataset_name, tokenizer, wandb_session):
     model.eval()
     with torch.no_grad():
         for batch in dataloader:
-
             tokens = model(batch)['language_head_output'].cpu().detach().numpy()
             decoded_tokens = decoder({'ctc_output': tokens}, tokenizer.ctc_blank, None)
 
             strings = [clean_special_tokens(x, tokenizer) for x in
                        tokenizer.decode_from_numpy_list([x['text'] for x in decoded_tokens])]
             labels = [clean_special_tokens(x, tokenizer) for x in tokenizer.decode(batch['labels'].permute(1, 0))]
-            for x, y in zip(strings, labels): print(x, y)
 
             metrics[f"CER_{dataset_name}"] += cer(strings, labels).item()
             metrics[f"ED_{dataset_name}"] += ed(strings, labels).item()
             metrics[f"MER_{dataset_name}"] += mer(strings, labels).item()
             total_steps += 1
+        for x, y in zip(strings, labels): print(x, y)
 
     final_scores = {key: metrics[key] / total_steps for key in metrics}
     wandb_session.log(
