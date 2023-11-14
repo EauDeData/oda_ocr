@@ -258,8 +258,9 @@ class TransformerDecoder(nn.Module):
     def forward(self, X):
 
         encoder_output = self.encoder(X)['features']  # Pass the batch X through the encoder
+        print(encoder_output.shape)
         projected = self.gelu_fn(self.projection(encoder_output))  # Project encoder output to decoder token size
-
+        print(projected.shape)
         tgt_mask = nn.Transformer.generate_square_subsequent_mask(projected.size(0)).to(projected.device)
 
         # Perform decoding using TransformerDecoder
