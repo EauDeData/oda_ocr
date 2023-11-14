@@ -127,8 +127,18 @@ def prepare_model(vocab_size, args):
             weights_state_dict = torch.load(model_choices_lookup['atienza_vit_base_augm'])
             base_model_wrapped.load_state_dict(weights_state_dict)
 
-            base_model_wrapped.module.vitstr.head = torch.nn.Linear(base_model_wrapped.module.vitstr.head.in_features,
-                                                                    vocab_size)
+            if args.decoder_architecture is None:
+                base_model_wrapped.module.vitstr.head = torch.nn.Linear(
+                                                                    base_model_wrapped.module.vitstr.head.in_features,
+                                                                    vocab_size
+                )
+
+            else:
+                base_model_wrapped.module.vitstr.head = torch.nn.Linear(
+                                                                    base_model_wrapped.module.vitstr.head.in_features,
+                                                                    base_model_wrapped.module.vitstr.head.in_features
+                )
+
             base_model_wrapped.module.vitstr.num_classes = vocab_size
 
             model = _ProtoModel(base_model_wrapped, args.device, target='square_full_images')
@@ -138,6 +148,7 @@ def prepare_model(vocab_size, args):
         if args.decoder_architecture == 'transformer':
             raise NotImplementedError('transformer architecture not implemented for decoding stage.')
         else:
+
             model = RNNDecoder(model, feature_size, args.decoder_token_size, args.decoder_depth, vocab_size,
                                args.decoder_architecture)
 
