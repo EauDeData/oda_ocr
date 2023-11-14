@@ -240,6 +240,40 @@ class RNNDecoder(nn.Module):
             'hidden_states': (hn, cn)
         }
 
+class TransformerDecoder(nn.Module):
+    def __init__(self, encoder, encoder_input_size, decoder_token_size, decoder_depth, vocab_size, decoder_width):
+        super(TransformerDecoder, self).__init__()
+
+        self.encoder = encoder
+        self.projection = torch.nn.Linear(encoder_input_size, decoder_token_size)
+        self.gelu_fn = torch.nn.GELU()
+
+        self.layer = nn.TransformerDecoderLayer(d_model=decoder_token_size, nhead=decoder_width)
+        self.decoder = nn.TransformerDecoder(self.layer, num_layers=decoder_depth)
+
+        self.lm_head = torch.nn.Linear(decoder_token_size, vocab_size)
+
+    def forward(self, X):
+        encoder_output = self.encoder(X)  # Pass the batch X through the encoder
+        projected = self.gelu_fn(self.projection(encoder_output))  # Project encoder output to decoder token size
+
+        tgt_mask = nn.Transformer.generate_square_subsequent_mask(projected.size(0)).to(X.device)
+
+        # Perform decoding using TransformerDecoder
+        decoded = self.decoder(
+            tgt=projected,
+            memory=encoder_output,
+            tgt_mask=tgt_mask
+        )
+
+        # Project the decoder output to vocabulary space
+        output = self.lm_head(decoded)
+
+        return {
+            'features': decoded,
+            'language_head_output': output,
+            'hidden_states': None
+        }
 
 if __name__ == '__main__':
     input_dictionary = {
