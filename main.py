@@ -122,7 +122,7 @@ def prepare_model(vocab_size, args):
             base_model = vitstr_base_patch16_224(pretrained=url)
             base_model_wrapped = ViTAtienzaWrapper(base_model)
             base_model_wrapped.module.vitstr.head = torch.nn.Linear(base_model_wrapped.module.vitstr.head.in_features,
-                                                                    96) # Decretazo, otherwise weights missmatch LoL
+                                                                    96)  # Decretazo, otherwise weights missmatch LoL
 
             weights_state_dict = torch.load(model_choices_lookup['atienza_vit_base_augm'])
             base_model_wrapped.load_state_dict(weights_state_dict)
@@ -131,7 +131,7 @@ def prepare_model(vocab_size, args):
                                                                     vocab_size)
             base_model_wrapped.module.vitstr.num_classes = vocab_size
 
-            model = _ProtoModel(base_model_wrapped, args.device, target = 'square_full_images')
+            model = _ProtoModel(base_model_wrapped, args.device, target='square_full_images')
             print('Loaded model with:', len(list(model.parameters())), 'modules.')
 
     if args.decoder_architecture is not None:
@@ -141,12 +141,11 @@ def prepare_model(vocab_size, args):
             model = RNNDecoder(model, feature_size, args.decoder_token_size, args.decoder_depth, vocab_size,
                                args.decoder_architecture)
 
-
     ### LINEARIZE ###
     ### The loaded model is already linear?
     if args.linear_model:
         print('Linearizing ViT model...')
-        wrapped = AllMightyWrapper(non_linear_model = model, device = args.device)
+        wrapped = AllMightyWrapper(non_linear_model=model, device=args.device)
         model = LinearizedModel(wrapped)
 
     model.to(args.device)
@@ -186,7 +185,8 @@ def loop(epoches, model, datasets, collator, tokenizer, args, train_dataloader, 
         print(f"{epoch} / {epoches} epoches")
 
         train_function(epoch, train_dataloader, optimizer, model, loss_function, args.patch_width, wandb,
-                       tokenizer=tokenizer.tokens[tokenizer.padding_token], scheduler=scheduler)
+                       tokenizer=tokenizer.tokens[tokenizer.padding_token], scheduler=scheduler,
+                       padding_token=tokenizer.padding_token)
 
         evals = evaluation_epoch(datasets, model, tokenizer, collator, args)
         print(evals)

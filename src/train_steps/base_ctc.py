@@ -1,7 +1,7 @@
 import torch
 from tqdm import tqdm
 
-def train_ctc(epoch, dataloader, optimizer, model, loss_function, patch_width, wandb_session, *args):
+def train_ctc(epoch, dataloader, optimizer, model, loss_function, patch_width, wandb_session, *args, **kwargs):
     
     buffer = 0
     counter = 0
@@ -31,7 +31,7 @@ def train_ctc(epoch, dataloader, optimizer, model, loss_function, patch_width, w
     wandb_session.log({'train loss': buffer / counter})
 
 
-def train_ctc_clip(epoch, dataloader, optimizer, model, loss_function, patch_width, wandb_session, scheduler = None, tokenizer = None, *args):
+def train_ctc_clip(epoch, dataloader, optimizer, model, loss_function, patch_width, wandb_session, scheduler = None, tokenizer = None, *args, **kwargs):
     buffer = 0
     counter = 0
 
