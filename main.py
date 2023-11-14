@@ -200,7 +200,7 @@ def loop(epoches, model, datasets, collator, tokenizer, args, train_dataloader, 
 
         train_function(epoch, train_dataloader, optimizer, model, loss_function, args.patch_width, wandb,
                        tokenizer=tokenizer.tokens[tokenizer.padding_token], scheduler=scheduler,
-                       padding_token=tokenizer.padding_token)
+                       padding_token=tokenizer.tokens[tokenizer.padding_token])
 
         evals = evaluation_epoch(datasets, model, tokenizer, collator, args)
         print(evals)
