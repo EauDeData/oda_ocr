@@ -260,6 +260,10 @@ class TransformerDecoder(nn.Module):
     def forward(self, X):
 
         encoder_output = self.encoder(X)['features']  # Pass the batch X through the encoder
+
+        import pdb
+        pdb.set_trace()
+
         memory = self.memory(encoder_output)
 
         projected = self.gelu_fn(self.projection(encoder_output))  # Project encoder output to decoder token size
@@ -272,8 +276,14 @@ class TransformerDecoder(nn.Module):
             tgt_mask=tgt_mask
         ))
 
+        import pdb
+        pdb.set_trace()
+
         # Project the decoder output to vocabulary space
         output = self.lm_head(decoded)
+
+        import pdb
+        pdb.set_trace()
 
         return {
             'features': decoded,
