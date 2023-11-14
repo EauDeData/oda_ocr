@@ -12,7 +12,7 @@ def train_cross_entropy(epoch, dataloader, optimizer, model, loss_function, patc
 
         predicted_seq_logits = model(batch)['language_head_output']
 
-        target_seq = (batch['labels'].to(model.device))  # (BS, SEQ_LEN)
+        target_seq = (batch['padded_labels_to_text'].to(model.device))  # (BS, SEQ_LEN)
 
         print(target_seq.shape)
         print(predicted_seq_logits.shape)

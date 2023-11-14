@@ -91,6 +91,7 @@ class CollateFNs:
         patched_images = []
         masks = []
         images_full_resized = []
+        simply_padded_labels = []
 
         for item in batch:
             original_image, image, text_token, raw_text, split, dataset, resized_image = item['original_image'], item[
@@ -127,6 +128,13 @@ class CollateFNs:
                 )
             )
 
+            text_simply_tokenized = torch.from_numpy(
+                self.character_tokenizer(
+                    text_token + [self.character_tokenizer.padding_token] * (max_tokens - len(text_token))
+                )
+            )
+
+            simply_padded_labels.append(text_simply_tokenized)
             text_tokens.append(text_tokenized)
 
             visual_tokens.append(
@@ -141,6 +149,7 @@ class CollateFNs:
         return {
             'input_visual_seq': torch.stack(visual_tokens),
             'images_tensor': torch.stack(images_tensor_full),
+            'padded_labels_to_text': torch.stack(simply_padded_labels),
             'labels': torch.stack(text_tokens),
             'raw_text_gt': raw_texts,
             'sources': sources,
