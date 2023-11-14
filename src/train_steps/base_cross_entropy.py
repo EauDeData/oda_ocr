@@ -10,7 +10,7 @@ def train_cross_entropy(epoch, dataloader, optimizer, model, loss_function, patc
     for batch in tqdm(dataloader, desc=f"Training classic approach - epoch {epoch}"):
         optimizer.zero_grad()
 
-        predicted_seq_logits = model(batch)
+        predicted_seq_logits = model(batch)['language_head_output']
 
         target_seq = (batch['labels'].to(model.device))  # (BS, SEQ_LEN)
         padding = torch.ones(target_seq.shape[0], predicted_seq_logits.shape[0], dtype=target_seq.dtype) * padding_token
