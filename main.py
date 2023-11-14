@@ -132,6 +132,7 @@ def prepare_model(vocab_size, args):
                                                                     base_model_wrapped.module.vitstr.head.in_features,
                                                                     vocab_size
                 )
+                base_model_wrapped.module.vitstr.num_classes = vocab_size
 
             else:
                 base_model_wrapped.module.vitstr.head = torch.nn.Linear(
@@ -139,8 +140,7 @@ def prepare_model(vocab_size, args):
                                                                     base_model_wrapped.module.vitstr.head.in_features
                 )
                 feature_size = base_model_wrapped.module.vitstr.head.in_features
-
-            base_model_wrapped.module.vitstr.num_classes = vocab_size
+                base_model_wrapped.module.vitstr.num_classes = feature_size
 
             model = _ProtoModel(base_model_wrapped, args.device, target='square_full_images')
             print('Loaded model with:', len(list(model.parameters())), 'modules.')
