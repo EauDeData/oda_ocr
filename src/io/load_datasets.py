@@ -43,8 +43,8 @@ def load_datasets(args, transforms = lambda x: x):
 
         datasets.append({
             'train': COCOTextDataset(base_folder=args.cocotext_path, split = 'train', langs=args.cocotext_langs, legibility=args.cocotext_visibility, **common),
-            'train': COCOTextDataset(base_folder=args.cocotext_path, split = 'val', langs=args.cocotext_langs, legibility=args.cocotext_visibility, **common),
-            'val': None
+            'val': COCOTextDataset(base_folder=args.cocotext_path, split = 'val', langs=args.cocotext_langs, legibility=args.cocotext_visibility, **common),
+            'test': None
         })
 
     if args.use_esposalles:
