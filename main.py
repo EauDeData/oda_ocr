@@ -138,6 +138,7 @@ def prepare_model(vocab_size, args):
                                                                     base_model_wrapped.module.vitstr.head.in_features,
                                                                     base_model_wrapped.module.vitstr.head.in_features
                 )
+                feature_size = base_model_wrapped.module.vitstr.head.in_features
 
             base_model_wrapped.module.vitstr.num_classes = vocab_size
 
