@@ -21,6 +21,8 @@ def train_cross_entropy(epoch, dataloader, optimizer, model, loss_function, patc
         predicted_seq_logits = predicted_seq_logits.permute(1, 0, 2).reshape(
             predicted_seq_logits.shape[0] * predicted_seq_logits.shape[1], predicted_seq_logits.shape[2])
 
+        if isinstance(loss_function, type(torch.nn.NLLLoss)):
+            predicted_seq_logits = torch.nn.functional.log_softmax(predicted_seq_logits, dim = -1)
         loss = loss_function(predicted_seq_logits, padded_labels)
         loss.backward()
         optimizer.step()
