@@ -256,7 +256,7 @@ class TransformerDecoder(nn.Module):
         self.lm_head = torch.nn.Linear(decoder_token_size, vocab_size)
 
     def forward(self, X):
-        encoder_output = self.encoder(X)  # Pass the batch X through the encoder
+        encoder_output = self.encoder(X['features'])  # Pass the batch X through the encoder
         projected = self.gelu_fn(self.projection(encoder_output))  # Project encoder output to decoder token size
 
         tgt_mask = nn.Transformer.generate_square_subsequent_mask(projected.size(0)).to(X.device)
