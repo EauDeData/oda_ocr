@@ -208,7 +208,7 @@ def get_model_name(args):
                                 'decoder_token_size', args.decoder_token_size,
                                 'decoder_depth', args.decoder_depth])
         if args.decoder_architecture == 'transformer':
-            name_components.extend(['decoder_width', args.decooder_width])
+            name_components.extend(['decoder_width', args.decoder_width])
     if args.reduce_on_plateau: name_components.extend(['reduce_on_plateau', args.reduce_on_plateau])
 
     name_components.extend(['total_square_size', args.square_image_max_size])
