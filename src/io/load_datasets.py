@@ -16,15 +16,6 @@ from src.datasets.ocr.sroie import SROIEDataset
 from src.datasets.ocr.saintgall import SaintGallDataset
 
 
-## AQUI AGAFAR ELS ARGUMENTS I ANAR FENT DICCIONARIS 
-
-{'train': None,
- 'val': None,
- 'test': None}
-
-# Amb None si no está disponible i el dataset si ho està
-
-
 def load_datasets(args, transforms = lambda x: x):
     datasets = []
 
