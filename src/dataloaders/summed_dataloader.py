@@ -153,15 +153,22 @@ class CollateFNs:
             'labels': torch.stack(text_tokens),
             'raw_text_gt': raw_texts,
             'sources': sources,
-            'original_images': resized_images,
+            # 'original_images': resized_images,
             'input_lengths': [x.size[0] // self.patch_width for x in resized_images],
             'output_lengths': [len([char for char in x]) for x in raw_texts],
-            'pre_resize_images': original_images,
+            # 'pre_resize_images': original_images,
             'totally_padded_image': torch.stack(patched_images),
             'input_lengths_clip': [224 // self.patch_width for _ in resized_images],
             'masks': masks,
             'square_full_images': torch.stack(images_full_resized)
         }
+    def collate_while_debugging(self, batch):
+        try:
+            return self.collate(batch)
+        except:
+            print(batch)
+            import pdb
+            pdb.set_trace()
 
 def resize_to_max_size(image, max_size):
     width, height = image.size
