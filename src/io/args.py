@@ -49,6 +49,8 @@ def parse_arguments():
     parser.add_argument('--epoches', type=int, default=10)
     parser.add_argument('--use_transformers', action='store_true')
     parser.add_argument('--output_folder', type=str, default=DEFAULT_OUPUT_FOLDER)
+    parser.add_argument('--output_model_name', type=str, default=None)
+
 
     dataset_group = parser.add_argument_group('Dataset argument group.')
 
@@ -119,7 +121,7 @@ def parse_arguments():
 
     model_group.add_argument('--load_checkpoint', action='store_true')
 
-    model_group.add_argument('--checkpoint_name', choices=model_choices, type=str, default=None)
+    model_group.add_argument('--checkpoint_name', type=str, default=None)
 
     model_group.add_argument('--model_architecture', type=str,
                              choices=['conv_vit_encoder', 'vit_encoder_vertical_patch', 'vit_lucid', 'clip',

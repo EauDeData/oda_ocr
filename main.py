@@ -15,6 +15,7 @@ from src.vision.models import (ViTEncoder, ConvVitEncoder, _ProtoModel, CLIPWrap
 from src.vision.vitstr import vitstr_base_patch16_224
 from src.linearize import LinearizedModel, AllMightyWrapper
 from src.evaluation.eval import eval_dataset
+from src.evaluation.visutils import loop_for_visualization
 from src.train_steps.base_ctc import train_ctc, train_ctc_clip
 from src.train_steps.base_cross_entropy import train_cross_entropy
 
@@ -79,9 +80,6 @@ def prepare_model(vocab_size, args):
     #### LOAD MODEL ###
     feature_size, model = None, None
 
-    if args.load_checkpoint and args.checkpoint_name not in model_choices_lookup:
-        raise NotImplementedError(f"Won't load {args.checkpoint_name}, model is not implemented yet.\n"
-                                  f"availible models are: {model_choices_lookup}")
     if args.use_transformers:
         raise NotImplementedError
     else:
@@ -162,6 +160,11 @@ def prepare_model(vocab_size, args):
         wrapped = AllMightyWrapper(non_linear_model=model, device=args.device)
         model = LinearizedModel(wrapped)
 
+    if args.load_checkpoint and args.checkpoint_name:
+
+        print(f"Loading state dict from: {args.checkpoint_name}")
+        model.load_state_dict(torch.load(args.checkpoint_name))
+
     model.to(args.device)
     model.train()
     return model
@@ -198,6 +201,7 @@ def loop(epoches, model, datasets, collator, tokenizer, args, train_dataloader, 
     for epoch in range(epoches):
         print(f"{epoch} / {epoches} epoches")
 
+        # loop_for_visualization(train_dataloader, model, tokenizer, None)
         train_function(epoch, train_dataloader, optimizer, model, loss_function, args.patch_width, wandb,
                        tokenizer=tokenizer.tokens[tokenizer.padding_token], scheduler=scheduler,
                        padding_token=tokenizer.tokens[tokenizer.padding_token])
@@ -212,7 +216,7 @@ def main(args):
     torch.autograd.set_detect_anomaly(True)
     model_name = get_model_name(args)
     args.model_name_str = model_name
-    args.assigned_uuid = str(uuid.uuid4())
+    args.assigned_uuid = str(uuid.uuid4()) if args.output_model_name is None else args.output_model_name
     print(model_name)
 
     normalize = {

@@ -18,7 +18,6 @@ def train_ctc(epoch, dataloader, optimizer, model, loss_function, patch_width, w
         # import pdb
         # pdb.set_trace()
         
-        
         loss = loss_function(softmaxed_output, ground_truth, tuple(batch['input_lengths']), tuple(batch['output_lengths']))
 
         loss.backward()
