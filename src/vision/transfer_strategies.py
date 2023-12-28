@@ -18,8 +18,9 @@ class DataFixTransfer(torch.nn.Module):
         src_tokens = self.get_tokens_from_dataset(source_dataset, collator, max_tokens)
 
         self.datafix_locate = DFLocate(verbose=True).shift_location(src_tokens, query_tokens)
-        self.corruption_mask = torch.tensor(self.datafix_locate.mask_).to(model.device)
-        print('Total corrputed features:', self.datafix_locate.n_corrupted_features_)
+        self.corruption_mask = torch.tensor(self.datafix_locate.mask_).to(self.encoder.device)
+        print('Total corrputed features:', self.datafix_locate.n_corrupted_features_ ,
+              'out of', len(self.corruption_mask))
         # self.datafix_correct = DFCorrect(self.datafix_locate.n_corrupted_features_,
         #                                verbose=True).fit_transform(src_tokens, query_tokens)
 
@@ -44,6 +45,7 @@ class DataFixTransfer(torch.nn.Module):
         The sparser the distribution, the harder the task.
         '''
         output_tokens = self.encoder(batch)['features'] * (1-self.corruption_mask).view(1, 1, -1)
+
         return self.forward_encoded_output(encoder_output=output_tokens)
 
     def compute_by_applied_shift(self, idx):

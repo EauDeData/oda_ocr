@@ -12,13 +12,14 @@ def prepare_datafix_model(model, collator, origin_dataset_list, target_dataset_l
     source_dataset_args = ListToArgsConstructor(origin_dataset_list, args)
     target_dataset_args = ListToArgsConstructor(target_dataset_list, args)
 
+    test_split = load_datasets(target_dataset_args, transforms)
     source_dataset = merge_datasets(load_datasets(source_dataset_args, transforms), 'train')
-    target_dataset = merge_datasets(load_datasets(target_dataset_args, transforms), eval_split)
+    target_dataset = merge_datasets(test_split, eval_split)
 
     datafix_model = DataFixTransfer(model, collator, source_dataset, target_dataset,
                                     max_tokens = args.datafix_max_tokens)
 
-    return datafix_model, target_dataset
+    return datafix_model, test_split
 
 def eval(args):
 
