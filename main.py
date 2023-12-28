@@ -163,7 +163,8 @@ def prepare_model(vocab_size, args):
     if args.load_checkpoint and args.checkpoint_name:
 
         print(f"Loading state dict from: {args.checkpoint_name}")
-        model.load_state_dict(torch.load(args.checkpoint_name))
+        incompatible_keys = model.load_state_dict(torch.load(args.checkpoint_name))
+        print(f"(I, script) Found incompatible keys: {incompatible_keys}")
 
     model.to(args.device)
     model.train()

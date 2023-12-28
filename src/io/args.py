@@ -43,14 +43,39 @@ cocotext_visibility_choices = ['legible', 'illegible']
 cv_folds = ['cv1', 'cv2', 'cv3', 'cv4']
 
 
+class ListToArgsConstructor:
+    def __init__(self, listed_datasets, args):
+        availability = {dataset_name: dataset_name in dataset_defaults for dataset_name in listed_datasets}
+        print(f"Received usage of: {availability}")
+        fstring_attrs = ('{}_path', '{}_level', '{}_cross_validation_fold')
+
+        for dataset_name in dataset_defaults:
+            setattr(self, f"use_{dataset_name}", dataset_name in listed_datasets)
+            for arg_attr in fstring_attrs:
+                formatted = arg_attr.format(dataset_name)
+                if hasattr(args, formatted): setattr(self, formatted, getattr(args, formatted))
+
+        attributes_to_steal = ('image_height', 'patch_width')
+
+        for attr in attributes_to_steal:
+            setattr(self, attr, getattr(args, attr))
+
+
+
 def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--epoches', type=int, default=10)
-    parser.add_argument('--use_transformers', action='store_true')
     parser.add_argument('--output_folder', type=str, default=DEFAULT_OUPUT_FOLDER)
     parser.add_argument('--output_model_name', type=str, default=None)
+    parser.add_argument('--use_transformers', action='store_true')
 
+    parser.add_argument('--perform_feature_correction', action='store_true')
+    parser.add_argument('--source_datasets', nargs='+',
+                        help='Source datasets for feature correction', required=False)
+    parser.add_argument('--target_datasets', nargs='+',
+                        help='Target datasets for feature correction', required=False)
+    parser.add_argument('--datafix_max_tokens', type=int, default=10000)
 
     dataset_group = parser.add_argument_group('Dataset argument group.')
 
