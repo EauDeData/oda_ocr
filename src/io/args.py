@@ -70,12 +70,23 @@ def parse_arguments():
     parser.add_argument('--output_model_name', type=str, default=None)
     parser.add_argument('--use_transformers', action='store_true')
 
+    parser.add_argument('--perform_model_arithmetics', action='store_true')
+    parser.add_argument('--checkpoints_list', nargs='+',
+                        help='List of checkpoints to fuse', required=False)
+    parser.add_argument('--linear_sum_models_weights', nargs='+',
+                        help='Weights of models', type=int, required=False)
+    parser.add_argument('--final_vector_scaling', type=float, default=0.8)
+
+
     parser.add_argument('--perform_feature_correction', action='store_true')
     parser.add_argument('--source_datasets', nargs='+',
                         help='Source datasets for feature correction', required=False)
     parser.add_argument('--target_datasets', nargs='+',
                         help='Target datasets for feature correction', required=False)
     parser.add_argument('--datafix_max_tokens', type=int, default=10000)
+
+
+
 
     dataset_group = parser.add_argument_group('Dataset argument group.')
 
