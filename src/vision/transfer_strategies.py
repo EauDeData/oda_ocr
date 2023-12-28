@@ -2,8 +2,7 @@ import torch
 from tqdm import tqdm
 import numpy as np
 
-from datafix import DFLocate
-from datafix import DFCorrect
+from src.Datafix.datafix import DFCorrect, DFLocate
 
 class DataFixTransfer(torch.nn.Module):
     def __init__(self, model, collator, source_dataset, target_dataset, max_tokens = 10000):
@@ -17,10 +16,15 @@ class DataFixTransfer(torch.nn.Module):
         print("(DataFix) Succesfully loaded all attributes.")
         query_tokens = self.get_tokens_from_dataset(target_dataset, collator, max_tokens)
         src_tokens = self.get_tokens_from_dataset(source_dataset, collator, max_tokens)
-        self.datafix_correct = DFCorrect().fit(src_tokens, query_tokens)
+
+        self.datafix_locate = DFLocate(verbose=True).shift_location(src_tokens, query_tokens)
+        self.corruption_mask = torch.tensor(self.datafix_locate.mask_).to(model.device)
+        print('Total corrputed features:', self.datafix_locate.n_corrupted_features_)
+        # self.datafix_correct = DFCorrect(self.datafix_locate.n_corrupted_features_,
+        #                                verbose=True).fit_transform(src_tokens, query_tokens)
 
     def get_tokens_from_dataset(self, dataset, collator, max_tokens = 10000):
-        dataloader_tmp = torch.utils.data.DataLoader(dataset, shuffle = True, batch_size = 1,
+        dataloader_tmp = torch.utils.data.DataLoader(dataset, shuffle=False, batch_size = 1,
                                                      collate_fn=collator.collate)
         all_tokens = []
         token_count = 0
@@ -33,6 +37,22 @@ class DataFixTransfer(torch.nn.Module):
                 if token_count >= max_tokens: break
 
         return np.vstack(all_tokens)
+
+    def compute_by_dropout(self, batch):
+        '''
+        Takes the mask and drops out all corruputed features, can run 'on-line' and it's the default or forward.
+        The sparser the distribution, the harder the task.
+        '''
+        output_tokens = self.encoder(batch)['features'] * (1-self.corruption_mask).view(1, 1, -1)
+        return self.forward_encoded_output(encoder_output=output_tokens)
+
+    def compute_by_applied_shift(self, idx):
+        '''
+        Using datafix, computes the result with fixed vectors given the corresponding index.
+            TODO: Implement DataFix - Correct in order to do this.
+        '''
+        pass
+
 
     def forward_encoded_output(self, encoder_output):
         memory = self.memory(encoder_output)
@@ -57,4 +77,4 @@ class DataFixTransfer(torch.nn.Module):
             'hidden_states': None
         }
     def forward(self, x):
-        pass
+        return self.compute_by_dropout(x)
