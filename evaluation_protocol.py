@@ -53,7 +53,7 @@ def fuse_models(base_model, tokenizer_leng, args):
                                + weights[prev_idx + 1] * task_vector)
 
     apply_method = multi_domain_vector.apply_to_linear if args.linear_model else multi_domain_vector.apply_to
-    return apply_method(preload_model(base_model)).cuda()
+    return apply_method(preload_model(base_model), args.final_vector_scaling).cuda()
 
 def eval(args):
 
