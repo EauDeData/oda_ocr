@@ -1,5 +1,6 @@
 import torch, torchvision
 import wandb
+import json
 
 from src.io.args import parse_arguments, ListToArgsConstructor
 from src.io.load_datasets import load_datasets
@@ -56,6 +57,7 @@ def fuse_models(base_model, tokenizer_leng, args):
     return apply_method(preload_model(base_model), args.final_vector_scaling).cuda()
 
 def eval(args):
+    results = {}
 
     wandb.init(project='oda_ocr')
     wandb.config.update(args)
@@ -89,14 +91,21 @@ def eval(args):
     else: eval_datasets = load_datasets(args, transforms)
 
     if args.perform_model_arithmetics:
+        results['results_taylor'] = []
+
         print('------------------ Fused Models Evaluation Protocol -------------------------')
         assert model_vectorized is not None, 'How did you even get here?'
         for result in evaluation_epoch(eval_datasets, model_vectorized, tokenizer, collator, args):
             print(result)
+            results['results_taylor'].append(result)
 
+    results['results_baseline'] = []
     print('------------------ Common evaluation protocol -------------------------')
     for result in evaluation_epoch(eval_datasets, model, tokenizer, collator, args):
         print(result)
+        results['results_baseline'].append(result)
+
+    json.dump(results, open('results_output.json'))
 
 if __name__ == '__main__':
     args = parse_arguments()
