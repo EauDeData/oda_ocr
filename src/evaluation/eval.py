@@ -6,7 +6,7 @@ from torchmetrics.text import EditDistance
 from torchmetrics.text import MatchErrorRate
 
 from src.decoders.decoders import GreedyTextDecoder
-
+from src.io.formatting_io_ops import bcolors
 
 def clean_special_tokens(string, tokenizer):
     for token in tokenizer.special_tokens:
@@ -41,7 +41,8 @@ def eval_dataset(dataloader, model, dataset_name, tokenizer, wandb_session):
             metrics[f"ED_{dataset_name}"] += ed(strings, labels).item()
             metrics[f"MER_{dataset_name}"] += mer(strings, labels).item()
             total_steps += 1
-        for x, y in zip(strings, labels): print(x, y)
+        for x, y in zip(strings, labels):
+            print(f"{bcolors.OKGREEN if x==y else bcolors.FAIL}Predicted:{x}, GT: {y}{bcolors.ENDC}")
 
     final_scores = {key: metrics[key] / total_steps for key in metrics}
     wandb_session.log(

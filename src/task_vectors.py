@@ -201,3 +201,33 @@ def linear_to_nonlinear(linear_task_vector, param_names):
         return NonLinearTaskVector(
             vector=linear_task_vector.get_named_parameters(param_names)
         )
+
+class GenericLinearVectorizer(LinearizedTaskVector):
+
+    # This trick is ugly as fuck if it doesn't crash the whole code i will just be amazed
+    def state_dict(self):
+        return self._state_dict
+    def _load_checkpoint(self, checkpoint):
+        if isinstance(checkpoint, str):
+            self._state_dict = torch.load(checkpoint)
+        else: self._state_dict = checkpoint
+        return self
+
+    def apply_to(self, pretrained_model, scaling_coef=1.0):
+        """Apply a task vector to a pretrained model."""
+        with torch.no_grad():
+            pretrained_model = pretrained_model
+            new_state_dict = {}
+            pretrained_state_dict = pretrained_model.state_dict()
+            for key in pretrained_state_dict:
+                if key not in self.vector:
+                    print(
+                        f"Warning: key {key} is present in the pretrained state dict but not in the task vector"  # noqa: E501
+                    )
+                    continue
+                new_state_dict[key] = (
+                    pretrained_state_dict[key] + scaling_coef * self.vector[key]
+                )
+        pretrained_model.load_state_dict(new_state_dict)
+        return pretrained_model
+

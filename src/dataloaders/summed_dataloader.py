@@ -145,11 +145,13 @@ class CollateFNs:
             'raw_text_gt': raw_texts,
             'sources': sources,
             'input_lengths': [x.size[0] // self.patch_width for x in resized_images],
-            'output_lengths': [len([char for char in x]) for x in raw_texts],
+            'output_lengths': [len(x['tokens']) for x in batch],
             'totally_padded_image': torch.stack(patched_images),
             'input_lengths_clip': [224 // self.patch_width for _ in resized_images],
             'masks': None,
-            'square_full_images': torch.stack(images_full_resized)
+            'square_full_images': torch.stack(images_full_resized),
+            'max_patches': max_patches,
+            'max_tokens': max_tokens
         }
     def collate_while_debugging(self, batch):
         try:

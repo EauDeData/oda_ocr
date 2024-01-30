@@ -71,7 +71,7 @@ class ParzivalDataset(GenericDataset):
             'dataset': self.name,
             'split': f"{self.mode}_{self.split}",
             'path': metadata['image_path'],
-            'tokens': metadata['tokens']
+            'tokens': [char if char != 'eq' else '-' for char in annotation.split('-')]
         }
                         
 

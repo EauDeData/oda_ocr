@@ -5,7 +5,7 @@ import json
 from src.io.args import parse_arguments, ListToArgsConstructor
 from src.io.load_datasets import load_datasets
 from src.vision.transfer_strategies import DataFixTransfer
-from src.task_vectors import NonLinearTaskVector, LinearizedTaskVector
+from src.task_vectors import NonLinearTaskVector, LinearizedTaskVector, GenericLinearVectorizer
 from src.linearize import LinearizedModel
 from src.io.formatting_io_ops import preload_model
 
@@ -27,7 +27,6 @@ def prepare_datafix_model(model, collator, origin_dataset_list, target_dataset_l
 
 def fuse_models(base_model, tokenizer_leng, args):
 
-    vectorizer = LinearizedTaskVector if args.linear_model else NonLinearTaskVector
     # We need to linearize the model if it is not linear already
     if args.linear_model and not isinstance(base_model, LinearizedModel):
         base_model = LinearizedModel(base_model) # Taylor's first order expansion
@@ -39,22 +38,26 @@ def fuse_models(base_model, tokenizer_leng, args):
         if args.linear_model and not isinstance(base_model, LinearizedModel):
             print(f"(SCRIPT) Trying to operate with a non-linear FT version while --linear_model is true."
                   f"\n\tCheckpoint: {model_checkpoint}")
-        loaded_model = prepare_model(tokenizer_leng, args)
-        loaded_model.load_state_dict(torch.load(model_checkpoint))
-        loaded_model.eval()
-
+        print('Fusing checkpoint', model_checkpoint, 'with weight', weight)
         # Important, everything linear or everything non-Linear
-        task_vector = vectorizer(preload_model(base_model), preload_model(loaded_model)) # Like this?
-        task_vectors.append(task_vector)
+        task_vector = GenericLinearVectorizer(base_model.state_dict(), model_checkpoint)
+
+        task_vectors.append(task_vector * weight)
         weights.append(weight)
 
-    multi_domain_vector = task_vectors[0]
-    for prev_idx, task_vector in enumerate(task_vectors[1:]):
-        multi_domain_vector = ((weights[prev_idx] if prev_idx == 0 else 1) * multi_domain_vector
-                               + weights[prev_idx + 1] * task_vector)
+    multi_domain_vector = None
+
+    for idx, task_vector in enumerate(task_vectors):
+        if multi_domain_vector is None:
+            multi_domain_vector = task_vector
+        else:
+            multi_domain_vector = task_vector + multi_domain_vector
 
     apply_method = multi_domain_vector.apply_to_linear if args.linear_model else multi_domain_vector.apply_to
-    return apply_method(preload_model(base_model), args.final_vector_scaling).cuda()
+
+    final_state_dict = apply_method(base_model, args.final_vector_scaling).cuda()
+
+    return final_state_dict
 
 def eval(args):
     results = {}

@@ -7,10 +7,13 @@ from src.dataloaders.summed_dataloader import GenericDataset
 DEFAULT_MLT = "/data/users/amolina/OCR/MLT19/"
 
 class MLT19Dataset(GenericDataset):
-    name = 'mlt19_dataset'
+
     def __init__(self, base_folder = DEFAULT_MLT, split: ["train", "val"] = 'train',\
                  language = ['Latin', 'Arabic',  "Chinese", "Japanese", "Korean", "Bangla", "Hindi", "Symbols", "Mixed", "None"],\
                 cross_val = 'cv1', image_height = 128, patch_width = 16, transforms = lambda x: x) -> None:
+
+        self.name = f"mlt19_dataset_{'_'.join([x[:3] for x in language])}"
+
         self.image_folder = os.path.join(
             base_folder, 'images'
         )

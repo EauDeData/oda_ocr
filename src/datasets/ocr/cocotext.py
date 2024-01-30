@@ -7,12 +7,12 @@ from src.dataloaders.summed_dataloader import GenericDataset
 DEFAULT_COCOTEXT = "/data/users/amolina/OCR/COCOText"
 
 class COCOTextDataset(GenericDataset):
-    name = 'cocotext_dataset'
+
     def __init__(self, base_folder = DEFAULT_COCOTEXT, annots_name='cocotext.v2.json', split: ['train', 'val'] = 'train',
                  langs = ['english', 'not english'], legibility = ['legible', 'illgible'],
                  image_height = 128, patch_width = 16, transforms = lambda x: x) -> None:
         super().__init__()
-
+        self.name = f"cocotext_dataset_{'_'.join(langs)}"
         # split train / val
         json_annots = json.load(
             open(os.path.join(base_folder, annots_name))

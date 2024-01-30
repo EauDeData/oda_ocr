@@ -153,18 +153,28 @@ def prepare_model(vocab_size, args):
             model = RNNDecoder(model, feature_size, args.decoder_token_size, args.decoder_depth, vocab_size,
                                args.decoder_architecture)
 
+    linearized = False
+    if args.load_checkpoint and args.checkpoint_name:
+        # TODO: Create a --load_linear_checkpoint in order to linearize model BEFORE
+        try:
+            print(f"Loading state dict from: {args.checkpoint_name}")
+            incompatible_keys = model.load_state_dict(torch.load(args.checkpoint_name))
+            print(f"(I, script) Found incompatible keys: {incompatible_keys}")
+        except:
+            print('Load Failed, retrying with linear regime on load')
+            print('Linearizing ViT model...')
+            wrapped = AllMightyWrapper(non_linear_model=model, device=args.device)
+            model = LinearizedModel(wrapped)
+            incompatible_keys = model.load_state_dict(torch.load(args.checkpoint_name))
+            print(f"(I, script) Found incompatible keys: {incompatible_keys}")
+            linearized = True
+
     ### LINEARIZE ###
     ### The loaded model is already linear?
-    if args.linear_model:
+    if args.linear_model and not linearized:
         print('Linearizing ViT model...')
         wrapped = AllMightyWrapper(non_linear_model=model, device=args.device)
         model = LinearizedModel(wrapped)
-
-    if args.load_checkpoint and args.checkpoint_name:
-
-        print(f"Loading state dict from: {args.checkpoint_name}")
-        incompatible_keys = model.load_state_dict(torch.load(args.checkpoint_name))
-        print(f"(I, script) Found incompatible keys: {incompatible_keys}")
 
     model.to(args.device)
     model.train()

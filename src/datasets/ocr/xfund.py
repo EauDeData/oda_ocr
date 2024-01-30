@@ -7,8 +7,10 @@ from src.dataloaders.summed_dataloader import GenericDataset
 DEFAULT_XFUND = "/data/users/amolina/OCR/xFUND"
 
 class XFundDataset(GenericDataset):
-    name = 'xfund_dataset'
+
     def __init__(self, base_folder = DEFAULT_XFUND, split: ['train', 'val'] = 'train', lang = ['DE', 'ES', 'FR', 'IT', 'JA', 'PT', 'ZH'], image_height = 128, patch_width = 16, transforms = lambda x: x) -> None:
+
+        self.name = f"xfund_dataset_{'_'.join([x for x in lang])}"
 
         self.split = split
         self.image_height = image_height

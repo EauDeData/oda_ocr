@@ -74,7 +74,7 @@ def parse_arguments():
     parser.add_argument('--checkpoints_list', nargs='+',
                         help='List of checkpoints to fuse', required=False)
     parser.add_argument('--linear_sum_models_weights', nargs='+',
-                        help='Weights of models', type=int, required=False)
+                        help='Weights of models', type=float, required=False)
     parser.add_argument('--final_vector_scaling', type=float, default=0.8)
 
 
