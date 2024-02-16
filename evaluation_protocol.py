@@ -59,6 +59,15 @@ def fuse_models(base_model, tokenizer_leng, args):
 
     return final_state_dict
 
+def fuse_two_models(base_model, model_a_state_dict, model_b_state_dict, weight_a, weight_b, final_scaling = 1):
+
+    task_vector_a = GenericLinearVectorizer(base_model.state_dict(), model_a_state_dict) * weight_a
+    task_vector_b = GenericLinearVectorizer(base_model.state_dict(), model_b_state_dict) * weight_b
+
+    multi_vector = task_vector_a + task_vector_b
+
+    return multi_vector.apply_to(base_model, final_scaling).cuda()
+
 def eval(args):
     results = {}
 

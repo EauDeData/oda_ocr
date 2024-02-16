@@ -232,3 +232,70 @@ def load_datasets(args, transforms=lambda x: x, split_langs=False):
                 )
 
     return datasets
+
+def log_usage(args, split_langs=False):
+    datasets = []
+
+    if args.use_cocotext:
+
+        if not split_langs:
+            datasets.append('cocotext')
+        else:
+            for lang in args.cocotext_langs:
+                datasets.append(f"cocotext_{lang}")
+
+    if args.use_esposalles:
+        datasets.append('esposalles')
+
+    if args.use_funsd:
+        datasets.append('funsd')
+
+    if args.use_hiertext:
+        datasets.append('hiertext')
+
+    if args.use_hist_maps:
+        datasets.append('hist_maps')
+
+    if args.use_iam:
+        datasets.append('iam')
+
+    if args.use_iiit:
+        datasets.append('iiit')
+
+    if args.use_mlt:
+
+        if not split_langs:
+            datasets.append('mlt')
+        else:
+            for lang in args.mlt19_langs:
+                datasets.append(f"mlt_{lang}")
+    if args.use_parzival:
+        datasets.append('parzival')
+
+    if args.use_saint_gall:
+        datasets.append('saintgall')
+
+    if args.use_sroie:
+        datasets.append('sroie')
+
+    if args.use_svt:
+        datasets.append('svt')
+
+    if args.use_textocr:
+        datasets.append('textocr')
+
+    if args.use_totaltext:
+        datasets.append('totaltext')
+
+    if args.use_washington:
+        datasets.append('gw')
+
+    if args.use_xfund:
+
+        if not split_langs:
+            datasets.append('xfund')
+        else:
+            for lang in args.xfund_langs:
+                datasets.append(f"xfund_{lang}")
+
+    return datasets

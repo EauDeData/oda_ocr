@@ -42,6 +42,6 @@ args.assigned_uuid = args.output_model_name
 os.makedirs(os.path.join(args.output_folder,
                                             args.assigned_uuid),
             exist_ok=True)
-torch.save(model.state_dict(), os.path.join(args.output_folder,
+torch.save(model_vectorized.state_dict(), os.path.join(args.output_folder,
                                             args.assigned_uuid,
                                             args.assigned_uuid + '.pt'))

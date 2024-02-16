@@ -1,19 +1,14 @@
-import torch, torchvision
+import torchvision
 import wandb
-import json
 import os
 
-from src.io.args import parse_arguments, ListToArgsConstructor
+from src.io.args import parse_arguments
 from src.io.load_datasets import load_datasets
-from src.vision.transfer_strategies import DataFixTransfer
-from src.task_vectors import NonLinearTaskVector, LinearizedTaskVector
-from src.linearize import LinearizedModel
-from src.io.formatting_io_ops import preload_model
-from src.evaluation.visutils import plot_radial
+
+from src.evaluation.visutils import plot_radial, plot_bars
 from src.io.models_dictionary import MODELS_LUT
 
-from main import prepare_model, evaluation_epoch, prepare_tokenizer_and_collator, merge_datasets
-from evaluation_protocol import fuse_models
+from main import prepare_model, evaluation_epoch, prepare_tokenizer_and_collator
 
 '''
 Help command bc im lazy:
@@ -85,6 +80,7 @@ if __name__ == '__main__':
         labels = [dataset_name for dataset_name in unraveled_results[0]]
 
         plot_radial(labels, numbers, names, output=output_tmp_folder + f'radial_tmp_{metric}.png')
+        plot_bars(labels, numbers, names, output=output_tmp_folder + f'bars_tmp_{metric}.png')
 
     ## PREPARE DATA PER DOMAIN ###
     handwritten_domain = set(['esposalles', 'washington', 'parzivall', 'iam'])
