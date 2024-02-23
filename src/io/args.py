@@ -7,7 +7,8 @@ from src.datasets.ocr.test.ocr_datasets_unitary_testing import (DEFAULT_COCOTEXT
                                                                 DEFAULT_IAM, DEFAULT_IIIT, DEFAULT_MLT,
                                                                 DEFAULT_PARZIVAL, DEFAULT_SAINT_GALL, \
                                                                 DEFAULT_SROIE, DEFAULT_SVT, DEFAULT_TEXTOCR,
-                                                                DEFAULT_TOTALTEXT, DEFAULT_WASHINGTON, DEFAULT_XFUND)
+                                                                DEFAULT_TOTALTEXT, DEFAULT_WASHINGTON, DEFAULT_XFUND,
+                                                                DEFAULT_WA)
 
 DEFAULT_OUPUT_FOLDER = '/data/users/amolina/oda_ocr_output/'
 
@@ -27,7 +28,8 @@ dataset_defaults = {
     'textocr': DEFAULT_TEXTOCR,
     'totaltext': DEFAULT_TOTALTEXT,
     'washington': DEFAULT_WASHINGTON,
-    'xfund': DEFAULT_XFUND
+    'xfund': DEFAULT_XFUND,
+    'word_art': DEFAULT_WA
 }
 
 model_choices_lookup = {
@@ -77,18 +79,18 @@ def parse_arguments():
                         help='Weights of models', type=float, required=False)
     parser.add_argument('--final_vector_scaling', type=float, default=0.8)
 
-
     parser.add_argument('--perform_feature_correction', action='store_true')
+    parser.add_argument('--do_democracy', action='store_true')
+
     parser.add_argument('--source_datasets', nargs='+',
                         help='Source datasets for feature correction', required=False)
     parser.add_argument('--target_datasets', nargs='+',
                         help='Target datasets for feature correction', required=False)
+    parser.add_argument('--ocr_dropout_chance', type=float, default=.5)
     parser.add_argument('--datafix_max_tokens', type=int, default=10000)
 
-
-
-
     dataset_group = parser.add_argument_group('Dataset argument group.')
+    parser.add_argument('--model_fusion_max_tokens', type=int, default=-1)
 
     ### COMMON DATASET ARGS ####
     dataset_group.add_argument('--image_height', type=int, default=128)
@@ -161,7 +163,7 @@ def parse_arguments():
 
     model_group.add_argument('--model_architecture', type=str,
                              choices=['conv_vit_encoder', 'vit_encoder_vertical_patch', 'vit_lucid', 'clip',
-                                      'vit_atienza'],
+                                      'vit_atienza', 'encoder_ensemble'],
                              default='conv_vit_encoder')
     model_group.add_argument('--conv_stride', type=int, default=8)
 

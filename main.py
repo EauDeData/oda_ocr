@@ -12,6 +12,7 @@ from src.dataloaders.summed_dataloader import CollateFNs
 from src.tokenizers.char_tokenizer import CharTokenizer
 from src.vision.models import (ViTEncoder, ConvVitEncoder, _ProtoModel, CLIPWrapper, RNNDecoder, ViTAtienzaWrapper,
                                TransformerDecoder)
+from src.vision.fusion_models import FusionModelFromEncoderOut
 from src.vision.vitstr import vitstr_base_patch16_224
 from src.linearize import LinearizedModel, AllMightyWrapper
 from src.evaluation.eval import eval_dataset
@@ -79,6 +80,7 @@ def prepare_train_loaders(dataset, collator, num_workers, batch_size):
 def prepare_model(vocab_size, args):
     #### LOAD MODEL ###
     feature_size, model = None, None
+    url = 'https://github.com/roatienza/deep-text-recognition-benchmark/releases/download/v0.1.0/vitstr_base_patch16_224_aug.pth'
 
     if args.use_transformers:
         raise NotImplementedError
@@ -117,7 +119,6 @@ def prepare_model(vocab_size, args):
 
         elif args.model_architecture == 'vit_atienza':
 
-            url = 'https://github.com/roatienza/deep-text-recognition-benchmark/releases/download/v0.1.0/vitstr_base_patch16_224_aug.pth'
             base_model = vitstr_base_patch16_224(pretrained=url)
             base_model_wrapped = ViTAtienzaWrapper(base_model)
             base_model_wrapped.module.vitstr.head = torch.nn.Linear(base_model_wrapped.module.vitstr.head.in_features,
@@ -143,6 +144,34 @@ def prepare_model(vocab_size, args):
 
             model = _ProtoModel(base_model_wrapped, args.device, target='square_full_images')
             print('Loaded model with:', len(list(model.parameters())), 'modules.')
+
+        elif args.model_architecture == 'encoder_ensemble':
+
+            base_model = vitstr_base_patch16_224(pretrained=url)
+            base_model_wrapped = ViTAtienzaWrapper(base_model)
+            base_model_wrapped.module.vitstr.head = torch.nn.Linear(base_model_wrapped.module.vitstr.head.in_features,
+                                                                    96)  # Decretazo, otherwise weights missmatch LoL
+
+            weights_state_dict = torch.load(model_choices_lookup['atienza_vit_base_augm'])
+            base_model_wrapped.load_state_dict(weights_state_dict)
+            base_model_wrapped.module.vitstr.head = torch.nn.Linear(
+                base_model_wrapped.module.vitstr.head.in_features,
+                base_model_wrapped.module.vitstr.head.in_features
+            )
+            feature_size = base_model_wrapped.module.vitstr.head.in_features
+            base_model_wrapped.module.vitstr.num_classes = feature_size
+            base_model_wrapper = _ProtoModel(base_model_wrapped, args.device, target='square_full_images')
+            base_model_with_decoder = TransformerDecoder(base_model_wrapper, feature_size, args.decoder_token_size,
+                                                         args.decoder_depth, vocab_size,
+                                       args.decoder_width)
+
+            model = FusionModelFromEncoderOut(base_model_with_decoder, args.checkpoints_list, feature_size,
+                                              fusion_width=args.model_width, fusion_depth=args.model_depth,
+                                              device=args.device,
+                                              seq_size=args.model_fusion_max_tokens,
+                                              ocr_dropout_chance=args.ocr_dropout_chance)
+
+
 
     if args.decoder_architecture is not None:
         if args.decoder_architecture == 'transformer':
@@ -181,7 +210,8 @@ def prepare_model(vocab_size, args):
     return model
 
 
-def evaluation_epoch(datasets, model, tokenizer, collator, args, splits = ['val', 'test', 'train']):
+def evaluation_epoch(datasets, model, tokenizer, collator, args, splits = ['val', 'test', 'train'],
+                     eval_fn = eval_dataset):
     evals = []
     for dataset in datasets:
         for split in splits:
@@ -191,7 +221,7 @@ def evaluation_epoch(datasets, model, tokenizer, collator, args, splits = ['val'
                 dataloader = torch.utils.data.DataLoader(dataset[split], batch_size=args.batch_size,
                                                          collate_fn=collator.collate, num_workers=args.num_workers_test)
 
-                evals.append(eval_dataset(dataloader, model, dataset_name, tokenizer, wandb))
+                evals.append(eval_fn(dataloader, model, dataset_name, tokenizer, wandb))
     return evals
 
 

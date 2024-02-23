@@ -64,25 +64,25 @@ if 1 not in weights:
     weights += [1]
 
 model_a = torch.load(
-    '/data/users/amolina/oda_ocr_output/non_linear_japanese_from_hiertext/non_linear_japanese_from_hiertext.pt')
+    '/data/users/amolina/oda_ocr_output/non_linear_word_art_from_hiertext/non_linear_word_art_from_hiertext.pt')
 model_b = torch.load(
-    '/data/users/amolina/oda_ocr_output/non_linear_korean_from_hiertext/non_linear_korean_from_hiertext.pt')
+    '/data/users/amolina/oda_ocr_output/non_linear_totaltext_from_hiertext/non_linear_totaltext_from_hiertext.pt')
 model_both = torch.load('/data/users/amolina/oda_ocr_output/'
-                        'base_generic_model'
-                        '/base_generic_model.pt')
+                        'non_linear_word_art_and_totaltext_from_base'
+                        '/non_linear_word_art_and_totaltext_from_base.pt')
 
-metric_a = 'MER_mlt19_dataset_Jap_val_cv1'
-metric_b = 'MER_mlt19_dataset_Kor_val_cv1'
+metric_a = 'CER_word_art_dataset_validation'
+metric_b = 'CER_total_text_dataset_Test'
 
-name_a = 'mlt_jap'
-name_b = 'mlt_kor'
+name_a = 'word_art'
+name_b = 'totaltext'
 
 color_a = '#d63131'
 color_b = '#319fd6'
 color_avg = '#404040'
 
 split_langs = True
-splits = ['val']
+splits = ['val', 'test']
 eval_datasets = load_datasets(args, transforms, split_langs=split_langs)
 
 #print(model)

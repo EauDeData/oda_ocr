@@ -8,9 +8,9 @@ from src.vision.transfer_strategies import DataFixTransfer
 from src.task_vectors import NonLinearTaskVector, LinearizedTaskVector, GenericLinearVectorizer
 from src.linearize import LinearizedModel
 from src.io.formatting_io_ops import preload_model
-
+from typing import *
 from main import prepare_model, evaluation_epoch, prepare_tokenizer_and_collator, merge_datasets
-
+from src.evaluation.eval import eval_dataset_democracy
 def prepare_datafix_model(model, collator, origin_dataset_list, target_dataset_list, transforms, args, eval_split = 'test'):
     # WARNING: It only works on encoder - decoder architectures as we have a feature space in the middle
     source_dataset_args = ListToArgsConstructor(origin_dataset_list, args)
@@ -68,10 +68,39 @@ def fuse_two_models(base_model, model_a_state_dict, model_b_state_dict, weight_a
 
     return multi_vector.apply_to(base_model, final_scaling).cuda()
 
+def get_list_of_checkpoints(args):
+    return [torch.load(ckpt) for ckpt in args.checkpoints_list]
+
+class DemocracyMaker9999(torch.nn.Module):
+    def __init__(self, model: torch.nn.Module, checkpoints: List[dict], device):
+        super().__init__()
+        self.ckpoints = checkpoints
+        self.model = model
+        self.softmax = torch.nn.Softmax(2) # (0_seq, 1_batch, 2_emb)
+        self.to(device)
+    def __call__(self, batch, **kwargs):
+        predicted_sequences = []
+        for state_dict in self.ckpoints:
+            self.model.load_state_dict(state_dict)
+            prediction = self.softmax(self.model(batch)['language_head_output'])
+            predicted_sequences.append(prediction)
+
+        return {'language_head_output': sum(predicted_sequences)}
+
+
+'''
+Exmaple command: WANDB_MODE=disabled python evaluation_protocol.py
+--use_iam --device cpu --use_mlt --model_architecture vit_atienza
+--decoder_architecture transformer
+--tokenizer_name oda_giga_tokenizer
+--batch_size 5 --checkpoints_list [CKPTS HERE] --do_democracy
+
+'''
+
 def eval(args):
     results = {}
 
-    wandb.init(project='oda_ocr')
+    wandb.init(project='oda_ocr_evals')
     wandb.config.update(args)
     wandb.run.name = f"evaluation_{args.checkpoint_name}" + '_datafix' if args.perform_feature_correction else ''
 
@@ -84,7 +113,6 @@ def eval(args):
         torchvision.transforms.PILToTensor(),
         normalize['normalize' if not args.standarize else 'standarize'])
     )
-    
 
     tokenizer, collator = prepare_tokenizer_and_collator(None, transforms, args)
 
@@ -92,6 +120,7 @@ def eval(args):
     if args.perform_model_arithmetics:
         model_vectorized = fuse_models(model, len(tokenizer), args)
     else: model_vectorized = None
+
     if args.perform_feature_correction:
         datafix_model, eval_datasets = prepare_datafix_model(model, collator, args.source_datasets,
                                                              args.target_datasets, transforms, args, 'test')
@@ -111,9 +140,19 @@ def eval(args):
             print(result)
             results['results_taylor'].append(result)
 
+    if args.do_democracy:
+        print('------------------ Voting Ensemble Evaluation Protocol -------------------------')
+        democratic_movement_of_weights = DemocracyMaker9999(
+            model, get_list_of_checkpoints(args), args.device
+        )
+        results['results_voting'] = []
+        for result in evaluation_epoch(eval_datasets, democratic_movement_of_weights, tokenizer, collator, args):
+            print(result)
+            results['results_voting'].append(result)
+
     results['results_baseline'] = []
     print('------------------ Common evaluation protocol -------------------------')
-    for result in evaluation_epoch(eval_datasets, model, tokenizer, collator, args):
+    for result in evaluation_epoch(eval_datasets, model, tokenizer, collator, args, splits=['val', 'test']):
         print(result)
         results['results_baseline'].append(result)
 

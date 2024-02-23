@@ -49,3 +49,6 @@ def eval_dataset(dataloader, model, dataset_name, tokenizer, wandb_session):
         final_scores
     )
     return final_scores
+
+def eval_dataset_democracy(dataloader, model, dataset_name, tokenizer, wandb_session):
+    pass

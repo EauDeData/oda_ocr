@@ -14,6 +14,7 @@ from src.datasets.ocr.textocr import TextOCRDataset
 from src.datasets.ocr.svt import SVTDataset
 from src.datasets.ocr.sroie import SROIEDataset
 from src.datasets.ocr.saintgall import SaintGallDataset
+from src.datasets.ocr.word_art import  WordArtDataset
 
 
 def load_datasets(args, transforms=lambda x: x, split_langs=False):
@@ -29,6 +30,14 @@ def load_datasets(args, transforms=lambda x: x, split_langs=False):
         'true': True,
         'false': False
     }
+    if args.use_word_art:
+        datasets.append(
+            {
+                'train': WordArtDataset(base_location=args.word_art_path, split='train', **common),
+                'val': WordArtDataset(base_location=args.word_art_path, split='validation', **common),
+                'test': None
+             }
+        )
 
     if args.use_cocotext:
 
@@ -90,7 +99,7 @@ def load_datasets(args, transforms=lambda x: x, split_langs=False):
             {
                 'train': HistoricalMapsdDataset(base_folder=args.hist_maps_path, split='train',
                                                 cross_val=args.hist_maps_cross_validation_fold, **common),
-                'test': HistoricalMapsdDataset(base_folder=args.hist_maps_path, split='train',
+                'test': HistoricalMapsdDataset(base_folder=args.hist_maps_path, split='test',
                                                cross_val=args.hist_maps_cross_validation_fold, **common),
                 'val': None
             }

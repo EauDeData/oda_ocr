@@ -284,6 +284,7 @@ class TransformerDecoder(nn.Module):
         }
 
 
+
 if __name__ == '__main__':
     input_dictionary = {
         'images_tensor': torch.rand(3, 3, 128, 16 * 5),

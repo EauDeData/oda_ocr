@@ -11,7 +11,7 @@ from src.datasets.ocr.iit5k import IIIT5kDataset, DEFAULT_IIIT
 from src.datasets.ocr.mlt19 import MLT19Dataset, DEFAULT_MLT
 from src.datasets.ocr.parzival import ParzivalDataset, DEFAULT_PARZIVAL
 from src.datasets.ocr.xfund import XFundDataset, DEFAULT_XFUND
-
+from src.datasets.ocr.word_art import WordArtDataset, DEFAULT_WA
 from src.datasets.ocr.totaltext import TotalTextDataset, DEFAULT_TOTALTEXT
 from src.datasets.ocr.textocr import TextOCRDataset, DEFAULT_TEXTOCR
 from src.datasets.ocr.svt import SVTDataset, DEFAULT_SVT
