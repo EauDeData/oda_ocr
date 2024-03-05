@@ -3,7 +3,7 @@ import os
 import json
 from src.dataloaders.summed_dataloader import GenericDataset
 
-DEFAULT_WA = "/data/users/amolina/OCR/WordArt"
+DEFAULT_WA = "/data2/users/amolina/OCR/WordArt"
 
 class WordArtDataset(GenericDataset):
     name = 'word_art_dataset'

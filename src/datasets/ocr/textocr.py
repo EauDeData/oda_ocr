@@ -4,7 +4,7 @@ import json
 
 from src.dataloaders.summed_dataloader import GenericDataset
 
-DEFAULT_TEXTOCR = "/data/users/amolina/OCR/TextOCR"
+DEFAULT_TEXTOCR = "/data2/users/amolina/OCR/TextOCR"
 
 class TextOCRDataset(GenericDataset):
 

@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup as bs
 
 from src.dataloaders.summed_dataloader import GenericDataset
 
-DEFAULT_SVT = "/data/users/amolina/OCR/SVT"
+DEFAULT_SVT = "/data2/users/amolina/OCR/SVT"
 
 class SVTDataset(GenericDataset):
     name = 'svt_dataset'

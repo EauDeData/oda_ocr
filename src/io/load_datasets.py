@@ -15,7 +15,7 @@ from src.datasets.ocr.svt import SVTDataset
 from src.datasets.ocr.sroie import SROIEDataset
 from src.datasets.ocr.saintgall import SaintGallDataset
 from src.datasets.ocr.word_art import  WordArtDataset
-
+from src.datasets.ocr.amr import AMRDataset
 
 def load_datasets(args, transforms=lambda x: x, split_langs=False):
     datasets = []
@@ -36,6 +36,14 @@ def load_datasets(args, transforms=lambda x: x, split_langs=False):
                 'train': WordArtDataset(base_location=args.word_art_path, split='train', **common),
                 'val': WordArtDataset(base_location=args.word_art_path, split='validation', **common),
                 'test': None
+             }
+        )
+    if args.use_amr:
+        datasets.append(
+            {
+                'train': AMRDataset(base_folder=args.amr_path, split='training', **common),
+                'val': AMRDataset(base_folder=args.amr_path, split='validation', **common),
+                'test': AMRDataset(base_folder=args.amr_path, split='testing', **common),
              }
         )
 

@@ -4,7 +4,7 @@ import json
 
 from src.dataloaders.summed_dataloader import GenericDataset
 
-DEFAULT_SROIE = "/data/users/amolina/OCR/SROIE"
+DEFAULT_SROIE = "/data2/users/amolina/OCR/SROIE"
 
 class SROIEDataset(GenericDataset):
     name = 'sroie_dataset'

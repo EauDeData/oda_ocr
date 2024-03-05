@@ -4,7 +4,7 @@ import json
 
 from src.dataloaders.summed_dataloader import GenericDataset
 
-DEFAULT_COCOTEXT = "/data/users/amolina/OCR/COCOText"
+DEFAULT_COCOTEXT = "/data2/users/amolina/OCR/COCOText"
 
 class COCOTextDataset(GenericDataset):
 

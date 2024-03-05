@@ -4,7 +4,7 @@ import json
 
 from src.dataloaders.summed_dataloader import GenericDataset
 
-DEFAULT_XFUND = "/data/users/amolina/OCR/xFUND"
+DEFAULT_XFUND = "/data2/users/amolina/OCR/xFUND"
 
 class XFundDataset(GenericDataset):
 

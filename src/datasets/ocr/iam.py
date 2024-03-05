@@ -3,7 +3,7 @@ import os
 import json 
 from src.dataloaders.summed_dataloader import GenericDataset
 
-DEFAULT_IAM = "/data/users/amolina/OCR/IAM"
+DEFAULT_IAM = "/data2/users/amolina/OCR/IAM"
 
 class IAMDataset(GenericDataset):
     name = 'iam_dataset'

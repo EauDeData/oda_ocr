@@ -4,7 +4,7 @@ import json
 
 from src.dataloaders.summed_dataloader import GenericDataset
 
-DEFAULT_MLT = "/data/users/amolina/OCR/MLT19/"
+DEFAULT_MLT = "/data2/users/amolina/OCR/MLT19/"
 
 class MLT19Dataset(GenericDataset):
 

@@ -4,7 +4,7 @@ import json
 
 from src.dataloaders.summed_dataloader import GenericDataset
 
-DEFAULT_SAINT_GALL = "/data/users/amolina/OCR/SaintGall"
+DEFAULT_SAINT_GALL = "/data2/users/amolina/OCR/SaintGall"
 
 class SaintGallDataset(GenericDataset):
     name = 'saint_gall_dataset'

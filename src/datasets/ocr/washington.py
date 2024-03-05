@@ -4,7 +4,7 @@ import json
 
 from src.dataloaders.summed_dataloader import GenericDataset
 
-DEFAULT_WASHINGTON = "/data/users/amolina/OCR/GW"
+DEFAULT_WASHINGTON = "/data2/users/amolina/OCR/GW"
 
 class GWDataset(GenericDataset):
     name = 'gw_dataset'

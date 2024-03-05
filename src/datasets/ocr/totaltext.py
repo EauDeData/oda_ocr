@@ -4,7 +4,7 @@ import json
 
 from src.dataloaders.summed_dataloader import GenericDataset
 
-DEFAULT_TOTALTEXT = "/data/users/amolina/OCR/TotalText"
+DEFAULT_TOTALTEXT = "/data2/users/amolina/OCR/TotalText"
 
 class TotalTextDataset(GenericDataset):
     name = 'total_text_dataset'

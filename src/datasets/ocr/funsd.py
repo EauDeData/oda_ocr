@@ -4,7 +4,7 @@ import json
 
 from src.dataloaders.summed_dataloader import GenericDataset
 
-DEFAULT_FUNSD = "/data/users/amolina/OCR/FUNSD"
+DEFAULT_FUNSD = "/data2/users/amolina/OCR/FUNSD"
 
 class FUNSDDataset(GenericDataset):
     name = 'funsd_dataset'

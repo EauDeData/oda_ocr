@@ -8,9 +8,9 @@ from src.datasets.ocr.test.ocr_datasets_unitary_testing import (DEFAULT_COCOTEXT
                                                                 DEFAULT_PARZIVAL, DEFAULT_SAINT_GALL, \
                                                                 DEFAULT_SROIE, DEFAULT_SVT, DEFAULT_TEXTOCR,
                                                                 DEFAULT_TOTALTEXT, DEFAULT_WASHINGTON, DEFAULT_XFUND,
-                                                                DEFAULT_WA)
+                                                                DEFAULT_WA, DEFAULT_AMR)
 
-DEFAULT_OUPUT_FOLDER = '/data/users/amolina/oda_ocr_output/'
+DEFAULT_OUPUT_FOLDER = '/data2/users/amolina/oda_ocr_output/'
 
 dataset_defaults = {
     'cocotext': DEFAULT_COCOTEXT,
@@ -29,11 +29,12 @@ dataset_defaults = {
     'totaltext': DEFAULT_TOTALTEXT,
     'washington': DEFAULT_WASHINGTON,
     'xfund': DEFAULT_XFUND,
-    'word_art': DEFAULT_WA
+    'word_art': DEFAULT_WA,
+    'amr': DEFAULT_AMR
 }
 
 model_choices_lookup = {
-    'atienza_vit_base_augm': '/data/users/amolina/oda_ocr_output/models/vitstr_base_patch16_224_aug.pt',
+    'atienza_vit_base_augm': '/data2/users/amolina/oda_ocr_output/models/vitstr_base_patch16_224_aug.pt',
 }
 
 model_choices = list(model_choices_lookup.keys()) + [None]

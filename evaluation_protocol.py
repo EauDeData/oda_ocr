@@ -4,7 +4,8 @@ import json
 
 from src.io.args import parse_arguments, ListToArgsConstructor
 from src.io.load_datasets import load_datasets
-from src.vision.transfer_strategies import DataFixTransfer
+# from src.vision.transfer_strategies import DataFixTransfer
+DataFixTransfer = None
 from src.task_vectors import NonLinearTaskVector, LinearizedTaskVector, GenericLinearVectorizer
 from src.linearize import LinearizedModel
 from src.io.formatting_io_ops import preload_model

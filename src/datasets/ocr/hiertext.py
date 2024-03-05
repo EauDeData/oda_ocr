@@ -4,7 +4,7 @@ import json
 
 from src.dataloaders.summed_dataloader import GenericDataset
 
-DEFAULT_HIERTEXT = "/data/users/amolina/OCR/HierText"
+DEFAULT_HIERTEXT = "/data2/users/amolina/OCR/HierText"
 
 def bbx_from_vertices_list(vertices):
     

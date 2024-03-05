@@ -3,7 +3,7 @@ import os
 import json 
 from src.dataloaders.summed_dataloader import GenericDataset
 
-DEFAULT_HIST_MAPS = "/data/users/amolina/OCR/HistoricalMaps"
+DEFAULT_HIST_MAPS = "/data2/users/amolina/OCR/HistoricalMaps"
 
 class HistoricalMapsdDataset(GenericDataset):
     name = 'hist_maps'

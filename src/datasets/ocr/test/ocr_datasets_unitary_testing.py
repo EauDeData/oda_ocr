@@ -17,7 +17,7 @@ from src.datasets.ocr.textocr import TextOCRDataset, DEFAULT_TEXTOCR
 from src.datasets.ocr.svt import SVTDataset, DEFAULT_SVT
 from src.datasets.ocr.sroie import SROIEDataset, DEFAULT_SROIE
 from src.datasets.ocr.saintgall import SaintGallDataset, DEFAULT_SAINT_GALL
-
+from src.datasets.ocr.amr import DEFAULT_AMR
 IDX = 30
 OUTPUT_TMP_FOLDER = './tmp_/'
 os.makedirs(OUTPUT_TMP_FOLDER, exist_ok=True)

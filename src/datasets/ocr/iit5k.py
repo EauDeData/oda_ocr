@@ -5,7 +5,7 @@ import scipy.io
 
 from src.dataloaders.summed_dataloader import GenericDataset
 
-DEFAULT_IIIT = "/data/users/amolina/OCR/IIIT5K/"
+DEFAULT_IIIT = "/data2/users/amolina/OCR/IIIT5K/"
 
 class IIIT5kDataset(GenericDataset):
     name = 'iiit5k_dataset'

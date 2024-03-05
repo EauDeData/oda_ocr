@@ -4,7 +4,7 @@ import json
 
 from src.dataloaders.summed_dataloader import GenericDataset
 
-DEFAULT_PARZIVAL = "/data/users/amolina/OCR/Parzival"
+DEFAULT_PARZIVAL = "/data2/users/amolina/OCR/Parzival"
 
 class ParzivalDataset(GenericDataset):
     name = 'parzival_dataset'

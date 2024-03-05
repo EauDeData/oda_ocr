@@ -3,7 +3,7 @@ import os
 
 from src.dataloaders.summed_dataloader import GenericDataset
 
-DEFAULT_ESPOSALLES = "/data/users/amolina/OCR/ESPOSALLES"
+DEFAULT_ESPOSALLES = "/data2/users/amolina/OCR/ESPOSALLES"
 
 class EsposalledDataset(GenericDataset):
     name = 'esposalles_dataset'
