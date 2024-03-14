@@ -1,3 +1,5 @@
+import copy
+
 import torch, torchvision
 import wandb
 import json
@@ -25,7 +27,24 @@ def prepare_datafix_model(model, collator, origin_dataset_list, target_dataset_l
                                     max_tokens = args.datafix_max_tokens)
 
     return datafix_model, test_split
+def obtain_task_vector(base_model_state_dict, model_state_dict):
 
+    state_dict = {}
+    for left_key, right_key in zip(base_model_state_dict, model_state_dict):
+        assert left_key == right_key, ('Linearizing models is not implemented yet,'
+                                       'compare equal things or implement it')
+        state_dict[left_key] = base_model_state_dict[left_key] - model_state_dict[right_key]
+
+    return state_dict
+
+def apply_task_vector(model_to_be_applied, task_vector_state_dict, weight = 1):
+    state_dict = {}
+    for left_key, right_key in zip(model_to_be_applied, task_vector_state_dict):
+        assert left_key == right_key, ('Linearizing models is not implemented yet,'
+                                       'compare equal things or implement it')
+        state_dict[left_key] = model_to_be_applied[left_key] + weight * task_vector_state_dict[right_key]
+
+    return state_dict
 def fuse_models(base_model, tokenizer_leng, args):
 
     # We need to linearize the model if it is not linear already
@@ -34,31 +53,25 @@ def fuse_models(base_model, tokenizer_leng, args):
 
     task_vectors = []
     weights = []
+    model_to_mess_with = copy.deepcopy(base_model)
     for weight, model_checkpoint in zip(args.linear_sum_models_weights, args.checkpoints_list):
 
-        if args.linear_model and not isinstance(base_model, LinearizedModel):
-            print(f"(SCRIPT) Trying to operate with a non-linear FT version while --linear_model is true."
-                  f"\n\tCheckpoint: {model_checkpoint}")
         print('Fusing checkpoint', model_checkpoint, 'with weight', weight)
         # Important, everything linear or everything non-Linear
-        task_vector = GenericLinearVectorizer(base_model.state_dict(), model_checkpoint)
-
-        task_vectors.append(task_vector * weight)
+        model_to_mess_with.load_state_dict(torch.load(model_checkpoint))
+        task_vectors.append(obtain_task_vector(base_model.encoder.state_dict(),
+                                               model_to_mess_with.encoder.state_dict()))
         weights.append(weight)
 
-    multi_domain_vector = None
+    multi_domain_vector = base_model.encoder.state_dict()
 
-    for idx, task_vector in enumerate(task_vectors):
-        if multi_domain_vector is None:
-            multi_domain_vector = task_vector
-        else:
-            multi_domain_vector = task_vector + multi_domain_vector
+    for idx, (w, task_vector) in enumerate(zip(weights, task_vectors)):
+        multi_domain_vector = apply_task_vector(multi_domain_vector, task_vector, w)
 
-    apply_method = multi_domain_vector.apply_to_linear if args.linear_model else multi_domain_vector.apply_to
+    base_model.encoder.load_state_dict(multi_domain_vector)
+    return base_model.state_dict() # TODO: Care, using only encoder!!!
 
-    final_state_dict = apply_method(base_model, args.final_vector_scaling).cuda()
 
-    return final_state_dict
 
 def fuse_two_models(base_model, model_a_state_dict, model_b_state_dict, weight_a, weight_b, final_scaling = 1):
 

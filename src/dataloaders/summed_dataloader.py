@@ -77,7 +77,8 @@ class CollateFNs:
         self.transforms = transforms
 
     def collate(self, batch):
-        max_tokens = max([len(x['tokens']) for x in batch])
+
+        max_tokens = max([len(x['tokens']) for x in batch]) + (1 if self.character_tokenizer.include_special else 0)
         max_patches = max([x['input_tensor'].shape[2] // self.patch_width for x in batch])
         max_tokens_both = max(max_patches, max_tokens)
 
@@ -145,7 +146,7 @@ class CollateFNs:
             'raw_text_gt': raw_texts,
             'sources': sources,
             'input_lengths': [x.size[0] // self.patch_width for x in resized_images],
-            'output_lengths': [len(x['tokens']) for x in batch],
+            'output_lengths': [len(x['tokens']) + (1 if self.character_tokenizer.include_special else 0) for x in batch],
             'totally_padded_image': torch.stack(patched_images),
             'input_lengths_clip': [224 // self.patch_width for _ in resized_images],
             'masks': None,

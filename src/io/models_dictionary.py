@@ -1,32 +1,34 @@
 import os
 
-BASE_MODELS = '/data/users/amolina/oda_ocr_output/'
+BASE_MODELS = '/data2/users/amolina/oda_ocr_output/'
 
 MODELS_LUT = {
-    'Zero-Shot':
+    'Zero-Shot (hiertext)':
         os.path.join(BASE_MODELS, 'non_linear_hiertext_only_base/non_linear_hiertext_only_base.pt'),
 
 
-    'Esposalles':
+    'Esposalles (from hiertext)':
         os.path.join(BASE_MODELS,
-                     '{model_name}/{model_name}.pt'.format(model_name='non_linear_esposalles_from_hiertext')),
+                     '{model_name}/{model_name}.pt'.format(model_name='ftesposalles_from_hiertext')),
+    'iam (from hiertext)':
+        os.path.join(BASE_MODELS,
+                     '{model_name}/{model_name}.pt'.format(model_name='ftiam_from_hiertext')),
+    'gw (from hiertext)':
+        os.path.join(BASE_MODELS,
+                     '{model_name}/{model_name}.pt'.format(model_name='ftwashington_from_hiertext')),
+    'Parzival (from hiertext)':
+        os.path.join(BASE_MODELS,
+                     '{model_name}/{model_name}.pt'.format(model_name='ftparzival_from_hiertext')),
+    'CoCoText (from hiertext)':
+        os.path.join(BASE_MODELS,
+                     '{model_name}/{model_name}.pt'.format(model_name='ftcocotext_from_hiertext')),
+    'MLT (from hiertext)':
+        os.path.join(BASE_MODELS,
+                     '{model_name}/{model_name}.pt'.format(model_name='ftmlt_from_hiertext')),
+    'TextOCR (from hiertext)':
+        os.path.join(BASE_MODELS,
+                     '{model_name}/{model_name}.pt'.format(model_name='fttextocr_from_hiertext')),
 
-    'Parzival':
-        os.path.join(BASE_MODELS,
-                     '{model_name}/{model_name}.pt'.format(model_name='non_linear_parzival_from_hiertext')),
-
-    'Esposalles -> Parzival':
-        os.path.join(BASE_MODELS,
-                     '{model_name}/{model_name}.pt'.format(model_name='non_linear_parzival__from_esposalles_from_hiertext')),
-
-    'Esposalles + Parzival':
-        os.path.join(BASE_MODELS,
-                     '{model_name}/{model_name}.pt'.format(
-                         model_name='non_linear_fused_parzival_esposalles')),
-    'Esposalles, Parzival':
-        os.path.join(BASE_MODELS,
-                     '{model_name}/{model_name}.pt'.format(
-                         model_name='non_linear_parzival_and_esposalles_from_hiertext')),
 }
 
 '''

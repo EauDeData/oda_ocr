@@ -19,7 +19,7 @@ from src.evaluation.eval import eval_dataset
 from src.evaluation.visutils import loop_for_visualization
 from src.train_steps.base_ctc import train_ctc, train_ctc_clip
 from src.train_steps.base_cross_entropy import train_cross_entropy
-
+torch.manual_seed(42)
 
 def prepare_optimizer(model, args):
     if args.optimizer == 'sgd':
@@ -42,7 +42,7 @@ def prepare_optimizer(model, args):
 
 def get_lost_and_train(args, tokenizer=None):
     if args.loss_function == 'ctc':
-        train_function = train_ctc if not args.model_architecture in ['clip', 'vit_atienza'] else train_ctc_clip
+        train_function = train_ctc_clip
         return torch.nn.CTCLoss(blank=tokenizer.tokens[tokenizer.ctc_blank], zero_infinity=True), train_function
     elif args.loss_function == 'cross_entropy':
         return torch.nn.CrossEntropyLoss(ignore_index=tokenizer.tokens[tokenizer.padding_token]), train_cross_entropy
@@ -57,13 +57,14 @@ def merge_datasets(datasets, split='train'):
     data = datasets[0][split]
 
     for idx in range(1, len(datasets)):
-        data = data + datasets[idx][split]
+        if split in datasets[idx]:
+            data = data + datasets[idx][split]
 
     return data
 
 
 def prepare_tokenizer_and_collator(merged_dataset, transforms, args):
-    tokenizer = CharTokenizer(merged_dataset, not args.loss_function == 'ctc', args.tokenizer_location,
+    tokenizer = CharTokenizer(merged_dataset, args.include_eos, args.tokenizer_location,
                               args.tokenizer_name, args.save_tokenizer)
     collator = CollateFNs(args.patch_width, args.image_height, tokenizer,
                           seq2seq_same_size=not args.loss_function == 'ctc', max_size=args.square_image_max_size,
@@ -119,13 +120,13 @@ def prepare_model(vocab_size, args):
 
         elif args.model_architecture == 'vit_atienza':
 
-            base_model = vitstr_base_patch16_224(pretrained=url)
+            base_model = vitstr_base_patch16_224(pretrained=False)
             base_model_wrapped = ViTAtienzaWrapper(base_model)
             base_model_wrapped.module.vitstr.head = torch.nn.Linear(base_model_wrapped.module.vitstr.head.in_features,
                                                                     96)  # Decretazo, otherwise weights missmatch LoL
 
-            weights_state_dict = torch.load(model_choices_lookup['atienza_vit_base_augm'])
-            base_model_wrapped.load_state_dict(weights_state_dict)
+            #weights_state_dict = torch.load(model_choices_lookup['atienza_vit_base_augm'])
+            #base_model_wrapped.load_state_dict(weights_state_dict)
 
             if args.decoder_architecture is None:
                 base_model_wrapped.module.vitstr.head = torch.nn.Linear(

@@ -72,6 +72,7 @@ def parse_arguments():
     parser.add_argument('--output_folder', type=str, default=DEFAULT_OUPUT_FOLDER)
     parser.add_argument('--output_model_name', type=str, default=None)
     parser.add_argument('--use_transformers', action='store_true')
+    parser.add_argument('--include_eos', action='store_true')
 
     parser.add_argument('--perform_model_arithmetics', action='store_true')
     parser.add_argument('--checkpoints_list', nargs='+',
