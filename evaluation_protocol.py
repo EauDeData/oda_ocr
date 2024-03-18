@@ -13,7 +13,8 @@ from src.linearize import LinearizedModel
 from src.io.formatting_io_ops import preload_model
 from typing import *
 from main import prepare_model, evaluation_epoch, prepare_tokenizer_and_collator, merge_datasets
-from src.evaluation.eval import eval_dataset_democracy
+from src.evaluation.eval import eval_dataset_democracy, eval_dataset_for_print_mask
+
 def prepare_datafix_model(model, collator, origin_dataset_list, target_dataset_list, transforms, args, eval_split = 'test'):
     # WARNING: It only works on encoder - decoder architectures as we have a feature space in the middle
     source_dataset_args = ListToArgsConstructor(origin_dataset_list, args)
@@ -166,7 +167,8 @@ def eval(args):
 
     results['results_baseline'] = []
     print('------------------ Common evaluation protocol -------------------------')
-    for result in evaluation_epoch(eval_datasets, model, tokenizer, collator, args, splits=['val', 'test']):
+    for result in evaluation_epoch(eval_datasets, model, tokenizer, collator, args, splits=['val', 'test'],
+                                   eval_fn=eval_dataset_for_print_mask):
         print(result)
         results['results_baseline'].append(result)
 
