@@ -16,8 +16,10 @@ from src.datasets.ocr.sroie import SROIEDataset
 from src.datasets.ocr.saintgall import SaintGallDataset
 from src.datasets.ocr.word_art import  WordArtDataset
 from src.datasets.ocr.amr import AMRDataset
-
-def load_datasets(args, transforms=lambda x: x, split_langs=False):
+from src.datasets.ocr.copiale import CopialeDataset
+from src.datasets.ocr.borg import BorgDataset
+from src.datasets.ocr.vatican import VaticanDataset
+def load_datasets(args, transforms=lambda x: x, split_langs=True):
     datasets = []
 
     common = {
@@ -247,7 +249,36 @@ def load_datasets(args, transforms=lambda x: x, split_langs=False):
                         'val': XFundDataset(base_folder=args.xfund_path, split='val', lang=[lang], **common),
                     }
                 )
+    if args.use_copiale:
 
+        datasets.append(
+            {
+                'train': CopialeDataset(base_folder=args.copiale_path, split='train', **common),
+                'test': CopialeDataset(base_folder=args.copiale_path, split='test', **common),
+                'val': CopialeDataset(base_folder=args.copiale_path, split='valid', **common)
+
+            }
+        )
+    if args.use_borg:
+
+        datasets.append(
+            {
+                'train': BorgDataset(base_folder=args.borg_path, split='train', **common),
+                'test': BorgDataset(base_folder=args.borg_path, split='test', **common),
+                'val': BorgDataset(base_folder=args.borg_path, split='valid', **common)
+
+            }
+        )
+    if args.use_vatican:
+
+        datasets.append(
+            {
+                'train': VaticanDataset(base_folder=args.vatican_path, split='train', **common),
+                'test': VaticanDataset(base_folder=args.vatican_path, split='test', **common),
+                'val': VaticanDataset(base_folder=args.vatican_path, split='valid', **common)
+
+            }
+        )
     return datasets
 
 def log_usage(args, split_langs=False):

@@ -18,6 +18,9 @@ from src.datasets.ocr.svt import SVTDataset, DEFAULT_SVT
 from src.datasets.ocr.sroie import SROIEDataset, DEFAULT_SROIE
 from src.datasets.ocr.saintgall import SaintGallDataset, DEFAULT_SAINT_GALL
 from src.datasets.ocr.amr import DEFAULT_AMR
+from src.datasets.ocr.borg import DEFAULT_BORG
+from src.datasets.ocr.copiale import  DEFAULT_COPIALE
+from src.datasets.ocr.vatican import DEFAULT_VATICAN
 IDX = 30
 OUTPUT_TMP_FOLDER = './tmp_/'
 os.makedirs(OUTPUT_TMP_FOLDER, exist_ok=True)

@@ -8,7 +8,8 @@ from src.datasets.ocr.test.ocr_datasets_unitary_testing import (DEFAULT_COCOTEXT
                                                                 DEFAULT_PARZIVAL, DEFAULT_SAINT_GALL, \
                                                                 DEFAULT_SROIE, DEFAULT_SVT, DEFAULT_TEXTOCR,
                                                                 DEFAULT_TOTALTEXT, DEFAULT_WASHINGTON, DEFAULT_XFUND,
-                                                                DEFAULT_WA, DEFAULT_AMR)
+                                                                DEFAULT_WA, DEFAULT_AMR,
+                                                                DEFAULT_VATICAN, DEFAULT_BORG, DEFAULT_COPIALE)
 
 DEFAULT_OUPUT_FOLDER = '/data2/users/amolina/oda_ocr_output/'
 
@@ -30,7 +31,10 @@ dataset_defaults = {
     'washington': DEFAULT_WASHINGTON,
     'xfund': DEFAULT_XFUND,
     'word_art': DEFAULT_WA,
-    'amr': DEFAULT_AMR
+    'amr': DEFAULT_AMR,
+    'copiale': DEFAULT_COPIALE,
+    'borg': DEFAULT_BORG,
+    'vatican': DEFAULT_VATICAN
 }
 
 model_choices_lookup = {
@@ -73,6 +77,7 @@ def parse_arguments():
     parser.add_argument('--output_model_name', type=str, default=None)
     parser.add_argument('--use_transformers', action='store_true')
     parser.add_argument('--include_eos', action='store_true')
+    parser.add_argument('--max_train_samples', type=int, default=None)
 
     parser.add_argument('--perform_model_arithmetics', action='store_true')
     parser.add_argument('--checkpoints_list', nargs='+',
@@ -80,9 +85,12 @@ def parse_arguments():
     parser.add_argument('--linear_sum_models_weights', nargs='+',
                         help='Weights of models', type=float, required=False)
     parser.add_argument('--final_vector_scaling', type=float, default=0.8)
+    parser.add_argument('--l1penalty', type=float, default=1)
 
     parser.add_argument('--perform_feature_correction', action='store_true')
     parser.add_argument('--do_democracy', action='store_true')
+    parser.add_argument('--do_neuron_inspection', action='store_true')
+
 
     parser.add_argument('--source_datasets', nargs='+',
                         help='Source datasets for feature correction', required=False)
@@ -151,6 +159,9 @@ def parse_arguments():
     ### MODEL ARGS ####
     model_group = parser.add_argument_group('Model argument group.')
     model_group.add_argument('--linear_model', action='store_true')
+    model_group.add_argument('--replace_last_layer', action='store_true')
+    model_group.add_argument('--old_tokenizer_size', type=int, default=5344)
+
     model_group.add_argument('--model_depth', type=int, default=6)
     model_group.add_argument('--model_width', type=int, default=8)
     model_group.add_argument('--dropout', type=float, default=0.1)

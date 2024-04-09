@@ -79,6 +79,8 @@ def prepare_train_loaders(dataset, collator, num_workers, batch_size):
 
 
 def prepare_model(vocab_size, args):
+    if args.replace_last_layer: vocab_size_arg = args.old_tokenizer_size
+    else: vocab_size_arg = vocab_size
     #### LOAD MODEL ###
     feature_size, model = None, None
     url = 'https://github.com/roatienza/deep-text-recognition-benchmark/releases/download/v0.1.0/vitstr_base_patch16_224_aug.pth'
@@ -90,13 +92,13 @@ def prepare_model(vocab_size, args):
         if args.model_architecture == 'vit_encoder_vertical_patch':
             model = ViTEncoder(args.image_height, args.patch_width, 3, args.token_size,
                                [args.visual_tokenizer_width] * args.visual_tokenizer_depth, args.model_depth,
-                               args.model_width, vocab_size, args.dropout, args.device)
+                               args.model_width, vocab_size_arg, args.dropout, args.device)
             feature_size = args.token_size
 
         elif args.model_architecture == 'conv_vit_encoder':
             assert args.conv_stride == args.patch_width, 'Num tokens will missmatch'
             model = ConvVitEncoder(args.image_height, args.patch_width, 3, args.token_size, args.conv_stride,
-                                   args.model_depth, args.model_width, vocab_size, args.dropout, args.device)
+                                   args.model_depth, args.model_width, vocab_size_arg, args.dropout, args.device)
             feature_size = args.token_size
 
         elif args.model_architecture == 'vit_lucid':
@@ -104,7 +106,7 @@ def prepare_model(vocab_size, args):
             model = _ProtoModel(ViT(
                 image_size=args.square_image_max_size,
                 patch_size=args.patch_width,
-                num_classes=vocab_size,
+                num_classes=vocab_size_arg,
                 dim=args.token_size,
                 depth=args.model_depth,
                 heads=args.model_width,
@@ -115,7 +117,7 @@ def prepare_model(vocab_size, args):
             feature_size = args.token_size
         elif args.model_architecture == 'clip':
 
-            model = CLIPWrapper(vocab_size, args.patch_width, args.device)
+            model = CLIPWrapper(vocab_size_arg, args.patch_width, args.device)
             feature_size = 768
 
         elif args.model_architecture == 'vit_atienza':
@@ -131,9 +133,9 @@ def prepare_model(vocab_size, args):
             if args.decoder_architecture is None:
                 base_model_wrapped.module.vitstr.head = torch.nn.Linear(
                                                                     base_model_wrapped.module.vitstr.head.in_features,
-                                                                    vocab_size
+                                                                    vocab_size_arg
                 )
-                base_model_wrapped.module.vitstr.num_classes = vocab_size
+                base_model_wrapped.module.vitstr.num_classes = vocab_size_arg
 
             else:
                 base_model_wrapped.module.vitstr.head = torch.nn.Linear(
@@ -163,7 +165,7 @@ def prepare_model(vocab_size, args):
             base_model_wrapped.module.vitstr.num_classes = feature_size
             base_model_wrapper = _ProtoModel(base_model_wrapped, args.device, target='square_full_images')
             base_model_with_decoder = TransformerDecoder(base_model_wrapper, feature_size, args.decoder_token_size,
-                                                         args.decoder_depth, vocab_size,
+                                                         args.decoder_depth, vocab_size_arg,
                                        args.decoder_width)
 
             model = FusionModelFromEncoderOut(base_model_with_decoder, args.checkpoints_list, feature_size,
@@ -176,11 +178,11 @@ def prepare_model(vocab_size, args):
 
     if args.decoder_architecture is not None:
         if args.decoder_architecture == 'transformer':
-            model = TransformerDecoder(model, feature_size, args.decoder_token_size, args.decoder_depth, vocab_size,
+            model = TransformerDecoder(model, feature_size, args.decoder_token_size, args.decoder_depth, vocab_size_arg,
                                        args.decoder_width)
         else:
 
-            model = RNNDecoder(model, feature_size, args.decoder_token_size, args.decoder_depth, vocab_size,
+            model = RNNDecoder(model, feature_size, args.decoder_token_size, args.decoder_depth, vocab_size_arg,
                                args.decoder_architecture)
 
     linearized = False
@@ -198,7 +200,8 @@ def prepare_model(vocab_size, args):
             incompatible_keys = model.load_state_dict(torch.load(args.checkpoint_name))
             print(f"(I, script) Found incompatible keys: {incompatible_keys}")
             linearized = True
-
+    if args.replace_last_layer:
+        model.lm_head = torch.nn.Linear(args.decoder_token_size, vocab_size)
     ### LINEARIZE ###
     ### The loaded model is already linear?
     if args.linear_model and not linearized:
@@ -246,7 +249,8 @@ def loop(epoches, model, datasets, collator, tokenizer, args, train_dataloader, 
         # loop_for_visualization(train_dataloader, model, tokenizer, None)
         train_function(epoch, train_dataloader, optimizer, model, loss_function, args.patch_width, wandb,
                        tokenizer=tokenizer.tokens[tokenizer.padding_token], scheduler=scheduler,
-                       padding_token=tokenizer.tokens[tokenizer.padding_token])
+                       padding_token=tokenizer.tokens[tokenizer.padding_token], max_steps=args.max_train_samples,
+                       batch_size=args.batch_size)
 
         evals = evaluation_epoch(datasets, model, tokenizer, collator, args)
         print(evals)

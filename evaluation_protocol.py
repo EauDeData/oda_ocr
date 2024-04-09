@@ -165,10 +165,19 @@ def eval(args):
             print(result)
             results['results_voting'].append(result)
 
+    if args.do_neuron_inspection:
+        print('------------------ Neuron inspection Evaluation Protocol -------------------------')
+
+        for result in evaluation_epoch(eval_datasets, model, tokenizer, collator, args, splits=['val', 'test'],
+                                       eval_fn=eval_dataset_for_print_mask):
+            print(result)
+        print('Neuron inspection ends the process, dying...')
+        exit()
+
     results['results_baseline'] = []
     print('------------------ Common evaluation protocol -------------------------')
     for result in evaluation_epoch(eval_datasets, model, tokenizer, collator, args, splits=['val', 'test'],
-                                   eval_fn=eval_dataset_for_print_mask):
+                                   ):
         print(result)
         results['results_baseline'].append(result)
 

@@ -33,7 +33,6 @@ class MLT19Dataset(GenericDataset):
             ), 'r'
         ).readlines()]
 
-
         self.data = []
         for gt_file in os.listdir(self.annotations_folder):
             if gt_file in valid_anns:
@@ -53,15 +52,26 @@ class MLT19Dataset(GenericDataset):
                                   [x2x, x2y],
                                   [y2y, y2x]]]
                         
+                        if lang != 'Latin' and (not ('#' in transcription)):
+                            self.data.append({
 
-                        self.data.append({
-                            
-                            'image_path': image_path,
-                            'transcription': transcription,
-                            'bbx': (min(points, key = lambda x: x[0])[0], min(points, key = lambda x: x[1])[1], max(points, key = lambda x: x[0])[0], max(points, key = lambda x: x[1])[1])
+                                'image_path': image_path,
+                                'transcription': transcription,
+                                'bbx': (min(points, key = lambda x: x[0])[0], min(points, key = lambda x: x[1])[1], max(points, key = lambda x: x[0])[0], max(points, key = lambda x: x[1])[1])
+
+                                }
+                            )
+                        elif lang == 'Latin':
+                            # Temporal, for some reproducibility in a single experiment
+                            self.data.append({
+
+                                'image_path': image_path,
+                                'transcription': transcription,
+                                'bbx': (min(points, key=lambda x: x[0])[0], min(points, key=lambda x: x[1])[1],
+                                        max(points, key=lambda x: x[0])[0], max(points, key=lambda x: x[1])[1])
 
                             }
-                        )
+                            )
     def __len__(self):
         return len(self.data)
 

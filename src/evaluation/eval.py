@@ -64,15 +64,22 @@ def eval_dataset(dataloader, model, dataset_name, tokenizer, wandb_session):
 def eval_dataset_democracy(dataloader, model, dataset_name, tokenizer, wandb_session):
     pass
 
+def intercept_forward(model, batch):
+
+    model_encoder = model.encoder.model.module.vitstr
+    print(model_encoder)
+    exit()
+
 def eval_dataset_for_print_mask(dataloader, model, dataset_name, tokenizer, wandb_session):
     decoder = GreedyTextDecoder(False)
 
     model.eval()
+    acc = 0
+    total = 0
     with torch.no_grad():
         for batch in dataloader:
-            tokens = model(batch)['language_head_output'].cpu().detach().numpy()
-            print(tokens.shape)
-            exit()
+            tokens = intercept_forward(model, batch)['language_head_output'].cpu().detach().numpy()
+
             decoded_tokens = decoder({'ctc_output': tokens}, tokenizer.ctc_blank, None)
 
             strings = [clean_special_tokens(x.split(tokenizer.eos)[0], tokenizer) for x in
@@ -82,4 +89,9 @@ def eval_dataset_for_print_mask(dataloader, model, dataset_name, tokenizer, wand
                       tokenizer.decode(batch['labels'].permute(1, 0))]
         for x, y in zip(strings, labels):
             print(f"{bcolors.OKGREEN if x == y else bcolors.FAIL}Predicted:{x}, GT: {y}{bcolors.ENDC}")
+
+        acc += sum(int(x == y) for x, y in zip(strings, labels) if len(y))
+        total += 1
+
+    return acc / total
 
