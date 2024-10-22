@@ -8,12 +8,14 @@ from src.io.load_datasets import load_datasets, log_usage
 from measure_distances_of_models import NORMS, p_norm
 from main import evaluation_epoch
 import copy
-
+from src.task_vectors_original import TaskVector
+from measure_distances_of_models import from_vector_to_state_dict
 import numpy as np
 import torchvision
 import torch
 import os
 import wandb
+from tqdm import tqdm
 
 def measure_model_distances(left_model_dict, right_model_dict, norm=2):
 
@@ -37,6 +39,32 @@ def measure_model_distances(left_model_dict, right_model_dict, norm=2):
     else:
         raise NotImplementedError(f"{norm} is not an implemented distance")
     return weighter(v1, v2, norm)
+
+
+def compute_weighted_average(base_checkpoint, list_of_checkpoints, list_of_weights):
+    assert len(list_of_checkpoints) == len(list_of_weights), "The length of checkpoints and weights must match."
+
+    models = []
+    tv1 = None
+
+    for num_k, base_model in tqdm(enumerate(list_of_checkpoints), total=len(list_of_checkpoints)):
+        v1 = []
+        tv1 = TaskVector(base_checkpoint, base_model).vector
+        for left_key in tv1:
+            v1.extend(tv1[left_key]
+                      .reshape(torch.numel(tv1[left_key])).cpu()
+                      .numpy().tolist()
+                      )
+        t = torch.tensor(v1, device='cuda')
+        models.append(t * list_of_weights[num_k])
+
+    models = torch.stack(models)
+    weighted_mean_model = models.sum(dim=0)
+
+    mean_model_state_dict = TaskVector(vector=from_vector_to_state_dict(tv1, weighted_mean_model)) \
+        .apply_to(base_checkpoint)
+
+    return mean_model_state_dict
 
 args = parse_arguments()
 
@@ -63,19 +91,16 @@ weights = [(i/limit) for i in range(0, limit, step)]
 if 1 not in weights:
     weights += [1]
 
-model_a = torch.load(
-    '/data/users/amolina/oda_ocr_output/non_linear_word_art_from_hiertext/non_linear_word_art_from_hiertext.pt')
-model_b = torch.load(
-    '/data/users/amolina/oda_ocr_output/non_linear_totaltext_from_hiertext/non_linear_totaltext_from_hiertext.pt')
-model_both = torch.load('/data/users/amolina/oda_ocr_output/'
-                        'non_linear_word_art_and_totaltext_from_base'
-                        '/non_linear_word_art_and_totaltext_from_base.pt')
+model_a = args.model_a_for_dist # '/data2/users/amolina/oda_ocr_output/langs_domain_adaptation/few_shot_chinese_from_averaged_from_hiertext/few_shot_chinese_from_averaged_from_hiertext.pt'
+model_b = args.model_b_for_dist # '/data2/users/amolina/oda_ocr_output/langs_domain_adaptation/few_shot_korean_from_averaged_from_hiertext/few_shot_korean_from_averaged_from_hiertext.pt'
+model_both = torch.load(args.model_joint_both)
 
-metric_a = 'CER_word_art_dataset_validation'
-metric_b = 'CER_total_text_dataset_Test'
+base_checkpoint = args.model_joint_both # '/data2/users/amolina/oda_ocr_output/svd/from_hiertext/averaged_model.pth'
+metric_a = args.metric_a_for_dist #  'CER_mlt19_dataset_Chi_val_cv1'
+metric_b = args.metric_b_for_dist # 'CER_mlt19_dataset_Kor_val_cv1'
 
-name_a = 'word_art'
-name_b = 'totaltext'
+name_a = args.name_a_for_dist # 'Chinese'
+name_b = args.name_b_for_dist # 'Korean'
 
 color_a = '#d63131'
 color_b = '#319fd6'
@@ -104,9 +129,9 @@ with torch.no_grad():
     origin_model_dataset_b_performance = [whole_dict[metric_b]] * len(weights)
     average = [.5 * i + .5 * j for i, j in zip(origin_model_dataset_a_performance, origin_model_dataset_b_performance)]
 
-    ax.plot(weights, origin_model_dataset_a_performance, marker=8, linestyle='-', color=('%s' % color_a), label=f'Origin model ({name_a})', linewidth=.5)
-    ax.plot(weights, origin_model_dataset_b_performance, marker=8, linestyle='-', color=('%s' % color_b), label=f'Origin model ({name_b})', linewidth=.5)
-    ax.plot(weights, average, marker=8, linestyle='dashdot', color=('%s' % color_avg), label='Origin model (avg)', linewidth=.25)
+    # ax.plot(weights, origin_model_dataset_a_performance, marker=8, linestyle='-', color=('%s' % color_a), label=f'Origin model ({name_a})', linewidth=.5)
+    # ax.plot(weights, origin_model_dataset_b_performance, marker=8, linestyle='-', color=('%s' % color_b), label=f'Origin model ({name_b})', linewidth=.5)
+    # ax.plot(weights, average, marker=8, linestyle='dashdot', color=('%s' % color_avg), label='Origin model (avg)', linewidth=.25)
 
 
     base_model.load_state_dict(model_both)
@@ -120,22 +145,23 @@ with torch.no_grad():
     joint_dataset_model_b_performance = [whole_dict[metric_b]] * len(weights)
     average = [.5 * i + .5 * j for i, j in zip(joint_dataset_model_a_performance, joint_dataset_model_b_performance)]
 
-    ax.plot(weights, joint_dataset_model_a_performance, marker='x', linestyle='-', color=color_a, label=f'Joint model ({name_a})', linewidth=.5)
-    ax.plot(weights, joint_dataset_model_b_performance, marker='x', linestyle='-', color=color_b, label=f'Joint model ({name_b})', linewidth=.5)
-    ax.plot(weights, average, linestyle='dashdot', marker='x', color=color_avg, label='Joint model (avg)', linewidth=.25)
+    # ax.plot(weights, joint_dataset_model_a_performance, marker='x', linestyle='-', color=color_a, label=f'Joint model ({name_a})', linewidth=.5)
+    # ax.plot(weights, joint_dataset_model_b_performance, marker='x', linestyle='-', color=color_b, label=f'Joint model ({name_b})', linewidth=.5)
+    # ax.plot(weights, average, linestyle='dashdot', marker='x', color=color_avg, label='Joint model (avg)', linewidth=.25)
 
 
 
     for weight in weights:
-        print(f"Comparing weights {weight} - {1-weight}")
+        print(f"Comparing weights {1- weight, name_a} - {weight, name_b}")
 
         base_model = prepare_model(len(tokenizer), args)  # Here we define the base model
-        base_model_copy = copy.deepcopy(base_model)
-        model = fuse_two_models(base_model, model_a, model_b, weight, 1 - weight, 1)
+        model = copy.deepcopy(base_model)
+        model_state_dict = compute_weighted_average(base_checkpoint, [model_a, model_b], [1-weight, weight])
+        model.load_state_dict(model_state_dict)
         report = evaluation_epoch(eval_datasets, model, tokenizer, collator, args, splits)
         whole_dict = {}
 
-        model_distances.append(measure_model_distances(base_model_copy.state_dict(), model.state_dict()))
+        model_distances.append(measure_model_distances(base_model.state_dict(), model.state_dict()))
 
         for dict_ in report:
             whole_dict = {**whole_dict, **dict_}
@@ -174,9 +200,9 @@ with torch.no_grad():
     cbar = plt.colorbar(gradient, label='distance to origin')
 
     #plt.grid()
-    plt.legend(ncol=3)
+    plt.legend(ncol=1)
     plt.xlabel('p - Vector scaling factor')
     plt.ylabel('Character Error Rate')
-    plt.savefig(f'{name_a}_and_{name_b}.png', dpi=300, transparent=True)
+    plt.savefig(f'{name_a}_and_{name_b}.svg', dpi=300, transparent=True)
 
 print(report)

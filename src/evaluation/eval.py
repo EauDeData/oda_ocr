@@ -36,6 +36,8 @@ def eval_dataset(dataloader, model, dataset_name, tokenizer, wandb_session):
     }
     total_steps = 0
     model.eval()
+    model.cuda()
+    model.device='cuda'
     with torch.no_grad():
         for batch in dataloader:
             tokens = model(batch)['language_head_output'].cpu().detach().numpy()

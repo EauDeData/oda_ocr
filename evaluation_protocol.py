@@ -164,6 +164,8 @@ def eval(args):
         for result in evaluation_epoch(eval_datasets, democratic_movement_of_weights, tokenizer, collator, args):
             print(result)
             results['results_voting'].append(result)
+        print(results['results_voting'])
+        exit()
 
     if args.do_neuron_inspection:
         print('------------------ Neuron inspection Evaluation Protocol -------------------------')

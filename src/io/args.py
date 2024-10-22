@@ -73,6 +73,11 @@ def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--epoches', type=int, default=10)
+    parser.add_argument('--reptile_num_episodes', type=int, default=30)
+    parser.add_argument('--reptile_tmp_folder', type=str, default='/data2/users/amolina/tmptile/')
+
+    parser.add_argument('--outer_lr', type=float, default=1)
+
     parser.add_argument('--output_folder', type=str, default=DEFAULT_OUPUT_FOLDER)
     parser.add_argument('--output_model_name', type=str, default=None)
     parser.add_argument('--use_transformers', action='store_true')
@@ -91,6 +96,16 @@ def parse_arguments():
     parser.add_argument('--do_democracy', action='store_true')
     parser.add_argument('--do_neuron_inspection', action='store_true')
 
+    parser.add_argument('--model_a_for_dist', default=None)
+    parser.add_argument('--model_b_for_dist', default=None)
+
+    parser.add_argument('--metric_a_for_dist', default=None)
+    parser.add_argument('--metric_b_for_dist', default=None)
+
+    parser.add_argument('--name_a_for_dist', default=None)
+    parser.add_argument('--name_b_for_dist', default=None)
+
+    parser.add_argument('--model_joint_both', default=None)
 
     parser.add_argument('--source_datasets', nargs='+',
                         help='Source datasets for feature correction', required=False)
@@ -192,7 +207,9 @@ def parse_arguments():
     optimizer_choices = ['sgd', 'adam', 'adagrad', 'adadelta', 'rmsprop', 'adamw']
     optimization_group.add_argument('--optimizer', choices=optimizer_choices, default='adam', help='Optimizer choice')
     optimization_group.add_argument('--learning_rate', type=float, default=5e-5, help='Learning rate')
-    optimization_group.add_argument('--loss_function', type=str, default='ctc', choices=['ctc', 'cross_entropy', 'nll'])
+    # Reptile should not be a loss function...
+    optimization_group.add_argument('--loss_function', type=str, default='ctc', choices=['ctc', 'cross_entropy', 'nll',
+                                                                                         'reptile'])
     optimization_group.add_argument('--reduce_on_plateau', type=int, default=0)
 
     return parser.parse_args()

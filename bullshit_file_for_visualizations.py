@@ -45,6 +45,7 @@ if __name__ == '__main__':
 
     tokenizer, collator = prepare_tokenizer_and_collator(None, transforms, args)
     eval_datasets = load_datasets(args, split_langs=True, transforms=transforms)
+
     for idx in range(len(eval_datasets)):
         eval_datasets[idx]['train'] = None
     for approach_tag, model_checkpoint in zip(models, models.values()):

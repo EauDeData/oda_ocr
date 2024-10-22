@@ -5,6 +5,7 @@ import wandb
 import torch.optim as optim
 from vit_pytorch import ViT
 import uuid
+import collections
 
 from src.io.args import parse_arguments, get_model_name, model_choices_lookup
 from src.io.load_datasets import load_datasets
@@ -17,7 +18,7 @@ from src.vision.vitstr import vitstr_base_patch16_224
 from src.linearize import LinearizedModel, AllMightyWrapper
 from src.evaluation.eval import eval_dataset
 from src.evaluation.visutils import loop_for_visualization
-from src.train_steps.base_ctc import train_ctc, train_ctc_clip
+from src.train_steps.base_ctc import train_ctc, train_ctc_clip, train_reptile
 from src.train_steps.base_cross_entropy import train_cross_entropy
 torch.manual_seed(42)
 
@@ -41,7 +42,10 @@ def prepare_optimizer(model, args):
 
 
 def get_lost_and_train(args, tokenizer=None):
-    if args.loss_function == 'ctc':
+    if args.loss_function == 'reptile':
+        train_function = train_reptile
+        return torch.nn.CTCLoss(blank=tokenizer.tokens[tokenizer.ctc_blank], zero_infinity=True), train_function
+    elif args.loss_function == 'ctc':
         train_function = train_ctc_clip
         return torch.nn.CTCLoss(blank=tokenizer.tokens[tokenizer.ctc_blank], zero_infinity=True), train_function
     elif args.loss_function == 'cross_entropy':
@@ -243,20 +247,35 @@ def loop(epoches, model, datasets, collator, tokenizer, args, train_dataloader, 
     os.makedirs(os.path.join(args.output_folder, args.assigned_uuid), exist_ok=True)
     open(os.path.join(args.output_folder, args.assigned_uuid, 'metadata.txt'), 'w').write(args.model_name_str)
 
+    # collections.OrderedDict is a state dict class
+
     for epoch in range(epoches):
         print(f"{epoch} / {epoches} epoches")
-
+        if args.loss_function=='reptile' and not isinstance(model, (collections.OrderedDict, dict)):
+            otype = type(model)
+            model = model.state_dict()
+            print(f'Reptile converted model instance type {otype} --> {type(model)}.')
         # loop_for_visualization(train_dataloader, model, tokenizer, None)
-        train_function(epoch, train_dataloader, optimizer, model, loss_function, args.patch_width, wandb,
+        retruned_model = train_function(epoch, train_dataloader, optimizer, model, loss_function, args.patch_width, wandb,
                        tokenizer=tokenizer.tokens[tokenizer.padding_token], scheduler=scheduler,
                        padding_token=tokenizer.tokens[tokenizer.padding_token], max_steps=args.max_train_samples,
-                       batch_size=args.batch_size)
+                       batch_size=args.batch_size, reptile_args=args)
 
-        evals = evaluation_epoch(datasets, model, tokenizer, collator, args)
+        if isinstance(model, (collections.OrderedDict, dict)):
+            model_template = prepare_model(args.vocabulary_size, args)
+            model_template.load_state_dict(model)
+        else:
+            if not (retruned_model is None):
+                model_template = retruned_model
+            else:
+                model_template = model
+        evals = evaluation_epoch(datasets, model_template, tokenizer, collator, args)
         print(evals)
 
-        torch.save(model.state_dict(), os.path.join(args.output_folder, args.assigned_uuid, args.assigned_uuid + '.pt'))
-
+        if not isinstance(model, (collections.OrderedDict, dict)):
+            torch.save(model.state_dict(), os.path.join(args.output_folder, args.assigned_uuid, args.assigned_uuid + '.pt'))
+        else:
+            torch.save(model, os.path.join(args.output_folder, args.assigned_uuid, args.assigned_uuid + '.pt'))
 
 def main(args):
     torch.autograd.set_detect_anomaly(True)
@@ -278,13 +297,31 @@ def main(args):
     print('Loading all datasets...')
     datasets = load_datasets(args, transforms)
     print(f"Loaded {len(datasets)} datasets")
-    whole_train = merge_datasets(datasets, split='train')
+    if args.loss_function == 'reptile':
+        whole_train = [merge_datasets([D], split='train') for D in datasets]
+        print(f"Leng of training data: {sum(len(x) for x in whole_train)}" )
 
-    tokenizer, collator = prepare_tokenizer_and_collator(whole_train, transforms, args)
+
+    else:
+        whole_train = merge_datasets(datasets, split='train')
+        print(f"Leng of training data: {len(whole_train)}" )
+
+    if isinstance(whole_train, list):
+        tokenizer, collator = prepare_tokenizer_and_collator(whole_train[0], transforms, args)
+    else:
+        tokenizer, collator = prepare_tokenizer_and_collator(whole_train, transforms, args)
+
     print('tokenizer num tokens:', len(tokenizer))
 
-    train_dataloader = prepare_train_loaders(whole_train, collator, args.num_workers_train, args.batch_size)
+    if args.loss_function == 'reptile':
+        train_dataloader = [
+            prepare_train_loaders(D, collator, args.num_workers_train, args.batch_size) for D in whole_train
+        ]
+    else:
+        train_dataloader = prepare_train_loaders(whole_train, collator, args.num_workers_train, args.batch_size)
 
+    args.vocabulary_size = len(tokenizer)
+    args.prepare_model = prepare_model
     model = prepare_model(len(tokenizer), args)
     optimizer = prepare_optimizer(model, args)
     loss_function, train_function = get_lost_and_train(args, tokenizer)

@@ -81,6 +81,7 @@ def compute_model_distances(left_model_dict, right_model_dict, norm=2):
 def model_distance(models_lut, filepath, norm=2):
     graph = nx.Graph()
     done_models = []
+    distances = {}
     for base_model in models_lut:
         for model_checkpoint in [model for model in models_lut if model != base_model]:
             if (base_model, model_checkpoint) in done_models: continue
@@ -90,24 +91,24 @@ def model_distance(models_lut, filepath, norm=2):
 
             differences, v1, v2, square_size, weighter = compute_model_distances(left_model_dict, right_model_dict)
 
-            differences = np.reshape(differences[:square_size ** 2],
-                                     (square_size, square_size))
-            img = 255 * (differences - differences.min()) / (differences.max() - differences.min())
-            cv2.imwrite(f'tmp_/{model_checkpoint}_{base_model}_weights_diff.png', img.astype(np.uint8),
-                        [cv2.IMWRITE_PNG_COMPRESSION, 0]
-                        )
+            # differences = np.reshape(differences[:square_size ** 2],
+            #                         (square_size, square_size))
+            # img = 255 * (differences - differences.min()) / (differences.max() - differences.min())
+            # cv2.imwrite(f'tmp_/{model_checkpoint}_{base_model}_weights_diff.png', img.astype(np.uint8),
+            #             [cv2.IMWRITE_PNG_COMPRESSION, 0]
+            #             )
+            #
+            # graph.add_edge(base_model, model_checkpoint, weight=weighter(v1, v2, norm))
+            # done_models.append((model_checkpoint, base_model))
 
-            graph.add_edge(base_model, model_checkpoint, weight=weighter(v1, v2, norm))
-            done_models.append((model_checkpoint, base_model))
-
-    nx.draw(graph, nx.spring_layout(graph), with_labels=True, node_size=700, node_color="skyblue", font_size=10)
-    nx.draw_networkx_edge_labels(graph, nx.spring_layout(graph), edge_labels= \
-        {(n1, n2): f"{d['weight']:.2f}" for n1, n2, d in graph.edges(data=True)})
-
-    # Save the graph to a file
-    plt.savefig(filepath, format="PNG")
-    print({(n1, n2): f"{d['weight']:.2f}" for n1, n2, d in graph.edges(data=True)})
-    nx.write_gexf(graph, filepath.replace('.png', '.gexf'))
+    # nx.draw(graph, nx.spring_layout(graph), with_labels=True, node_size=700, node_color="skyblue", font_size=10)
+    # nx.draw_networkx_edge_labels(graph, nx.spring_layout(graph), edge_labels= \
+    #     {(n1, n2): f"{d['weight']:.2f}" for n1, n2, d in graph.edges(data=True)})
+    #
+    # # Save the graph to a file
+    # plt.savefig(filepath, format="PNG")
+    # print({(n1, n2): f"{d['weight']:.2f}" for n1, n2, d in graph.edges(data=True)})
+    # nx.write_gexf(graph, filepath.replace('.png', '.gexf'))
 
 
 def compute_cumulative_top_neurons_change(models_lut, model_to_rate_change):
@@ -144,7 +145,7 @@ def compute_cumulative_top_neurons_change(models_lut, model_to_rate_change):
             done_models.append((model_checkpoint, base_model))
 
 
-def task_vectors_cosine_similarity_matrix(base_checkpoint, list_of_checkpoints, dist='hist'):
+def task_vectors_cosine_similarity_matrix(base_checkpoint, list_of_checkpoints, dist='hist', labels = []):
     done_models = []
     matrix = np.ones([len(list_of_checkpoints)] * 2)
     for num_k, base_model in enumerate(list_of_checkpoints):
@@ -162,13 +163,17 @@ def task_vectors_cosine_similarity_matrix(base_checkpoint, list_of_checkpoints, 
     df_distance = pd.DataFrame(matrix, index=list_of_checkpoints, columns=list_of_checkpoints)
 
     # Create a heatmap using Seaborn
-    plt.figure(figsize=(8 * 2, 6 * 2))
+    plt.figure(figsize=(8, 6))
     hm = sns.heatmap(df_distance, annot=True, cmap='viridis', fmt='.2f', linewidths=.5)
-    hm.set_yticklabels(hm.get_yticklabels(), rotation=45, horizontalalignment='right')
+
+    hm.set_yticks([])
+    hm.set_yticklabels([])
+
+    hm.set_xticklabels(labels, rotation=0,)
     plt.title('Model Distance Matrix')
     plt.xlabel('Models')
     plt.ylabel('Models')
-    plt.savefig('../TMP_VIZ/cosine_distance.png')
+    plt.savefig('../TMP_VIZ/cosine_distance.png', dpi=300, transparent=True)
     return matrix
 
 
@@ -215,7 +220,7 @@ def from_vector_to_state_dict(state_dict_base, V):
     return state_dict_out
 
 
-def compute_svd(base_checkpoint, list_of_checkpoints):
+def compute_svd(base_checkpoint, list_of_checkpoints, base):
     models = []
     tv1 = None
     print(list(list_of_checkpoints))
@@ -241,7 +246,7 @@ def compute_svd(base_checkpoint, list_of_checkpoints):
     mean_model_state_dict = TaskVector(vector=from_vector_to_state_dict(tv1, mean_model)) \
         .apply_to(base_checkpoint)
 
-    base = '/data2/users/amolina/oda_ocr_output/svd/from_hiertext_hwonly/'
+
     os.makedirs(base, exist_ok=True)
     torch.save(mean_model_state_dict, base + 'averaged_model.pth')
 
@@ -287,7 +292,7 @@ def compute_average_scaled(base_checkpoint, list_of_checkpoints):
     mean_model_state_dict = TaskVector(vector=from_vector_to_state_dict(tv1, mean_model)) \
         .apply_to(base_checkpoint)
 
-    base = '/data2/users/amolina/oda_ocr_output/svd/from_hiertext_hwonly/'
+    base = '/data2/users/amolina/oda_ocr_output/svd/from_hiertext2/'
     os.makedirs(base, exist_ok=True)
     torch.save(mean_model_state_dict, base + 'averaged_model.pth')
 
@@ -356,12 +361,12 @@ def task_vectors_cosine_similarity_matrix_eigen(base_checkpoint, list_of_checkpo
                 compute_model_distances(tv1, tv2, norm='hist')
             matrix[num_k, num_j] = differences_1  # This is similarity
 
-    df_distance = pd.DataFrame(matrix, index=checkpoints_names, columns=[f"eigenvector {i}-th" for i in range(6)])
+    df_distance = pd.DataFrame(abs(matrix), index=checkpoints_names, columns=[f"{i}-th" for i in range(6)])
 
     # Create a heatmap using Seaborn
-    plt.figure(figsize=(8 * 2, 6 * 2))
+    plt.figure(figsize=(8, 6))
     hm = sns.heatmap(df_distance, annot=True, cmap='viridis', fmt='.2f', linewidths=.5)
-    hm.set_yticklabels(hm.get_yticklabels(), rotation=45, horizontalalignment='right')
+    # hm.set_yticklabels(hm.get_yticklabels(), rotation=45, horizontalalignment='right')
     plt.title('Model Distance Matrix')
     plt.xlabel('EigenVectors')
     plt.ylabel('Models')
@@ -414,18 +419,22 @@ if __name__ == '__main__':
     print('cosine double check')
 
     #### COMMON STAGE ####
-    # model_distance(models, os.path.join(output_tmp_folder, 'model_distances.png'), 2)
+    # task_vectors_cosine_similarity_matrix('/data2/users/amolina/oda_ocr_output/non_linear_hiertext_only_base/non_linear_hiertext_only_base.pt', models.values(), 'cosine', labels=models.keys())
     # compute_cumulative_top_neurons_change(models, 'Zero-Shot')
     # base_model = models.pop('Zero-Shot (hiertext)')
     # task_vectors_cosine_similarity_matrix(base_model, models.values())
     # plot_values_task_vectors( models.pop('Zero-Shot (hiertext)'), models.values())
+    base = '/data2/users/amolina/oda_ocr_output/lang_fused_all_models_without_textocr/'
     zeroshot = models.pop('Zero-Shot (hiertext)')
-    compute_svd(zeroshot, models.values())
+    # zeroshot = '/data2/users/amolina/oda_ocr_output/svd/from_hiertext/averaged_model.pth'
+    print(models)
+    compute_svd(zeroshot, models.values(), base)
     # task_vectors_cosine_similarity_matrix(zeroshot, models.values())
     # ties_merge_models(zeroshot, models.values())
     # prepare_dictionary_of_vectors(models, zeroshot)
-    # eigencheckpoints = [f'/data2/users/amolina/oda_ocr_output/svd/from_hiertext_sceneonly/{i}_eigenvector.pth'
-    #                     for i in range(6)]
-    #
+    # compute_average_scaled(zeroshot, models.values())
+    # compute_svd(zeroshot, models.values(), '/data2/users/amolina/oda_ocr_output/svd/from_hiertext2/')
+    # eigencheckpoints = [f'/data2/users/amolina/oda_ocr_output/svd/from_hiertext2/{i}_eigenvector_scaled.pth' for i in range(6)]
+    # task_vectors_cosine_similarity_matrix_eigen(zeroshot, models.values(), eigencheckpoints, models.keys())
     # # task_vectors_cosine_similarity_matrix(zeroshot, models.values(), norm='cosine')
     # task_vectors_cosine_similarity_matrix_eigen(zeroshot, models.values(), eigencheckpoints, models.keys())

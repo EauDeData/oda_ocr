@@ -3,7 +3,7 @@ import os
 import json
 
 from src.datasets.ocr.vatican import VaticanDataset
-DEFAULT_COPIALE = "/data2/users/amolina/OCR/Borg/"
+DEFAULT_COPIALE = "/data2/users/amolina/OCR/Copiale/"
 
 class CopialeDataset(VaticanDataset):
     name = 'copiale_dataset'
